@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map and Form App</title>
+  <!-- Include Mapbox CSS -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+  <!-- Link to external CSS file -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="form-container">
+      <h2>Store Discount Form</h2>
+      <form>
+        <label for="store-name">Store Name:</label>
+        <input type="text" id="store-name" name="store-name" placeholder="Enter store name" required>
+
+        
+
+        <label for = "select"> Discount Type: </label>
+        <select name = "question" id = "select-discount">
+            <option value = "q1"> Specific Percentage </option>
+            <option value = "q2"> Buy One Get One Free </option>
+            <option value = "q3"> Get One $5 Off </option>
+        </select>
+
+        <label for="discount">Discount (%):</label>
+        <input type="number" id="discount" name="discount" placeholder="Enter discount percentage" required>
+
+        <label for="location">ZipCode:</label>
+        <input type="text" id="location" name="location" placeholder="Enter valid ZipCode" required>
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+    <div id="map"></div>
+  </div>
+
+  <!-- Include Mapbox JS -->
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+  <!-- Link to external JS file -->
+  <script src="script.js"></script>
+</body>
+</html>
