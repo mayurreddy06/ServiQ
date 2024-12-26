@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Places Autocomplete</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwHozpYoJS8xgURnkkICo7L0vw8xW2Oak&libraries=places"></script>
+    <style>
+      body {
+        padding: 25px;
+        background-color: #f0f1f3;
+        font-family: "Arial", sans-serif;
+      }
+
+      #place-picker-box {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #place-picker-container {
+        text-align: left;
+      }
+
+      input {
+        width: 300px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="place-picker-box">
+      <div id="place-picker-container">
+        <input id="autocomplete" placeholder="Enter an address">
+      </div>
+    </div>
+
+    <script>
+      function initAutocomplete() {
+        const input = document.getElementById('autocomplete');
+        const autocomplete = new google.maps.places.Autocomplete(input);
+        
+        autocomplete.addListener('place_changed', function() {
+          const place = autocomplete.getPlace();
+          
+          if (place.geometry && place.geometry.location) {
+            const lat = place.geometry.location.lat();
+            const lng = place.geometry.location.lng();
+            console.log('Coordinates:', { lat, lng });
+          } else {
+            console.log('No coordinates found for this place');
+          }
+        });
+      }
+
+      window.addEventListener('load', initAutocomplete);
+    </script>
+  </body>
+</html>
