@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-
 const admin = require('firebase-admin');
 require('dotenv').config(); 
 const serviceAccount = require(process.env.FIREBASE_JSON);
@@ -16,7 +15,6 @@ admin.initializeApp({
 
 // Database reference
 const db = admin.database();
-
 module.exports = db;
 
 app.use(express.static(path.join(__dirname, '../client')));
