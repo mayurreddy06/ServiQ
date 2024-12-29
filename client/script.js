@@ -1,22 +1,16 @@
-// Include Mapbox and Geocoder libraries in your HTML
+// Existing map initialization and interaction code
 const ACCESS_TOKEN = 'pk.eyJ1IjoidmlzaGFscHV0dGFndW50YSIsImEiOiJjbTUxaDUxMGQxeGpnMmtwcHVycGhqaHhsIn0.IWxQPRNmfEJWT-k8sTCGlA';
 mapboxgl.accessToken = ACCESS_TOKEN;
 
-// Initialize the map
 const map = new mapboxgl.Map({
-  container: 'map', // HTML container ID
-  style: 'mapbox://styles/mapbox/streets-v11', // Map style
-  center: [-82.9988, 39.9612], // Starting position [longitude, latitude]
-  zoom: 12 // Starting zoom level
+  container: 'map',
+  style: 'mapbox://styles/mapbox/streets-v11',
+  center: [-82.9988, 39.9612],
+  zoom: 12
 });
 
-// Add navigation controls
 map.addControl(new mapboxgl.NavigationControl());
-
-// Add fullscreen control
 map.addControl(new mapboxgl.FullscreenControl());
-
-// Add search box using Mapbox Geocoder
 map.addControl(
   new MapboxGeocoder({
     accessToken: ACCESS_TOKEN,
@@ -26,14 +20,36 @@ map.addControl(
   })
 );
 
-// Handle discount dropdown change
-document.getElementById('select-discount').addEventListener('change', function () {
-  const textbox = document.getElementById('discount');
-  if (this.value === 'q1') {
-    textbox.disabled = false; // Enable the text box
-    textbox.classList.remove('disabled'); // Remove grayed-out style
-  } else {
-    textbox.disabled = true; // Disable the text box
-    textbox.classList.add('disabled'); // Add grayed-out style
+// Handle form submission
+async function sendDiscount(event) {
+  event.preventDefault(); // Prevent page reload on form submission
+
+  // Get form values
+  const storeName = document.getElementById('autocomplete').value;
+  const discountAmount = parseInt(document.getElementById('discount').value, 10);
+  const coordinatesText = document.getElementById('coordinates').innerText;
+  
+  // Extract latitude and longitude from the displayed coordinates
+  const [lat, lng] = coordinatesText.match(/-?\d+\.\d+/g).map(Number);
+
+  const discountData = { storeName, discountAmount, lat, lng };
+
+  try {
+    const response = await fetch('/add-discount', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(discountData)
+    });
+
+    if (response.ok) {
+      console.log('Discount added successfully');
+    } else {
+      console.error('Failed to add discount:', await response.text());
+    }
+  } catch (error) {
+    console.error('Error:', error);
   }
-});
+}
+
+// Attach the form submission handler
+document.querySelector('form').addEventListener('submit', sendDiscount);
