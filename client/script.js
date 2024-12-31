@@ -9,6 +9,38 @@ const map = new mapboxgl.Map({
   zoom: 12
 });
 
+async function fetchAndDisplayMarkers() {
+  try {
+    const response = await fetch('/get-discounts'); // Fetch data from the server
+    if (!response.ok) {
+      console.error('Failed to fetch discounts:', await response.text());
+      return;
+    }
+
+    const discounts = await response.json();
+    for (const key in discounts) {
+      const { storeName, discountAmount, location } = discounts[key];
+      const { lat, lng } = location;
+
+      // Add marker for each discount
+      new mapboxgl.Marker()
+        .setLngLat([lng, lat]) // Set marker position
+        .setPopup(
+          new mapboxgl.Popup().setHTML(`
+            <h3>${storeName}</h3>
+            <p>Discount: ${discountAmount}%</p>
+          `)
+        ) // Add a popup
+        .addTo(map); // Add the marker to the map
+    }
+  } catch (error) {
+    console.error('Error fetching or displaying markers:', error);
+  }
+}
+
+// Call the function when the map loads
+map.on('load', fetchAndDisplayMarkers);
+
 map.addControl(new mapboxgl.NavigationControl());
 map.addControl(new mapboxgl.FullscreenControl());
 map.addControl(
@@ -24,12 +56,9 @@ map.addControl(
 async function sendDiscount(event) {
   event.preventDefault(); // Prevent page reload on form submission
 
-  // Get form values
   const storeName = document.getElementById('autocomplete').value;
   const discountAmount = parseInt(document.getElementById('discount').value, 10);
   const coordinatesText = document.getElementById('coordinates').innerText;
-  
-  // Extract latitude and longitude from the displayed coordinates
   const [lat, lng] = coordinatesText.match(/-?\d+\.\d+/g).map(Number);
 
   const discountData = { storeName, discountAmount, lat, lng };
@@ -38,11 +67,12 @@ async function sendDiscount(event) {
     const response = await fetch('/add-discount', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(discountData)
+      body: JSON.stringify(discountData),
     });
 
     if (response.ok) {
       console.log('Discount added successfully');
+      fetchAndDisplayMarkers(); // Refresh markers after adding a discount
     } else {
       console.error('Failed to add discount:', await response.text());
     }
@@ -50,6 +80,7 @@ async function sendDiscount(event) {
     console.error('Error:', error);
   }
 }
+
 
 // Attach the form submission handler
 document.querySelector('form').addEventListener('submit', sendDiscount);

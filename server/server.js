@@ -44,6 +44,25 @@ app.post('/add-discount', async (req, res) => {
   }
 });
 
+// Route to fetch all discounts from Firebase
+app.get('/get-discounts', async (req, res) => {
+  try {
+    const ref = db.ref('shopping_discounts'); // Reference to the Firebase path
+    const snapshot = await ref.once('value'); // Fetch data once
+    const discounts = snapshot.val(); // Extract the data
+
+    if (!discounts) {
+      return res.status(200).json([]); // Return an empty array if no discounts exist
+    }
+
+    res.status(200).json(discounts); // Send discounts data as JSON
+  } catch (error) {
+    console.error('Error fetching discounts:', error);
+    res.status(500).send('Error fetching discounts');
+  }
+});
+
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
