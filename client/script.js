@@ -52,16 +52,16 @@ map.addControl(
   })
 );
 
-// Handle form submission
 async function sendDiscount(event) {
-  event.preventDefault(); // Prevent page reload on form submission
+  event.preventDefault();
 
   const storeName = document.getElementById('autocomplete').value;
   const discountAmount = parseInt(document.getElementById('discount').value, 10);
   const coordinatesText = document.getElementById('coordinates').innerText;
   const [lat, lng] = coordinatesText.match(/-?\d+\.\d+/g).map(Number);
+  const timestamp = Date.now(); // Current time in milliseconds
 
-  const discountData = { storeName, discountAmount, lat, lng };
+  const discountData = { storeName, discountAmount, lat, lng, timestamp };
 
   try {
     const response = await fetch('/add-discount', {
@@ -72,7 +72,7 @@ async function sendDiscount(event) {
 
     if (response.ok) {
       console.log('Discount added successfully');
-      fetchAndDisplayMarkers(); // Refresh markers after adding a discount
+      fetchAndDisplayMarkers(); // Refresh markers
     } else {
       console.error('Failed to add discount:', await response.text());
     }
@@ -80,6 +80,7 @@ async function sendDiscount(event) {
     console.error('Error:', error);
   }
 }
+
 
 
 // Attach the form submission handler

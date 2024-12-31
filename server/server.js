@@ -26,17 +26,16 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../client', 'mapboxkey.html'));
 });
 
-// Add-discount route
 app.post('/add-discount', async (req, res) => {
-  const { storeName, discountAmount, lat, lng } = req.body;
+  const { storeName, discountAmount, lat, lng, timestamp } = req.body;
 
-  if (!storeName || !discountAmount || !lat || !lng) {
+  if (!storeName || !discountAmount || !lat || !lng || !timestamp) {
     return res.status(400).send('Missing required fields');
   }
 
   try {
     const ref = db.ref('shopping_discounts');
-    await ref.push({ storeName, discountAmount, location: { lat, lng } });
+    await ref.push({ storeName, discountAmount, location: { lat, lng }, timestamp });
     res.status(200).send('Discount added successfully');
   } catch (error) {
     console.error('Error adding discount:', error);
@@ -44,23 +43,64 @@ app.post('/add-discount', async (req, res) => {
   }
 });
 
+
 // Route to fetch all discounts from Firebase
 app.get('/get-discounts', async (req, res) => {
   try {
-    const ref = db.ref('shopping_discounts'); // Reference to the Firebase path
-    const snapshot = await ref.once('value'); // Fetch data once
-    const discounts = snapshot.val(); // Extract the data
+    const ref = db.ref('shopping_discounts');
+    const snapshot = await ref.once('value');
+    const discounts = snapshot.val();
 
     if (!discounts) {
-      return res.status(200).json([]); // Return an empty array if no discounts exist
+      return res.status(200).json([]); // No discounts found
     }
 
-    res.status(200).json(discounts); // Send discounts data as JSON
+    const currentTime = Date.now();
+    const validDiscounts = {};
+
+    // Filter discounts less than 24 hours old
+    for (const key in discounts) {
+      const { timestamp } = discounts[key];
+      if (currentTime - timestamp < 24 * 60 * 60 * 1000) { // 24 hours in milliseconds
+        validDiscounts[key] = discounts[key];
+      } else {
+        // Remove expired items from the database
+        await ref.child(key).remove();
+      }
+    }
+
+    res.status(200).json(validDiscounts);
   } catch (error) {
     console.error('Error fetching discounts:', error);
     res.status(500).send('Error fetching discounts');
   }
 });
+
+const cleanExpiredItems = async () => {
+  try {
+    const ref = db.ref('shopping_discounts');
+    const snapshot = await ref.once('value');
+    const discounts = snapshot.val();
+
+    if (!discounts) return;
+
+    const currentTime = Date.now();
+
+    for (const key in discounts) {
+      const { timestamp } = discounts[key];
+      if (currentTime - timestamp >= 24 * 60 * 60 * 1000) { // 24 hours in milliseconds
+        await ref.child(key).remove(); // Remove expired items
+        console.log(`Removed expired discount: ${key}`);
+      }
+    }
+  } catch (error) {
+    console.error('Error cleaning expired items:', error);
+  }
+};
+
+// Run cleanup every hour
+setInterval(cleanExpiredItems, 60 * 60 * 1000); // 1 hour in milliseconds
+
 
 
 // Start the server
