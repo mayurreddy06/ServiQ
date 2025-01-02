@@ -30,18 +30,13 @@
         <label for="discount">Discount (%):</label>
         <input type="number" id="discount" name="discount" placeholder="Enter discount percentage" required>
 
-        <label for="expiration">Expiration Date (optional)</label>
-        <input type= "date" id="expiration" name = "expiration" placeholder="Enter date">
         <button type="submit">Submit</button>
       </form>
 
       <!-- Display coordinates -->
       <div id="coordinates" style="margin-top: 20px;"></div>
     </div>
-    <!-- Map container -->
     <div id="map"></div>
-    <!-- Custom container for the search bar -->
-    <div id="geocoder-container"></div>
   </div>
 
   <!-- Include Mapbox JS -->
@@ -53,47 +48,6 @@
   <script src="script.js"></script>
   
   <script>
-    // Set the Mapbox access token
-    mapboxgl.accessToken = 'YOUR_ACCESS_TOKEN_HERE'; // Replace with your access token
-
-    // Initialize the map
-    const map = new mapboxgl.Map({
-      container: 'map', // ID of the container
-      style: 'mapbox://styles/mapbox/streets-v11', // Map style
-      center: [-74.006, 40.7128], // Initial center [longitude, latitude]
-      zoom: 12 // Initial zoom level
-    });
-
-    // Add Navigation Controls
-    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-
-    // Add Fullscreen Control
-    map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
-
-    // Add Geocoder (Search Bar)
-    const geocoder = new MapboxGeocoder({
-      accessToken: mapboxgl.accessToken,
-      mapboxgl: mapboxgl,
-      placeholder: 'Search for places...', // Placeholder text
-    });
-
-    // Append Geocoder to the custom container
-    document.getElementById('geocoder-container').appendChild(geocoder.onAdd(map));
-
-    // Handle Search Bar Results
-    geocoder.on('result', (event) => {
-      console.log('Search result:', event.result);
-      const coords = event.result.geometry.coordinates;
-      // Add a marker at the searched location
-      new mapboxgl.Marker().setLngLat(coords).addTo(map);
-    });
-
-    // Event Listener for Map Click
-    map.on('click', (event) => {
-      const { lng, lat } = event.lngLat;
-      console.log(`Clicked coordinates: Longitude: ${lng}, Latitude: ${lat}`);
-    });
-
     // Initialize Google Places Autocomplete
     function initAutocomplete() {
       const input = document.getElementById('autocomplete');
