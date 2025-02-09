@@ -24,4 +24,4 @@ async function addAccount(event){
 
 }
 
-document.querySelector('account-form').addEventListener('submit', addAccount);
+document.querySelector('#account-form').addEventListener('submit', addAccount);
