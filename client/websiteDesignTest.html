@@ -1,41 +1,94 @@
-<html lang = "en">
-    <head>
-        <meta charset = 'UTF-8'>
-        <meta name = 'viewport' content= 'width=device-width , initial-scale = 1.0'>
-        <title>MapSave</title>
-        <link rel="stylesheet" href = 'test.css'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MapSave</title>
+  <link rel="stylesheet" href="test.css">
+  <!-- Google Places API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwHozpYoJS8xgURnkkICo7L0vw8xW2Oak&libraries=places"></script>
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="#map">Map</a></li>
+        <li><a href="#description">Description</a></li>
+        <li><a href="#form">Discount Form</a></li>
+        <li><a href="#scanner">Scan Discount</a></li>
+      </ul>
+    </nav>
+  </header>
 
-    </head>
-    <body>
-        <header>
-            <nav>
-                <ul>
-                    <li><a href = "#map">Map</li>
-                    <li><a href = "#description">Description</a></li>
-                    <li><a href = "#form">Discount Form</a></li>
-                    <li><a href = "#scanner">Scan Discount</a></li>
-                </ul>
-            </nav>
-        </header>
+  <main>
+    <!-- Hero Section -->
+    <section id="hero">
+      <h1>Easily Find & Add Discounts</h1>
+      <a href="#map" class="cta-button">FIND DISCOUNTS</a>
+    </section>
 
-        <main>
-            <section id = "description">
-                <h1>Easily Find & Add Discounts</h1>
-            </section>
-                
-            <section id="form">
-            <h2>Form</h2>
-            <p>Add form stuff here</p>
-            </section>
+    <!-- Form Section -->
+    <section id="form">
+      <h2>Discount Form</h2>
+      <form id="discount-form">
+        <label for="autocomplete">Store Location:</label>
+        <input type="text" id="autocomplete" name="store-location" placeholder="Enter a location" required>
         
-            <section id="scanner">
-            <h2>Scanner</h2>
-            <p>Add scanner stuff here</p>
-            </section>
-        </main>
+        <label for="select"> Discount Type: </label>
+        <select name="question" id="select-discount">
+          <option value="q1"> Specific Percentage </option>
+          <option value="q2"> Buy One Get One Free </option>
+          <option value="q3"> Get One $5 Off </option>
+        </select>
 
-        <footer>
-            <p>&copy; 2025 MapSave. All Rights Reserved</p>
-        </footer>
-    </body>
+        <label for="discount">Discount (%):</label>
+        <input type="text" id="discount" name="discount" placeholder="Enter discount percentage" required>
+
+        <button type="submit">Submit</button>
+      </form>
+
+      <!-- Display coordinates -->
+      <div id="coordinates" style="margin-top: 20px;"></div>
+    </section>
+
+    <!-- Scanner Section -->
+    <section id="scanner">
+      <h2>Scanner</h2>
+      <p>Add scanner stuff here</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 MapSave. All Rights Reserved</p>
+  </footer>
+
+  <!-- Link to external JS file -->
+  <script src="script.js"></script>
+  
+  <script>
+    // Initialize Google Places Autocomplete
+    function initAutocomplete() {
+      const input = document.getElementById('autocomplete');
+      const autocomplete = new google.maps.places.Autocomplete(input);
+
+      autocomplete.addListener('place_changed', function() {
+        const place = autocomplete.getPlace();
+        
+        if (place.geometry && place.geometry.location) {
+          const lat = place.geometry.location.lat();
+          const lng = place.geometry.location.lng();
+          // Display coordinates
+          document.getElementById('coordinates').innerHTML = 
+            `<p>Latitude: ${lat}</p><p>Longitude: ${lng}</p>`;
+          
+          console.log('Coordinates:', { lat, lng });
+        } else {
+          console.log('No coordinates found for this place');
+        }
+      });
+    }
+
+    window.addEventListener('load', initAutocomplete);
+  </script>
+</body>
 </html>

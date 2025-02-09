@@ -81,7 +81,5 @@ async function sendDiscount(event) {
   }
 }
 
-
-
 // Attach the form submission handler
 document.querySelector('form').addEventListener('submit', sendDiscount);
