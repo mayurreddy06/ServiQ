@@ -56,7 +56,7 @@ async function sendDiscount(event) {
   event.preventDefault();
 
   const storeName = document.getElementById('autocomplete').value;
-  const discountAmount = parseInt(document.getElementById('discount').value, 10);
+  const discountAmount = document.getElementById('discount').value; // Keep as text
   const coordinatesText = document.getElementById('coordinates').innerText;
   const [lat, lng] = coordinatesText.match(/-?\d+\.\d+/g).map(Number);
   const timestamp = Date.now(); // Current time in milliseconds
