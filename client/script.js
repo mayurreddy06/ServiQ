@@ -19,19 +19,21 @@ async function fetchAndDisplayMarkers() {
 
     const discounts = await response.json();
     for (const key in discounts) {
-      const { storeName, discountAmount, location } = discounts[key];
+      const { ai_response, location } = discounts[key];
+    
+      if (!ai_response) continue; // Skip if there is no AI response
+    
       const { lat, lng } = location;
-
-      // Add marker for each discount
+    
+      // Add marker for each AI-generated discount
       new mapboxgl.Marker()
-        .setLngLat([lng, lat]) // Set marker position
+        .setLngLat([lng, lat])
         .setPopup(
           new mapboxgl.Popup().setHTML(`
-            <h3>${storeName}</h3>
-            <p>Discount: ${discountAmount}%</p>
+            <p>${ai_response}</p>
           `)
         ) // Add a popup
-        .addTo(map); // Add the marker to the map
+        .addTo(map);
     }
   } catch (error) {
     console.error('Error fetching or displaying markers:', error);
