@@ -4,9 +4,9 @@ import os
 from groq import Groq
 
 # Firebase credentials initialization
-cred = credentials.Certificate("firebase_key.json")  # Download this from Firebase settings
+cred = credentials.Certificate("firebase_key.json")
 firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://store-discount-finder-default-rtdb.firebaseio.com/'  # Replace with your database URL
+    'databaseURL': 'https://store-discount-finder-default-rtdb.firebaseio.com/' 
 })
 
 # DB Reference
@@ -48,11 +48,15 @@ Option 1, and the only option, call the method "getShortText" based upon these i
 
 Example 1:
 Input: "there is a walmart discount of 50 percent on the first of January"
-Output: "Walmart Discount of 50%"
+Output: Walmart Discount of 50%
 
 Example 2:
 Input: "Taco bell is selling burritos for 25 Percent off"
-Output: "Taco Bell Discount of 25% for burritos"
+Output: Taco Bell Discount of 25% for burritos
+
+Example 3:
+Input: "There is a buy one get one 20% off on shirts"
+Output: BOGO 20% off shirts
 ]
 
 Do not write down thoughts, Only the specified output
@@ -72,7 +76,8 @@ def getShortText(query):
 
     try:
         agent = Agent(client=client, system=prompt)
-        result = agent(query)  # Get the AI response for the query
+        # Storing the AI shortened description inside result
+        result = agent(query)
         return result.strip() if result else "No response"
     except Exception as e:
         print(f"AI Error: {e}")
@@ -89,7 +94,8 @@ def process_firebase_data():
         
         for key, value in data.items():
             if 'storeName' in value and 'discountAmount' in value:
-                query = f"{value['storeName']} has a discount of {value['discountAmount']}"
+                # 2/11/2025 12:16 PM: Changed query to be more specific. Keep this query
+                query = f"At {value['storeName']}: {value['discountAmount']}"
 
                 # Explicitly convert query to a string
                 query = str(query).strip()
