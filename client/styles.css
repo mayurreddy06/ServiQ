@@ -99,4 +99,54 @@ body, html {
     transition: all 0.3s ease;
 
   }
+
+  /* Custom Popups */
+  .cartoon-popup {
+    position: relative;
+    background: #fffcaa; /* Light yellow background */
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    border: 3px solid #ffcc00; /* Cartoony thick border */
+  }
+  
+  /* Add the speech bubble tail */
+  .cartoon-popup::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 10px;
+    border-style: solid;
+    border-color: #ffcc00 transparent transparent transparent;
+  }
+  
+  .mapboxgl-popup-content {
+    background: transparent !important; /* Remove default background */
+    box-shadow: none !important;
+    padding: 0;
+  }
+  
+  .mapboxgl-popup-tip {
+    display: none !important; /* Hide default tip */
+  }
+
+  .custom-marker {
+    background-image: url('discount-tag.png'); /* Replace with any custom image */
+    background-size: cover;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+
+
+  
+  
   

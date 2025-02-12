@@ -11,34 +11,49 @@ const map = new mapboxgl.Map({
 
 async function fetchAndDisplayMarkers() {
   try {
-    const response = await fetch('/get-discounts'); // Fetch data from the server
+    const response = await fetch('/get-discounts');
     if (!response.ok) {
       console.error('Failed to fetch discounts:', await response.text());
       return;
     }
 
     const discounts = await response.json();
+
     for (const key in discounts) {
       const { ai_response, location } = discounts[key];
-    
+
       if (!ai_response) continue; // Skip if there is no AI response
-    
+
       const { lat, lng } = location;
-    
-      // Add marker for each AI-generated discount
-      new mapboxgl.Marker()
+
+      // Use a custom icon instead of the default blue pin
+      const marker = new mapboxgl.Marker({
+        element: createCustomMarker() // Calls function to create a custom marker
+      })
         .setLngLat([lng, lat])
         .setPopup(
-          new mapboxgl.Popup().setHTML(`
-            <p>${ai_response}</p>
-          `)
-        ) // Add a popup
+          new mapboxgl.Popup({ offset: 25 })
+            .setHTML(`
+              <div class="cartoon-popup">
+                <p>${ai_response}</p>
+              </div>
+            `)
+        )
         .addTo(map);
     }
   } catch (error) {
     console.error('Error fetching or displaying markers:', error);
   }
 }
+
+// Function to create a custom marker
+function createCustomMarker() {
+  const markerElement = document.createElement('div');
+  markerElement.className = 'custom-marker';
+  return markerElement;
+}
+
+
 
 // Call the function when the map loads
 map.on('load', fetchAndDisplayMarkers);
