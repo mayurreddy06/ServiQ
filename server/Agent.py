@@ -20,8 +20,11 @@ client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 class Agent:
     def __init__(self, client, system):
         self.client = client
+        # initalizes client as groq
         self.system = system
+        # stores the system prompt
         self.messages = []
+        # creates an empty list of messages
         if self.system is not None:
             self.messages.append({"role": "system", "content": self.system})
 
