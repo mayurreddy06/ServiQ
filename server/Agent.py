@@ -45,21 +45,48 @@ class Agent:
 
 # Define the system prompt for the agent to shorten text
 prompt = """
-You are given an input, and you need to choose whether to call one of two methods to return a certain output:
-
-Option 1, and the only option, call the method "getShortText" based upon these inputs: [
+You are given an input, and you need to display an output based on the following examples: [
 
 Example 1:
-Input: "there is a walmart discount of 50 percent on the first of January"
-Output: Walmart Discount of 50%
+
+INPUT
+"there is a walmart discount of 50 percent of Jackets on the first of January"
+
+OUTPUT
+Location: Walmart
+Discount: 50%
+Item: Jackets
+Category: Clothes
 
 Example 2:
-Input: "Taco bell is selling burritos for 25 Percent off"
-Output: Taco Bell Discount of 25% for burritos
+
+INPUT
+"Taco bell is selling burritos for 25 Percent off"
+
+OUTPUT
+Store: Taco Bell
+Discount: 25%
+Item: Burritos
+Category: Food
 
 Example 3:
-Input: "There is a buy one get one 20% off on shirts"
-Output: BOGO 20% off shirts
+
+INPUT
+"Buy One Get One Deal for my wife's gold engagement ring at the local Columbus JCPenny"
+
+OUTPUT
+Store: JCPenny
+Discount: BOGO
+Item: Gold Engagement Ring
+Category: Jewlery
+
+
+Here are a list of categories, and the only ones, that can be chosen from:
+[Grocery, Electronics, Fashion & Apparel, Home & Garden, Health & Beauty, Sports & Outdoors, Toys & Games, Automotive, Travel & Vacations, 
+Restaurants & Food Delivery, Entertainment, Books, Pet Supplies, Baby & Kids, Accessories, Office & Business Supplies, Fitness & Wellness, 
+Seasonal & Holiday]
+
+
 ]
 
 Do not write down thoughts, Only the specified output
