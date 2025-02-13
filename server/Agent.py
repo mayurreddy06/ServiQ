@@ -1,3 +1,4 @@
+import re
 import firebase_admin
 from firebase_admin import credentials, db
 import os
@@ -140,7 +141,18 @@ def process_firebase_data():
                 response_short = getShortText(query)
                 print(f"AI Response: {response_short}")
 
+                pattern = r"Store:\s*(.*?)\s*Discount:\s*(.*?)\s*Item:\s*(.*?)\s*Category:\s*(.*)"
+                # regex pattern for recognizing category values
+                match = re.search(pattern, response_short)
+                # extracts data
+                store, discount, item, category = match.groups()
+                # assigns values based on regex
                 ref.child(key).update({'ai_response': response_short})
+                ref.child(key).update({'Store: ': store})
+                ref.child(key).update({'Discount: ': discount})
+                ref.child(key).update({'Item: ': item})
+                ref.child(key).update({'Category: ': category})
+                # updates firebase values
 
     except Exception as e:
         print(f"Error processing Firebase data: {e}")
