@@ -141,17 +141,34 @@ def process_firebase_data():
                 response_short = getShortText(query)
                 print(f"AI Response: {response_short}")
 
-                pattern = r"Store:\s*(.*?)\s*Discount:\s*(.*?)\s*Item:\s*(.*?)\s*Category:\s*(.*)"
-                # regex pattern for recognizing category values
-                match = re.search(pattern, response_short)
-                # extracts data
-                store, discount, item, category = match.groups()
-                # assigns values based on regex
-                ref.child(key).update({'ai_response': response_short})
-                ref.child(key).update({'Store: ': store})
-                ref.child(key).update({'Discount: ': discount})
-                ref.child(key).update({'Item: ': item})
-                ref.child(key).update({'Category: ': category})
+                # Define separate regex patterns for each field
+                store_pattern = r"Store:\s*(.*?)\s*Discount:"
+                discount_pattern = r"Discount:\s*(.*?)\s*Item:"
+                item_pattern = r"Item:\s*(.*?)\s*Category:"
+                category_pattern = r"Category:\s*(.*)"
+
+               # Extract each field separately
+                store_match = re.search(store_pattern, response_short)
+                discount_match = re.search(discount_pattern, response_short)
+                item_match = re.search(item_pattern, response_short)
+                category_match = re.search(category_pattern, response_short)
+
+                # Check if all fields were successfully extracted
+                if store_match and discount_match and item_match and category_match:
+                    store = store_match.group(1).strip()
+                    discount = discount_match.group(1).strip()
+                    item = item_match.group(1).strip()
+                    category = category_match.group(1).strip()
+
+                    # Ensure all values are strings (or other JSON-serializable types)
+                    updates = {
+                        'ai_response': str(response_short),  
+                        'Store': str(store),                
+                        'Discount': str(discount),          
+                        'Item': str(item),                 
+                        'Category': str(category)         
+                    }
+                ref.child(key).update(updates)
                 # updates firebase values
 
     except Exception as e:
