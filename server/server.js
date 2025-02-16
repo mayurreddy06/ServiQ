@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const admin = require('firebase-admin');
-const { exec } = require('child_process'); // Import child_process
+const { exec } = require('child_process');
 require('dotenv').config(); 
 
 const serviceAccount = require(process.env.FIREBASE_JSON);
@@ -22,9 +22,13 @@ module.exports = db;
 app.use(express.static(path.join(__dirname, '../client')));
 app.use(express.json());
 
-/*app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'signin.html'));
-});*/
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client', 'create_account.html'));
+});
+
+app.get('/mapboxkey.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client', 'mapboxkey.html'));
+});
 
 app.post('/add-account', async (req, res) => {
   const {email, password} = req.body;
@@ -53,10 +57,6 @@ app.post('/add-account', async (req, res) => {
     res.status(500).send('Error adding account');
   }
 
-});
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'mapboxkey.html'));
 });
 
 app.post('/add-discount', async (req, res) => {
@@ -144,7 +144,7 @@ const cleanExpiredItems = async () => {
 };
 
 // Run cleanup every hour
-setInterval(cleanExpiredItems, 60 * 60 * 1000); // 1 hour in milliseconds
+setInterval(cleanExpiredItems, 60 * 60 * 1000);
 
 // Start the server
 app.listen(PORT, () => {
