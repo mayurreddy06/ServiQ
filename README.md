@@ -1,2 +1,2 @@
-# MapSave
+# ServiQ
 aihackathon
