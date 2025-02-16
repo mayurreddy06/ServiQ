@@ -11,32 +11,49 @@ const map = new mapboxgl.Map({
 
 async function fetchAndDisplayMarkers() {
   try {
-    const response = await fetch('/get-discounts'); // Fetch data from the server
+    const response = await fetch('/get-discounts');
     if (!response.ok) {
       console.error('Failed to fetch discounts:', await response.text());
       return;
     }
 
     const discounts = await response.json();
+
     for (const key in discounts) {
-      const { storeName, discountAmount, location } = discounts[key];
+      const { ai_response, location } = discounts[key];
+
+      if (!ai_response) continue; // Skip if there is no AI response
+
       const { lat, lng } = location;
 
-      // Add marker for each discount
-      new mapboxgl.Marker()
-        .setLngLat([lng, lat]) // Set marker position
+      // Use a custom icon instead of the default blue pin
+      const marker = new mapboxgl.Marker({
+        element: createCustomMarker() // Calls function to create a custom marker
+      })
+        .setLngLat([lng, lat])
         .setPopup(
-          new mapboxgl.Popup().setHTML(`
-            <h3>${storeName}</h3>
-            <p>Discount: ${discountAmount}%</p>
-          `)
-        ) // Add a popup
-        .addTo(map); // Add the marker to the map
+          new mapboxgl.Popup({ offset: 25 })
+            .setHTML(`
+              <div class="cartoon-popup">
+                <p>${ai_response}</p>
+              </div>
+            `)
+        )
+        .addTo(map);
     }
   } catch (error) {
     console.error('Error fetching or displaying markers:', error);
   }
 }
+
+// Function to create a custom marker
+function createCustomMarker() {
+  const markerElement = document.createElement('div');
+  markerElement.className = 'custom-marker';
+  return markerElement;
+}
+
+
 
 // Call the function when the map loads
 map.on('load', fetchAndDisplayMarkers);
