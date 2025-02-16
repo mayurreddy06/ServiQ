@@ -53,8 +53,6 @@ function createCustomMarker() {
   return markerElement;
 }
 
-
-
 // Call the function when the map loads
 map.on('load', fetchAndDisplayMarkers);
 

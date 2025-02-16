@@ -26,10 +26,6 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../client', 'create_account.html'));
 });
 
-app.get('/mapboxkey.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'mapboxkey.html'));
-});
-
 app.post('/add-account', async (req, res) => {
   const {email, password} = req.body;
 
@@ -57,6 +53,10 @@ app.post('/add-account', async (req, res) => {
     res.status(500).send('Error adding account');
   }
 
+});
+
+app.get('/mapboxkey.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client', 'mapboxkey.html'));
 });
 
 app.post('/add-discount', async (req, res) => {

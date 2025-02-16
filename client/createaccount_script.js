@@ -1,8 +1,3 @@
-const admin = require('firebase-admin');
-
-const db = admin.database();
-module.exports = db;
-
 async function addAccount(event) {
   event.preventDefault();
 
