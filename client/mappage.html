@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ServiQ - Map</title>
+        <link rel="stylesheet" href="projectstyles.css">
+        <link rel="stylesheet" href="test.css">
+        <!-- Mapbox CSS -->
+        <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+        <!-- Google Places API -->
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwHozpYoJS8xgURnkkICo7L0vw8xW2Oak&libraries=places"></script>
+    </head>
+    <body>
+        <div class="banner">
+            <div class="bubble">
+                <div class="navbar">
+                    <img src="ServiQ_logo.png" class="logo">
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Search</a></li>
+                        <li><a href="#">Info</a></li>
+                        <li><a href="#">Login</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <main>
+            <!-- Map Section -->
+            <div id="map"></div>
+            
+            <!-- Form Section -->
+            <section id="form">
+                <h2>Discount Form</h2>
+                <form id="discount-form">
+                    <label for="autocomplete"> Organization Location:</label>
+                    <input type="text" id="autocomplete" name="store-location" placeholder="Enter a location" required>
+                   
+                    <label for="select"> Category </label>
+                    <select name="question" id="category">
+                      <option value="Community Service"> Community Service </option>
+                      <option value="Education"> Education </option>
+                      <option value="Environment & Conservation"> Environment & Conservation </option>
+                    </select>
+    
+                    <label for="Start Time">Start Time:</label>
+                    <input type="text" id="start-time" name="discount" placeholder="Enter Start Time" required>
+    
+                    <label for="End Time">End Time:</label>
+                    <input type="text" id="end-time" name="discount" placeholder="Enter End Time" required>
+    
+                    <input type="range" id="spots" name="discount" min="1" max="200" value="100">
+                    <p># of Spots Available: <span id="sliderValue">100</span></p>
+    
+                    <script>
+                      const slider = document.getElementById('spots');
+                      const sliderValue = document.getElementById('sliderValue');
+    
+                      slider.addEventListener('input', () => {
+                        sliderValue.textContent = slider.value; // Update the displayed value
+                      });
+                    </script>
+    
+                    <button type="submit">Submit</button>
+                </form>
+                
+                <!-- Display coordinates -->
+                <div id="coordinates" style="margin-top: 20px;"></div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 ServiQ. All Rights Reserved</p>
+        </footer>
+
+        <!-- Include Mapbox JS -->
+        <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+        <!-- Link to external JS file -->
+        <script src="script.js"></script>
+       
+        <script>
+            // Initialize Google Places Autocomplete
+            function initAutocomplete() {
+                const input = document.getElementById('autocomplete');
+                const autocomplete = new google.maps.places.Autocomplete(input);
+    
+                autocomplete.addListener('place_changed', function() {
+                    const place = autocomplete.getPlace();
+                   
+                    if (place.geometry && place.geometry.location) {
+                        const lat = place.geometry.location.lat();
+                        const lng = place.geometry.location.lng();
+                        // Display coordinates
+                        document.getElementById('coordinates').innerHTML =
+                            `<p>Latitude: ${lat}</p><p>Longitude: ${lng}</p>`;
+                       
+                        console.log('Coordinates:', { lat, lng });
+                    } else {
+                        console.log('No coordinates found for this place');
+                    }
+                });
+            }
+    
+            // Initialize Mapbox Map
+            mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN'; // Replace with your Mapbox access token
+            const map = new mapboxgl.Map({
+                container: 'map', // Container ID
+                style: 'mapbox://styles/mapbox/streets-v12', // Map style
+                center: [-74.5, 40], // Initial map center [lng, lat]
+                zoom: 9 // Initial zoom level
+            });
+    
+            // Add navigation controls to the map
+            map.addControl(new mapboxgl.NavigationControl());
+    
+            window.addEventListener('load', initAutocomplete);
+        </script>
+    </body>
+</html>
