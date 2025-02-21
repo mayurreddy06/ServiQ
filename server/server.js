@@ -26,6 +26,10 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../client', 'create_account.html'));
 });
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client', 'create_account.html'));
+});
+
 app.post('/add-account', async (req, res) => {
   const {email, password} = req.body;
 
@@ -33,26 +37,22 @@ app.post('/add-account', async (req, res) => {
     return res.status(400).send('Missing required fields');
   }
 
-  const ref = db.ref('user_accounts');
-  const snapshot = await ref.once('value');
-  const snapshotVals = snapshot.val();
-
-  if(snapshotVals){
-    for(const val in snapshotVals){
-      if(snapshotVals[val].email === email){
-        return res.status(409).send('Account with this email already exists');
-      }
-    }
-  }
-
   try{
-    await ref.push({ email, password });
-    res.status(200).send("Account created successfully!");
-  } catch(error){
-    console.error('Error creating account:', error);
-    res.status(500).send('Error adding account');
-  }
+    const userRecord = await admin.auth().createUser({
+      email: email,
+      password: password
+    });
 
+    await db.ref(`user_accounts/${userRecord.uid}`).set({ email });
+    return res.status(200).send("Created account successfully");
+
+  } catch(error){
+    if(error.code === 'auth/email-already-exists'){
+      return res.status(400).send("An account with this email already exists.");
+    }
+
+    return res.status(500).send(error.message);
+  }
 });
 
 app.get('/mapboxkey.html', (req, res) => {
