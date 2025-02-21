@@ -1,48 +1,124 @@
-
-body {
-    font-family: Arial, sans-serif;
+* {
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
+    font-family: Georgia;
 }
-header {
-    background-color: #333;
-    color: #fff;
-    padding: 20px;
-    text-align: center;
-}
-nav {
+
+.banner {
+    width: 100%;
+    height: 100vh;
+    background-image: linear-gradient(rgba(156,175,136,0.75),rgba(156,175,136,0.75));
+    background-size: cover;
+    background-position: center;
     display: flex;
     justify-content: center;
-    background-color: #444;
-    padding: 10px;
+    align-items: center;
 }
-nav a {
-    color: #fff;
-    text-decoration: none;
-    margin: 0 15px;
-    font-size: 16px;
-}
-nav a:hover {
-    text-decoration: underline;
-}
-.content {
+
+.bubble {
+    width: 80%;
+    height: 80vh;
+    background-color: rgb(255,255,240);
+    border-radius: 20px;
     padding: 20px;
-    text-align: center;
-    max-width: 600px;
-    margin: 0 auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
-.content p {
-    line-height: 1.6;
-    margin: 10px 0;
+
+.navbar {
+    width: 85%;
+    margin: auto;
+    padding: 35px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
-footer {
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    padding: 10px;
-    position: fixed;
+
+.logo {
+    width: 120px;
+    cursor: pointer;
+}
+
+.navbar ul li {
+    list-style: none;
+    display: inline-block;
+    margin: 0 20px;
+    position: relative;
+}
+
+.navbar ul li a {
+    text-decoration: none;
+    color: #000; /* Changed to black for visibility on white background */
+    text-transform: uppercase;
+}
+
+.navbar ul li::after {
+    content: '';
+    height: 3px;
+    width: 0%;
+    background: #009688;
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    transition: 0.5s;
+}
+
+.navbar ul li:hover::after {
     width: 100%;
+}
+
+.content {
+    text-align: center;
+    color: #000; /* Changed to black for visibility on white background */
+    margin-top: 300px; /* Move the entire content section up by 30px */
+}
+
+.content h1 {
+    font-size: 70px;
+    margin-top: -150px; /* No additional margin for the heading */
+}
+
+.content p {
+    margin: 20px auto;
+    font-weight: 100;
+    line-height: 25px;
+}
+
+button {
+    width: 200px;
+    padding: 15px 0;
+    text-align: center;
+    margin: 20px 10px;
+    border-radius: 25px;
+    font-weight: bold;
+    border: 2px solid #009688;
+    background: transparent;
+    color: #009688; /* Changed to match the theme */
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+button span {
+    background: #009688;
+    height: 100%;
+    width: 0%;
+    border-radius: 25px;
+    position: absolute;
+    left: 0;
     bottom: 0;
+    z-index: -1; /* Ensures the span is behind the button text */
+    transition: 1.2s;
+}
+
+button:hover span {
+    width: 100%; /* Expands the green background on hover */
+}
+
+button:hover {
+    border: 2px solid transparent;
+    color: rgb(255,255,240);
 }

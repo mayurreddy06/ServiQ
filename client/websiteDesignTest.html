@@ -17,7 +17,6 @@
         <li><a href="#map">Map</a></li>
         <li><a href="#description">Description</a></li>
         <li><a href="#form">Discount Form</a></li>
-        
       </ul>
     </nav>
   </header>
@@ -30,24 +29,60 @@
     </section>
 
     <!-- Map Section -->
-    <div id="map"></div>
+    <div id="map">
+      <!-- Search Bar -->
+      <div id="map-search-bar">
+        <input type="text" id="map-search" placeholder="Search location...">
+      </div>
+      <!-- Button Panels -->
+      <div id="map-controls">
+        <div class="control-group">
+          <label for="radius">Radius (miles):</label>
+          <input type="number" id="radius" min="1" max="100" value="10">
+        </div>
+        <div class="control-group">
+          <label for="category">Category:</label>
+          <select id="category">
+            <option value="Community Service">Community Service</option>
+            <option value="Education">Education</option>
+            <option value="Environment & Conservation">Environment & Conservation</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="date">Date:</label>
+          <input type="date" id="date">
+        </div>
+      </div>
+    </div>
 
     <!-- Form Section -->
     <section id="form">
       <h2>Discount Form</h2>
       <form id="discount-form">
-        <label for="autocomplete">Store Location:</label>
+        <label for="select">Searching the Database</label>
+        <input type="text" id="search-bar">
+
+        <label for="autocomplete">Organization Location:</label>
         <input type="text" id="autocomplete" name="store-location" placeholder="Enter a location" required>
-        
-        <label for="select"> Discount Type: </label>
-        <select name="question" id="select-discount">
-          <option value="q1"> Specific Percentage </option>
-          <option value="q2"> Buy One Get One Free </option>
-          <option value="q3"> Get One $5 Off </option>
+
+        <label for="select">Category</label>
+        <select name="question" id="category">
+          <option value="Community Service">Community Service</option>
+          <option value="Education">Education</option>
+          <option value="Environment & Conservation">Environment & Conservation</option>
         </select>
 
-        <label for="discount">Discount (%):</label>
-        <input type="text" id="discount" name="discount" placeholder="Enter discount percentage" required>
+        <label for="Start Time">Start Time:</label>
+        <input type="text" id="start-time" name="discount" placeholder="Enter Start Time" required>
+
+        <label for="End Time">End Time:</label>
+        <input type="text" id="end-time" name="discount" placeholder="Enter End Time" required>
+
+        <label for="Task">Task:</label>
+        <input type="text" id="task" name="discount" placeholder="Enter Task" required>
+
+        <input type="range" id="spots" name="discount" min="1" max="200" value="100">
+        <p># of Spots Available: <span id="sliderValue">100</span></p>
 
         <button type="submit">Submit</button>
       </form>
@@ -55,8 +90,6 @@
       <!-- Display coordinates -->
       <div id="coordinates" style="margin-top: 20px;"></div>
     </section>
-
-    
   </main>
 
   <footer>
@@ -67,43 +100,7 @@
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
   <!-- Link to external JS file -->
   <script src="script.js"></script>
+
   
-  <script>
-    // Initialize Google Places Autocomplete
-    function initAutocomplete() {
-      const input = document.getElementById('autocomplete');
-      const autocomplete = new google.maps.places.Autocomplete(input);
-
-      autocomplete.addListener('place_changed', function() {
-        const place = autocomplete.getPlace();
-        
-        if (place.geometry && place.geometry.location) {
-          const lat = place.geometry.location.lat();
-          const lng = place.geometry.location.lng();
-          // Display coordinates
-          document.getElementById('coordinates').innerHTML = 
-            `<p>Latitude: ${lat}</p><p>Longitude: ${lng}</p>`;
-          
-          console.log('Coordinates:', { lat, lng });
-        } else {
-          console.log('No coordinates found for this place');
-        }
-      });
-    }
-
-    // Initialize Mapbox Map
-    mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN'; // Replace with your Mapbox access token
-    const map = new mapboxgl.Map({
-      container: 'map', // Container ID
-      style: 'mapbox://styles/mapbox/streets-v12', // Map style
-      center: [-74.5, 40], // Initial map center [lng, lat]
-      zoom: 9 // Initial zoom level
-    });
-
-    // Add navigation controls to the map
-    map.addControl(new mapboxgl.NavigationControl());
-
-    window.addEventListener('load', initAutocomplete);
-  </script>
 </body>
 </html>
