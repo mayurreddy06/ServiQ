@@ -1,157 +1,190 @@
 /* General Styles */
 body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    font-family: Arial, sans-serif;
-    background: #f4f4f4; /* Light gray background */
-  }
-  
-  header {
-    
-    background: #333;
-    color: #fff;
-    padding: 1rem 0;
-  }
-  
-  header nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-  }
-  
-  header nav ul li {
-    font-size: 17px;
-    background-color: rgba(121, 106, 106, 0.467);
-  
-    border-width: 2px;
-    padding: 5px 10px;
-    border-style: solid;
-    border-radius: 15px;
-    margin: 0 35px;
-    transition: opacity 0.3s;
-  }
-  header nav ul li:hover{
-    opacity: 0.5;
-    border-width: 2px;
-  }
-  
-  header nav ul li a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  
-  /* Hero Section */
-  #hero {
-    background: #f4f4f4;
-    padding: 4rem 2rem;
-    text-align: center;
-  }
-  
-  #hero h1 {
-    font-size: 2.5rem;
-    margin-bottom: 2.5rem;
-  }
-  
-  .cta-button {
-    background: #333;
-    color: #fff;
-    padding: 0.8rem 2rem;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-  }
-  
-  .cta-button:hover {
-    background: #555;
-  }
-  
-  /* Map Section */
-  #map {
-    height: 380px; /* Set a fixed height for the map */
-    width: 50%; /* Full width */
-    margin-left: 25%;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    
-  }
-  
-  /* Form Section */
-  #form {
-    background: #fff;
-    padding: 2rem;
-    margin: 20px auto;
-    max-width: 600px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  #form h2 {
-    margin-top: 0;
-    color: #333;
-  }
-  
-  #discount-form label {
-    display: block;
-    margin-bottom: 5px;
-    color: #555;
-  }
-  
-  #discount-form input, #discount-form select {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  #discount-form button {
-    width: 100%;
-    padding: 10px;
-    background-color: #4CAF50; /* Green background */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  #discount-form button:hover {
-    background-color: #45a049; /* Darker green on hover */
-  }
-  
-  /* Coordinates Display */
-  #coordinates {
-    font-size: 12px;
-    color: #666;
-  }
-  
-  /* Scanner Section */
-  #scanner {
-    background: #fff;
-    padding: 2rem;
-    margin: 20px auto;
-    max-width: 600px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  #scanner h2 {
-    margin-top: 0;
-    color: #333;
-  }
-  
-  /* Footer */
-  footer {
-    background: #333;
-    color: #fff;
-    text-align: center;
-    padding: 1rem 0;
-    margin-top: 2rem;
-  }
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4; /* Light gray background */
+}
+
+header {
+  background: #333;
+  color: #fff;
+  padding: 1rem 0;
+}
+
+header nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+header nav ul li {
+  font-size: 17px;
+  background-color: rgba(121, 106, 106, 0.467);
+  border-width: 2px;
+  padding: 5px 10px;
+  border-style: solid;
+  border-radius: 15px;
+  margin: 0 35px;
+  transition: opacity 0.3s;
+}
+
+header nav ul li:hover {
+  opacity: 0.5;
+  border-width: 2px;
+}
+
+header nav ul li a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Hero Section */
+#hero {
+  background: #f4f4f4;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+#hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.cta-button {
+  background: #333;
+  color: #fff;
+  padding: 0.8rem 2rem;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.cta-button:hover {
+  background: #555;
+}
+
+/* Map Section */
+#map {
+  height: 380px; /* Set a fixed height for the map */
+  width: 50%; /* Full width */
+  margin-left: 25%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Map Search Bar */
+#map-search-bar {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  background: white;
+  padding: 5px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#map-search {
+  width: 200px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+/* Map Controls */
+#map-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  background: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 10px;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.control-group label {
+  font-size: 14px;
+  color: #333;
+}
+
+.control-group input, .control-group select {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+/* Form Section */
+#form {
+  background: #fff;
+  padding: 2rem;
+  margin: 20px auto;
+  max-width: 600px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#form h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+#discount-form label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+#discount-form input, #discount-form select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#discount-form button {
+  width: 100%;
+  padding: 10px;
+  background-color: #4CAF50; /* Green background */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#discount-form button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+
+/* Coordinates Display */
+#coordinates {
+  font-size: 12px;
+  color: #666;
+}
+
+/* Footer */
+footer {
+  background: #333;
+  color: #fff;
+  text-align: center;
+  padding: 1rem 0;
+  margin-top: 2rem;
+}

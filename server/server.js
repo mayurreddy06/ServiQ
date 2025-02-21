@@ -34,17 +34,55 @@ app.get('/', (req, res) => {
 
 // Route to add volunteer data
 app.post('/add-volunteer-data', async (req, res) => {
-  const { storeAddress, category, start_time, end_time, spots, timestamp } = req.body;
+  const { storeAddress, category, start_time, end_time, spots, timestamp, task, searchBar, location} = req.body;
 
 
-  if (!storeAddress || !category || !start_time || !end_time || !spots || !timestamp) {
+  if (!storeAddress || !category || !start_time || !end_time || !spots || !timestamp || !task || !searchBar || !location) {
     return res.status(400).send('Missing required fields');
   }
 
 
   try {
-    const ref = db.ref('volunteer_opportunities'); // Changed from 'shopping_discounts'
-    await ref.push({ storeAddress, category, start_time, end_time, spots, timestamp });
+    const ref = db.ref('volunteer_opportunities'); // Correct spelling // Changed from 'shopping_discounts'
+    await ref.push({ storeAddress, category, start_time, end_time, spots, timestamp, task, searchBar, location});
+
+
+    res.status(200).send('Volunteer opportunity added successfully');
+  } catch (error) {
+    console.error('Error adding volunteer opportunity:', error);
+    res.status(500).send('Error adding volunteer opportunity');
+  }
+});
+
+app.get('/get-volunteer-tasks', async (req, res) => {
+  try {
+    const ref = db.ref('volunteer_opportunities'); // Ensure this matches your DB
+    const snapshot = await ref.once('value');
+    
+    if (!snapshot.exists()) {
+      return res.status(404).json({ message: "No volunteer tasks found" });
+    }
+
+    const tasks = snapshot.val(); // Firebase stores data as an object
+    res.json(tasks);
+  } catch (error) {
+    console.error('Error fetching volunteer tasks:', error);
+    res.status(500).json({ message: 'Error fetching volunteer tasks' });
+  }
+});
+
+// Route to add user inputted data
+app.post('/add-user-data', async (req, res) => {
+  const { timestamp, searchBar } = req.body;
+
+
+  if ( !timestamp || !searchBar) {
+    return res.status(400).send('Missing required fields');
+  }
+
+  try {
+    const ref = db.ref('user_input'); // Changed from 'shopping_discounts'
+    await ref.push({ timestamp, searchBar});
 
 
     res.status(200).send('Volunteer opportunity added successfully');
