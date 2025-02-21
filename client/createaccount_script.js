@@ -15,7 +15,7 @@ async function addAccount(event) {
 
     if (response.ok) {
       console.log('Account added successfully');
-      window.location.href = '/mapboxkey.html';
+      window.location.href = '/websiteDesignTest.html';
     } else {
       console.error('Failed to add account:', await response.text());
     }
