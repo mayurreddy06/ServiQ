@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MapSave</title>
+        <link rel="stylesheet" href="test.css">
+        <!-- Mapbox CSS -->
+        <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+        <!-- Google Places API -->
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwHozpYoJS8xgURnkkICo7L0vw8xW2Oak&libraries=places"></script>
+      </head>
+    <body>
+
+
+            <!-- Map Section -->
+    <div id="map">
+        <!-- Search Bar -->
+ 
+      </div>
+
+
+        <title>Event Posting</title>
+        <h1>Post an Event</h1>
+        <div>
+            <form id="task-post">
+                <label for="autocomplete">Enter a Location</label>
+                <input type="text" id="autocomplete" name="store-location" placeholder="Enter a location" required>
+
+
+                <label for="date">Date</label>
+                <input type="date" id="date">
+
+
+                <label for="Start Time">Start Time</label>
+                <input type="time" id="start-time">
+
+
+                <label for="End Time">End Time</label>
+                <input type="time" id="end-time">
+
+
+                <label for="select">Select Category</label>
+                <select name="question" id="category">
+                    <option value="community">Community Service</option>
+                    <option value="education">Education</option>
+                    <option value="environment">Environmental Conservation</option>  
+                </select>
+
+
+                <label for="description">Write a description of your task</label>
+                <input type="text" id="description" name="Description" placeholder="Event Description" required>
+
+
+                <label for="volunteers">How many volunteers would you like to have?</label>
+                <input type="number" id="volunteers" name="number" placeholder="# Volunteers" required>
+               
+                <button type="submit" name="submit">Submit Event</button>
+               
+            </form>
+        </div>
+
+
+          <!-- Include Mapbox JS -->
+            <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+            <!-- Link to external JS file -->
+            <script src="script.js"></script>
+    </body>
+
+
+</html>
+
+
+
