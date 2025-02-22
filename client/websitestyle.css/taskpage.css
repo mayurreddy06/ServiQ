@@ -1,0 +1,7 @@
+h1{
+    display: flex;
+    justify-content: center;
+    background-color: lightblue;
+    margin-left: 15%;
+    width: 70%;
+}

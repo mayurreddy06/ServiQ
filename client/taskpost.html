@@ -3,8 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>MapSave</title>
-        <link rel="stylesheet" href="test.css">
+        <title>Event Posting</title>
+        <link rel="stylesheet" href="/client/websitestyle.css/taskpage.css">
+        <link rel="stylesheet" href="/client/navbar.css">
         <!-- Mapbox CSS -->
         <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
         <!-- Google Places API -->
@@ -12,17 +13,20 @@
       </head>
     <body>
 
+        <div class="navbar">
+            <img src="/client/images/ServiQ_logo.png" class="logo">
+            <ul>
+                <li><a href="/client/homepage.html">Home</a></li>
+                <li><a href="/client/mappage.html">Search</a></li>
+                <li><a href="/client/taskpost.html">Tasks</a></li>
+                <li><a href="signlog/signlog.html">Login</a></li>
+            </ul>
+        </div>
+        <div id="map">    
+        </div>
 
-            <!-- Map Section -->
-    <div id="map">
-        <!-- Search Bar -->
- 
-      </div>
-
-
-        <title>Event Posting</title>
         <h1>Post an Event</h1>
-        <div>
+        <div>        
             <form id="task-post">
                 <label for="autocomplete">Enter a Location</label>
                 <input type="text" id="autocomplete" name="store-location" placeholder="Enter a location" required>
@@ -40,12 +44,22 @@
                 <input type="time" id="end-time">
 
 
-                <label for="select">Select Category</label>
-                <select name="question" id="category">
-                    <option value="community">Community Service</option>
-                    <option value="education">Education</option>
-                    <option value="environment">Environmental Conservation</option>  
-                </select>
+                <div class="category-group">
+                    <label>Select Category:</label>
+                    <div class="toppings">
+                        <label><input type="checkbox" name="category" value="comm-service">Community Service</label>
+                        <label><input type="checkbox" name="category" value="climate">Climate</label>
+                        <label><input type="checkbox" name="category" value="wildlife"> Wild Life</label>
+                        <label><input type="checkbox" name="category" value="teaching"> Teaching</label>
+                        <label><input type="checkbox" name="category" value="environement"> Environment</label>
+                        <label><input type="checkbox" name="category" value="social">Social</label>
+                        <label><input type="checkbox" name="category" value="animal"> Animal</label>
+                        <label><input type="checkbox" name="category" value="sports"> Sports</label>
+                        <label><input type="checkbox" name="category" value="health"> Health</label>
+
+
+                    </div>
+                </div>
 
 
                 <label for="description">Write a description of your task</label>
@@ -60,15 +74,9 @@
             </form>
         </div>
 
-
           <!-- Include Mapbox JS -->
             <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
             <!-- Link to external JS file -->
             <script src="script.js"></script>
     </body>
-
-
 </html>
-
-
-

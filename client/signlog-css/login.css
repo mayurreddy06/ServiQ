@@ -1,17 +1,24 @@
+body{
+    background-color: rgb(243,238,231);
+}
 p{
     font-size: 16px;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     color: black;
 }
 
-h2{
+.text-center{
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    color: rgb(243,238,231)
+    font-size: 24px;
+    color: rgb(243,238,231);
+    margin: -50px 0 80px 0;
+    display: block;
+    text-align: center;
+    
 }
 
 input{
     margin-bottom: 20px;
-    
 }
 
 .entry{
@@ -26,6 +33,7 @@ input{
   font-size:16px;
   color:#fff; 
   transition: all 0.5s ease-in-out;
+  
 }
 .entry input{ 
   border:0;
@@ -55,17 +63,23 @@ input{
 
 
 .login-button{
-    margin-top: 20px;
     color: black;
     background-color: rgb(243,238,231);
-    outline: none;
-        border: 0;
+    border: none;
     padding: 10px 20px;
     cursor: pointer;
     position: relative;
     text-transform: uppercase;
     margin-top: 40px;
+    transition: all 0.2s ease;
 }
+
+.login-button:hover{
+    background-color: rgb(230,220,210);
+    color: black;
+    border: none;
+}
+
 
 .entry input:focus ~ label,
 .entry input:valid ~ label{
