@@ -24,51 +24,67 @@
         </div>
         <div id="map">    
         </div>
-
-        <h1>Post an Event</h1>
+        <div class="event-text">
+            <h1>Post an Event</h1>
+        </div>
+        
         <div>        
             <form id="task-post">
-                <label for="autocomplete">Enter a Location</label>
-                <input type="text" id="autocomplete" name="store-location" placeholder="Enter a location" required>
+                <div class="location">
+                    <label for="location">Enter a Location</label>
+                    <input type="text" id="location" name="store-location" required>
+                </div>
+                <div class="date">
+                    <label for="date">Date</label>
+                    <input type="date" id="date">
+                </div>
+                <div class="time">
+                    <div>
+                        <label for="Start Time">Start Time</label>
+                        <input type="time" id="start-time">
+                    
+                        <label for="End Time">End Time</label>
+                        <input type="time" id="end-time">
+                    </div>
+                </div>
 
-
-                <label for="date">Date</label>
-                <input type="date" id="date">
-
-
-                <label for="Start Time">Start Time</label>
-                <input type="time" id="start-time">
-
-
-                <label for="End Time">End Time</label>
-                <input type="time" id="end-time">
-
+                
 
                 <div class="category-group">
                     <label>Select Category:</label>
-                    <div class="toppings">
-                        <label><input type="checkbox" name="category" value="comm-service">Community Service</label>
-                        <label><input type="checkbox" name="category" value="climate">Climate</label>
-                        <label><input type="checkbox" name="category" value="wildlife"> Wild Life</label>
-                        <label><input type="checkbox" name="category" value="teaching"> Teaching</label>
-                        <label><input type="checkbox" name="category" value="environement"> Environment</label>
-                        <label><input type="checkbox" name="category" value="social">Social</label>
-                        <label><input type="checkbox" name="category" value="animal"> Animal</label>
-                        <label><input type="checkbox" name="category" value="sports"> Sports</label>
-                        <label><input type="checkbox" name="category" value="health"> Health</label>
+                    <div class="category-boxes">
+                        <div>
+                            <label><input type="checkbox" name="category" value="comm-service">Community Service</label>
+                            <label><input type="checkbox" name="category" value="climate">Climate</label>
+                            <label><input type="checkbox" name="category" value="wildlife"> Wild Life</label>
+                            <label><input type="checkbox" name="category" value="teaching"> Teaching</label>
+                        </div>
+                        <div>
+                            <label><input type="checkbox" name="category" value="environement"> Environment</label>
+                            <label><input type="checkbox" name="category" value="social">Social</label>
+                            <label><input type="checkbox" name="category" value="animal"> Animal</label>
+                            <label><input type="checkbox" name="category" value="sports"> Sports</label>
+                        </div>
+                        <div class="checkbox-circle2">
+                            <label><input type="checkbox" name="category" value="health"> Health</label>
 
+                            <input type="checkbox" id="checkbox-circle2" name="check">
+                            <label for="checkbox-circle2">Check one</label>
+                        </div>
 
                     </div>
                 </div>
 
+                <div>
+                    <label for="description">Event Description</label>
+                    <input type="text" id="description" name="Description" required>
+                </div>
 
-                <label for="description">Write a description of your task</label>
-                <input type="text" id="description" name="Description" placeholder="Event Description" required>
+                <div>
+                    <label for="volunteers">Volunteer Count</label>
+                    <input type="number" id="volunteers" name="number" required>
+                </div>
 
-
-                <label for="volunteers">How many volunteers would you like to have?</label>
-                <input type="number" id="volunteers" name="number" placeholder="# Volunteers" required>
-               
                 <button type="submit" name="submit">Submit Event</button>
                
             </form>
