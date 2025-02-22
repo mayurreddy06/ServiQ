@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+
+        <title>Event Posting</title>
+        <h1>Post an Event</h1>
+        <div>
+            <form id="task-post">
+                <label for="location">Enter a Location</label>
+                <input type="text" id="location-bar">
+
+                <label for="date">Date</label>
+                <input type="date" id="date">
+
+                <label for="start-time">Start Time</label>
+                <input type="time" id="start-time">
+
+                <label for="end-time">End Time</label>
+                <input type="time" id="end-time">
+
+                <label for="category">Select Category</label>
+                <select name="volunteer-category" id="volunteer-category">
+                    <option value="community">Community Service</option>
+                    <option value="education">Education</option>
+                    <option value="environment">Environmental Conservation</option>  
+                </select>
+                <input type="text" name="Description" placeholder="Event Description" required>
+                <input type="number" name="number" placeholder="# Volunteers" required>
+                <button type="submit" name="submit">Submit Event</button>
+                
+            </form>
+        </div>
+
+    </body>
+
+</html>
