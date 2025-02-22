@@ -152,11 +152,9 @@ setInterval(cleanExpiredItems, 60 * 60 * 1000);
 
 // Route to add volunteer data
 app.post('/add-volunteer-data', async (req, res) => {
-  const { storeAddress, category, start_time, spots, timestamp, task, searchBar, location, date} = req.body;
-
   const { storeAddress, category, start_time, end_time, spots, timestamp, task, searchBar, location } = req.body;
 
-  if (!storeAddress || !category || !start_time || !spots || !timestamp || !task || !searchBar || !location || !date) {
+  if (!storeAddress || !category || !start_time || !end_time || !spots || !timestamp || !task || !searchBar || !location) {
     return res.status(400).send('Missing required fields');
   }
 
