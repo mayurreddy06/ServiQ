@@ -4,29 +4,31 @@
         <title>Sign Up</title>
     </head>
     <body>
-        <div class="form-box" id="register-form">
-            <form action="">
+        <div class="form-box">
+            <form id="user-register-form">
                 <h2>Volunteer Sign Up</h2>
-                <input type="email" name="name"placeholder="Name" required>
-                <input type="email" name="name"placeholder="Email" required>
-                <input type="password" name="password" placeholder="Password" required>
-                <input type="password" name="password" placeholder="Reenter password" required>
+                <input type="text" name="name"placeholder="Name">
+                <input type="email" name="name"placeholder="Email" id="user-email" required>
+                <input type="password" name="password" placeholder="Password" id="user-password" required>
+                <input type="password" name="password" placeholder="Reenter password" id="user-reenter-password" required>
                 <button type="submit" name="login">Sign Up</button>
                 <p>Already have an account? <a href="signlog.html">Login</a> </p>
             </form>
         </div>
 
-        <div class="form-box" id="register-form">
-            <form action="">
+        <div class="form-box">
+            <form id="agency-register-form">
                 <h2>Admin Sign Up</h2>
-                <input type="email" name="name"placeholder="Agency Name" required>
-                <input type="text" name="Description" placeholder="Agency Description" required>
-                <input type="email" name="name"placeholder="Email" required>
-                <input type="password" name="password" placeholder="Password" required>
-                <input type="password" name="password" placeholder="Reenter password" required>
+                <input type="text" name="name"placeholder="Agency Name">
+                <input type="text" name="Description" placeholder="Agency Description">
+                <input type="email" name="name" placeholder="Email" id="agency-email" required>
+                <input type="password" name="password" placeholder="Password" id="agency-password" required>
+                <input type="password" name="reenter-password" placeholder="Reenter password" id="agency-reenter-password" required>
                 <button type="submit" name="login">Sign Up</button>
                 <p>Already have an account? <a href="signlog.html">Login</a></p>            
             </form>
         </div>
+
+        <script src="createaccount_script.js"></script>
     </body>
 </html>

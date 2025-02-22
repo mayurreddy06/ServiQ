@@ -24,12 +24,12 @@ app.use(express.json());
 
 // Serve the main HTML file
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'create_account.html'));
+  res.sendFile(path.join(__dirname, '../client/signlog', 'signup.html'));
 });
 
 // Account Creation Route
 app.post('/add-account', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, accountType } = req.body;
 
   if (!email || !password) {
     return res.status(400).send('Missing required fields');
@@ -41,7 +41,12 @@ app.post('/add-account', async (req, res) => {
       password: password
     });
 
-    await db.ref(`user_accounts/${userRecord.uid}`).set({ email });
+    if(accountType === 'user'){
+      await db.ref(`user_accounts/${userRecord.uid}`).set({ email });
+    } else if(accountType === 'agency'){
+      await db.ref(`agency_accounts/${userRecord.uid}`).set({ email });
+    }
+    
     return res.status(200).send("Created account successfully");
 
   } catch (error) {

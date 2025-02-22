@@ -1,10 +1,26 @@
 async function addAccount(event) {
   event.preventDefault();
 
-  const email = document.getElementById('user-email').value;
-  const password = document.getElementById('user-password').value;
+  let email, password, reenteredPassword, accountType;
 
-  const userData = { email, password };
+  if(event.target.id === "user-register-form"){
+    email = document.getElementById('user-email').value;
+    password = document.getElementById('user-password').value.trim();
+    reenteredPassword = document.getElementById('user-reenter-password').value.trim();
+    accountType = 'user';
+  } else if(event.target.id === "agency-register-form"){
+    email = document.getElementById('agency-email').value;
+    password = document.getElementById('agency-password').value.trim();
+    reenteredPassword = document.getElementById('agency-reenter-password').value.trim();
+    accountType = 'agency'
+  }
+
+  if(password !== reenteredPassword){
+    console.error("Passwords do not match");
+    return;
+  }
+
+  const userData = { email, password, accountType };
   
   try {
     const response = await fetch('/add-account', {
@@ -24,4 +40,5 @@ async function addAccount(event) {
   }
 }
 
-document.querySelector('#account-form').addEventListener('submit', addAccount);
+document.querySelector('#user-register-form').addEventListener('submit', addAccount);
+document.querySelector('#agency-register-form').addEventListener('submit', addAccount);
