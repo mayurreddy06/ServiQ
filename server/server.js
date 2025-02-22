@@ -34,17 +34,17 @@ app.get('/', (req, res) => {
 
 // Route to add volunteer data
 app.post('/add-volunteer-data', async (req, res) => {
-  const { storeAddress, category, start_time, end_time, spots, timestamp, task, searchBar, location} = req.body;
+  const { storeAddress, category, start_time, spots, timestamp, task, searchBar, location, date} = req.body;
 
 
-  if (!storeAddress || !category || !start_time || !end_time || !spots || !timestamp || !task || !searchBar || !location) {
+  if (!storeAddress || !category || !start_time || !spots || !timestamp || !task || !searchBar || !location || !date) {
     return res.status(400).send('Missing required fields');
   }
 
 
   try {
     const ref = db.ref('volunteer_opportunities'); // Correct spelling // Changed from 'shopping_discounts'
-    await ref.push({ storeAddress, category, start_time, end_time, spots, timestamp, task, searchBar, location});
+    await ref.push({ storeAddress, category, start_time, spots, timestamp, task, searchBar, location, date});
 
 
     res.status(200).send('Volunteer opportunity added successfully');
