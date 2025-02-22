@@ -29,22 +29,35 @@ app.get('/', (req, res) => {
 
 // Account Creation Route
 app.post('/add-account', async (req, res) => {
-  const { email, password, accountType } = req.body;
+  const { email, password, name, accountType, agencyDescription } = req.body;
 
   if (!email || !password) {
     return res.status(400).send('Missing required fields');
   }
 
   try {
-    const userRecord = await admin.auth().createUser({
-      email: email,
-      password: password
-    });
+
+    let accountRecord;
 
     if(accountType === 'user'){
-      await db.ref(`user_accounts/${userRecord.uid}`).set({ email });
+      accountRecord = await admin.auth().createUser({
+        email: email,
+        password: password,
+        name: name,
+        accountType: accountType
+      });
+
+      await db.ref(`user_accounts/${accountRecord.uid}`).set({ email, name });
     } else if(accountType === 'agency'){
-      await db.ref(`agency_accounts/${userRecord.uid}`).set({ email });
+      accountRecord = await admin.auth().createUser({
+        email: email,
+        password: password,
+        name: name,
+        accountType: accountType,
+        agencyDescription: agencyDescription
+      });
+
+      await db.ref(`agency_accounts/${accountRecord.uid}`).set({ email, name, agencyDescription });
     }
     
     return res.status(200).send("Created account successfully");
@@ -61,6 +74,14 @@ app.post('/add-account', async (req, res) => {
 // Mapbox Key Route
 app.get('/websiteDesignTest.html', (req, res) => {
   res.sendFile(path.join(__dirname, '../client', 'websiteDesignTest.html'));
+});
+
+app.get('/signlog.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/signlog', 'signlog.html'));
+});
+
+app.get('/signup.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/signlog', 'signup.html'));
 });
 
 // Route to add a shopping discount

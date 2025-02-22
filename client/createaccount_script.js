@@ -1,18 +1,21 @@
 async function addAccount(event) {
   event.preventDefault();
 
-  let email, password, reenteredPassword, accountType;
+  let name, agencyDescription, email, password, reenteredPassword, accountType;
 
   if(event.target.id === "user-register-form"){
+    name = document.getElementById('user-name').value;
     email = document.getElementById('user-email').value;
     password = document.getElementById('user-password').value.trim();
     reenteredPassword = document.getElementById('user-reenter-password').value.trim();
     accountType = 'user';
   } else if(event.target.id === "agency-register-form"){
+    name = document.getElementById('agency-name').value;
+    agencyDescription = document.getElementById('agency-description').value;
     email = document.getElementById('agency-email').value;
     password = document.getElementById('agency-password').value.trim();
     reenteredPassword = document.getElementById('agency-reenter-password').value.trim();
-    accountType = 'agency'
+    accountType = 'agency';
   }
 
   if(password !== reenteredPassword){
@@ -20,13 +23,19 @@ async function addAccount(event) {
     return;
   }
 
-  const userData = { email, password, accountType };
+  let accountData;
+
+  if(accountType === 'user'){
+    accountData = { email, password, name, accountType};
+  } else if(accountType === 'agency'){
+    accountData = { email, password, name, accountType, agencyDescription};
+  }
   
   try {
     const response = await fetch('/add-account', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData)
+      body: JSON.stringify(accountData)
     });
 
     if (response.ok) {
