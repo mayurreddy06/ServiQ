@@ -37,20 +37,24 @@
       <!-- Button Panels -->
       <div id="map-controls">
         <div class="control-group">
-          <label for="radius">Radius (miles):</label>
-          <input type="number" id="radius" min="1" max="100" value="10">
+          <label for="radius">ZipCode:</label>
+          <input type="number" id="zipcode" min="00501" max="99950" value="43035" onchange = "fetchAndDisplayMarkers()">
         </div>
         <div class="control-group">
           <label for="category">Category:</label>
-          <select id="category">
-            <option value="Community Service">Community Service</option>
+          <select id="category-type" onchange = "fetchAndDisplayMarkers()">
             <option value="Education">Education</option>
+            <option value="Community Service">Community Service</option>
+            <option value="All">All</option>
+            
             <option value="Environment & Conservation">Environment & Conservation</option>
+            
+            
           </select>
         </div>
         <div class="control-group">
           <label for="date">Date:</label>
-          <input type="date" id="date">
+          <input type="date" id="event-date" onchange = "fetchAndDisplayMarkers()">
         </div>
       </div>
     </div>
@@ -59,8 +63,6 @@
     <section id="form">
       <h2>Discount Form</h2>
       <form id="discount-form">
-        <label for="select">Searching the Database</label>
-        <input type="text" id="search-bar">
 
         <label for="autocomplete">Organization Location:</label>
         <input type="text" id="autocomplete" name="store-location" placeholder="Enter a location" required>
@@ -73,10 +75,14 @@
         </select>
 
         <label for="Start Time">Start Time:</label>
-        <input type="text" id="start-time" name="discount" placeholder="Enter Start Time" required>
+        <input type="time" id="start-time" name="discount" placeholder="Enter Start Time">
 
         <label for="End Time">End Time:</label>
-        <input type="text" id="end-time" name="discount" placeholder="Enter End Time" required>
+        <input type="time" id="end-time" name="discount" placeholder="Enter End Time">
+
+        <label for="Date">Date:</label>
+        <input type="date" id="date-input" name="discount" placeholder="Enter a>
+        
 
         <label for="Task">Task:</label>
         <input type="text" id="task" name="discount" placeholder="Enter Task" required>
@@ -84,7 +90,7 @@
         <input type="range" id="spots" name="discount" min="1" max="200" value="100">
         <p># of Spots Available: <span id="sliderValue">100</span></p>
 
-        <button type="submit">Submit</button>
+        <button type="submit" onclick = "sendVolunteerData()">Submit</button>
       </form>
 
       <!-- Display coordinates -->

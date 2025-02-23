@@ -173,15 +173,15 @@ setInterval(cleanExpiredItems, 60 * 60 * 1000);
 
 // Route to add volunteer data
 app.post('/add-volunteer-data', async (req, res) => {
-  const { storeAddress, category, start_time, end_time, spots, timestamp, task, searchBar, location } = req.body;
+  const { storeAddress, category, start_time, end_time, spots, timestamp, task, location, date} = req.body;
 
-  if (!storeAddress || !category || !start_time || !end_time || !spots || !timestamp || !task || !searchBar || !location) {
+  if (!storeAddress || !category || !start_time || !end_time || !spots || !timestamp || !task|| !location || !date) {
     return res.status(400).send('Missing required fields');
   }
 
   try {
     const ref = db.ref('volunteer_opportunities');
-    await ref.push({ storeAddress, category, start_time, end_time, spots, timestamp, task, searchBar, location });
+    await ref.push({ storeAddress, category, start_time, end_time, spots, timestamp, task, location, date});
 
     res.status(200).send('Volunteer opportunity added successfully');
   } catch (error) {
@@ -209,23 +209,23 @@ app.get('/get-volunteer-tasks', async (req, res) => {
 });
 
 // Route to add user inputted data
-app.post('/add-user-data', async (req, res) => {
-  const { timestamp, searchBar } = req.body;
+// app.post('/add-user-data', async (req, res) => {
+//   const { timestamp, searchBar } = req.body;
 
-  if (!timestamp || !searchBar) {
-    return res.status(400).send('Missing required fields');
-  }
+//   if (!timestamp || !searchBar) {
+//     return res.status(400).send('Missing required fields');
+//   }
 
-  try {
-    const ref = db.ref('user_input');
-    await ref.push({ timestamp, searchBar });
+//   try {
+//     const ref = db.ref('user_input');
+//     await ref.push({ timestamp, searchBar });
 
-    res.status(200).send('User data added successfully');
-  } catch (error) {
-    console.error('Error adding user data:', error);
-    res.status(500).send('Error adding user data');
-  }
-});
+//     res.status(200).send('User data added successfully');
+//   } catch (error) {
+//     console.error('Error adding user data:', error);
+//     res.status(500).send('Error adding user data');
+//   }
+// });
 
 // Start the server
 app.listen(PORT, () => {
