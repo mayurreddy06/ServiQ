@@ -17,21 +17,21 @@
                 </ul>
             </div>
             <div class="form-box">
-                <form action="">
+                <form id="signin-form">
                     <span class="text-center">Login</span>
                     <label for="email-entry">Email</label>
-                    <div class="entry" id="email-entry" ><input type="email" name="email" required></div>
+                    <div class="entry"><input type="email" name="email" id="email-entry" required></div>
 
                     <label for="password-entry">Password</label>
-                    <div class="entry" id="password-entry"><input type="password" name="password"  required></div>
+                    <div class="entry"><input type="password" name="password" id="password-entry" required></div>
 
-                    <button type="button" class="login-button">Login</button>
+                    <button type="submit" class="login-button">Login</button>
 
                     <p>Don't have an account? <a href="signup.html">Register</a> </p>
                 </form>
             </div>
 
-            
+            <script type="module" src="signin_script.js"></script>
         </div>
     </body>
 </html>

@@ -1,3 +1,12 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { firebaseConfig } from './firebaseConfig.js'
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const database = getDatabase(app);
+
 async function addAccount(event) {
   event.preventDefault();
 
@@ -22,30 +31,38 @@ async function addAccount(event) {
     console.error("Passwords do not match");
     return;
   }
-
-  let accountData;
-
-  if(accountType === 'user'){
-    accountData = { email, password, name, accountType};
-  } else if(accountType === 'agency'){
-    accountData = { email, password, name, accountType, agencyDescription};
-  }
   
   try {
-    const response = await fetch('/add-account', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(accountData)
-    });
-
-    if (response.ok) {
-      console.log('Account added successfully');
-      window.location.href = '/websiteDesignTest.html';
-    } else {
-      console.error('Failed to add account:', await response.text());
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    
+    if(accountType === 'user'){
+      await set(ref(database, `user_accounts/${user.uid}`), {
+        email: email,
+        name: name,
+        accountType: accountType
+      });
+    } else if(accountType === 'agency'){
+      await set(ref(database, `agency_accounts/${user.uid}`), {
+        email: email,
+        name: name,
+        accountType: accountType,
+        agencyDescription: agencyDescription
+      });
     }
+    
+    console.log('Account added successfully');
+    window.location.href = '/websiteDesignTest.html';
+    
   } catch (error) {
-    console.error('Error:', error);
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    
+    if (errorCode === 'auth/email-already-in-use') {
+      console.error("An account with this email already exists.");
+    } else {
+      console.error('Error creating account:', errorMessage);
+    }
   }
 }
 
