@@ -1,0 +1,22 @@
+.content{
+    background-color: #CBD5C0
+}
+.statement-content{
+    margin-top:100px;
+}
+
+.homepage-image{
+    margin-top:20px;
+}
+.big-statement{
+    font-size: 28px;
+    position:relative;
+    margin-left:60%;
+
+}
+
+.small-statement{
+    font-size:16px;
+    position:absolute;
+    left:20px;
+}
