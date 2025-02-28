@@ -108,13 +108,25 @@ async function fetchAndDisplayMarkers() {
       // Skip if required fields are missing
       if (!storeAddress || !location || !category || !date)
         continue;
-      // Apply filters
-      // if (selectedCategory !== "All" && category !== selectedCategory || (selectedDate !== "none" && taskDate !== selectedDate)) {
+
+      if(useCategory)
+      {
+        if (category !== selectedCategory)
+        {
+          continue;
+        }
+      }
+      if(useCalendar)
+        {
+          if (taskDate !== selectedDate)
+          {
+            continue;
+          }
+        }
+      // if ((useCategory === false && category !== selectedCategory) || (useCalendar == false && taskDate !== selectedDate)) {
+      //   alert("executed");
       //   continue; 
       // }
-      if (useCategory === true && category !== selectedCategory || (useCalendar == true && taskDate !== selectedDate)) {
-        continue; 
-      }
       // Add marker to the map
       const marker = new mapboxgl.Marker()
         .setLngLat([lng, lat])
