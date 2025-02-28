@@ -27,46 +27,24 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../client', 'signup.html'));
 });
 
-// Account Creation Route
+// Saves additional account data in database
 app.post('/add-account', async (req, res) => {
-  const { email, password, name, accountType, agencyDescription } = req.body;
+  const { uid, email, name, accountType, agencyDescription } = req.body;
 
-  if (!email || !password) {
+  if (!uid || !email || !name) {
     return res.status(400).send('Missing required fields');
   }
 
   try {
-
-    let accountRecord;
-
-    if(accountType === 'user'){
-      accountRecord = await admin.auth().createUser({
-        email: email,
-        password: password,
-        name: name,
-        accountType: accountType
-      });
-
-      await db.ref(`user_accounts/${accountRecord.uid}`).set({ email, name });
-    } else if(accountType === 'agency'){
-      accountRecord = await admin.auth().createUser({
-        email: email,
-        password: password,
-        name: name,
-        accountType: accountType,
-        agencyDescription: agencyDescription
-      });
-
-      await db.ref(`agency_accounts/${accountRecord.uid}`).set({ email, name, agencyDescription });
+    if (accountType === 'user') {
+      await db.ref(`user_accounts/${uid}`).set({ email, name, accountType });
+    } else if (accountType === 'agency') {
+      await db.ref(`agency_accounts/${uid}`).set({ email, name, accountType, agencyDescription });
     }
     
-    return res.status(200).send("Created account successfully");
-
+    return res.status(200).send("User data saved successfully");
   } catch (error) {
-    if (error.code === 'auth/email-already-exists') {
-      return res.status(400).send("An account with this email already exists.");
-    }
-
+    console.error('Error saving user data:', error);
     return res.status(500).send(error.message);
   }
 });
