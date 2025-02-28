@@ -103,6 +103,8 @@ async function fetchAndDisplayMarkers() {
 
       let useCategory = document.getElementById("toggle-category").checked;
       let useCalendar = document.getElementById("toggle-date").checked;
+      let useZipcode = document.getElementById("toggle-zipcode").checked;
+
       
 
       // Skip if required fields are missing
@@ -123,6 +125,13 @@ async function fetchAndDisplayMarkers() {
             continue;
           }
         }
+      if(useZipcode)
+          {
+            if (foundZipcode !== selectedZipcode)
+            {
+              continue;
+            }
+          }
       // if ((useCategory === false && category !== selectedCategory) || (useCalendar == false && taskDate !== selectedDate)) {
       //   alert("executed");
       //   continue; 
