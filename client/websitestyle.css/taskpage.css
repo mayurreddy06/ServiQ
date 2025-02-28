@@ -1,0 +1,150 @@
+h1{
+    display: flex;
+    justify-content: center;
+    background-color: lightblue;
+    margin-left: 15%;
+    width: 70%;
+}
+
+.event-text {
+    white-space: nowrap; /* Prevents text from wrapping */
+    overflow: hidden; /* Ensures text doesn't break out */
+    text-align: center; /* Centers the text */
+    width: 100%; /* Ensures the container spans the full width */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    color: #223254;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+  
+
+.category-boxes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Four columns */
+    gap: 10px; /* Space between checkboxes */
+    max-width: 600px; /* Adjust width if needed */
+}
+
+.cbx {
+    display: flex;
+    align-items:center;
+    gap: 5px;
+}
+
+  /* Checkbox container: 4 per row */
+.checkbox-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
+    gap: 10px; /* Spacing between checkboxes */
+    width: 100%;
+    max-width: 600px; /* Adjust for layout */
+}
+  
+  /* Label styling */
+.cbx {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+    justify-content: center;
+    text-align: center;
+    min-width: 100px;
+}
+  
+.cbx:hover {
+    background: rgba(0, 119, 255, 0.06);
+}
+  
+  /* Checkbox indicator */
+.cbx span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+  
+.cbx span:first-child {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* SVG inside the checkbox */
+.cbx span:first-child svg {
+    width: 12px;
+    height: 10px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 16px;
+    stroke-dashoffset: 16px;
+    transition: stroke-dashoffset 0.3s ease;
+}
+
+/* Hover effect */
+.cbx:hover span:first-child {
+    border-color: #0077ff;
+}
+
+/* Hide default checkboxes */
+.inp-cbx {
+    position: absolute;
+    visibility: hidden;
+}
+
+/* Checked state styling */
+.inp-cbx:checked + .cbx span:first-child {
+    background: #0077ff;
+    border-color: #0077ff;
+    animation: wave 0.4s ease;
+}
+
+.inp-cbx:checked + .cbx span:first-child svg {
+    stroke-dashoffset: 0;
+}
+
+/* Animation */
+@keyframes wave {
+50% {
+    transform: scale(0.9);
+}
+}
+
+/* SVG container */
+.inline-svg {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    user-select: none;
+}
+
+  /* Responsive adjustments */
+@media screen and (max-width: 768px) {
+.checkbox-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 per row on small screens */
+}
+}
+  
+@media screen and (max-width: 480px) {
+.checkbox-container {
+    grid-template-columns: repeat(1, 1fr); /* 1 per row on very small screens */
+}
+}
+  

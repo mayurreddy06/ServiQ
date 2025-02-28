@@ -1,3 +1,4 @@
+
 p{
     font-size: 16px;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
@@ -16,6 +17,14 @@ p{
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.navbar-logo{
+    width: 120px;
+}
+
+.navbar-links{
+    width: 470px;
 }
 .navbar ul li {
     list-style: none;

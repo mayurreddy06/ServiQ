@@ -24,7 +24,7 @@ app.use(express.json());
 
 // Serve the main HTML file
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/', 'signup.html'));
+  res.sendFile(path.join(__dirname, '../client', 'signup.html'));
 });
 
 // Account Creation Route
@@ -77,11 +77,11 @@ app.get('/websiteDesignTest.html', (req, res) => {
 });
 
 app.get('/signlog.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/signlog', 'signlog.html'));
+  res.sendFile(path.join(__dirname, '../client', 'signlog.html'));
 });
 
 app.get('/signup.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/signlog', 'signup.html'));
+  res.sendFile(path.join(__dirname, '../client', 'signup.html'));
 });
 
 // Route to add a shopping discount
