@@ -82,7 +82,7 @@ header nav ul li a {
 }
 
 /* Map Search Bar */
-#map-search-bar {
+.map-panel {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -91,6 +91,9 @@ header nav ul li a {
   padding: 5px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  /* height: 50vh; */
+  margin-top: 100px;
 }
 
 #map-search {
@@ -187,4 +190,72 @@ footer {
   text-align: center;
   padding: 1rem 0;
   margin-top: 2rem;
+}
+
+.main
+{
+  width: 50px;
+  /* makes the panel take up as much space as needed */
+  overflow-y: auto;
+  /* allows scrolling down if the left panel overfills */
+  
+}
+
+.side-panel-toggle
+{
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  /* ensures that this panel doesn't overlap and go over the space of the other panels */
+
+  display: grid;
+  place-items: center;
+  /* Those two commands ensure the icons in the button are vertically and horizontally centered */
+
+  color: #ffffff;
+  background: #009578;
+  border: none;
+  border-radius: 5px 0 0 5px;
+  outline: none;
+  cursor: pointer;
+}
+
+.side-panel-toggle:hover
+{
+  background: #007960;
+}
+
+.icon-close
+{
+  display: none !important
+}
+
+.side-panel
+{
+  display: none;
+  width: 200px;
+  flex-shrink: 0;
+  padding: 20px;
+  background: #009578;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.35);
+  color: white;
+  text-align: left;
+
+}
+.side-panel h3
+{
+  text-align: center;
+}
+
+.side-panel-open .side-panel
+{
+  display: initial;
+}
+
+.side-panel-open .icon-open {
+  display: none !important;
+}
+
+.side-panel-open .icon-close {
+  display: initial !important;
 }

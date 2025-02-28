@@ -77,7 +77,7 @@ async function fetchAndDisplayMarkers() {
     }
     catch (error)
     {
-      selectedDate = "none"
+      selectedDate = "none";
     }
     let selectedZipcode = document.getElementById('zipcode').value;
     selectedZipcode = String(selectedZipcode);
@@ -101,15 +101,19 @@ async function fetchAndDisplayMarkers() {
 
       const foundZipcode = await reverseGeocode(lng, lat);
 
+      let useCategory = document.getElementById("toggle-category").checked;
+      let useCalendar = document.getElementById("toggle-date").checked;
       
+
       // Skip if required fields are missing
       if (!storeAddress || !location || !category || !date)
         continue;
       // Apply filters
-      if (selectedCategory !== "All" && category !== selectedCategory || (selectedDate !== "none" && taskDate !== selectedDate) || (foundZipcode !== selectedZipcode)) {
-
-
-        continue; // Skip this task if it doesn't match the filters
+      // if (selectedCategory !== "All" && category !== selectedCategory || (selectedDate !== "none" && taskDate !== selectedDate)) {
+      //   continue; 
+      // }
+      if (useCategory === true && category !== selectedCategory || (useCalendar == true && taskDate !== selectedDate)) {
+        continue; 
       }
       // Add marker to the map
       const marker = new mapboxgl.Marker()
