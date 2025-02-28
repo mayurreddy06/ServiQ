@@ -10,7 +10,43 @@ const map = new mapboxgl.Map({
   zoom: 12,
 });
 
+window.onload = function () {
+  document.getElementById("event-date").valueAsDate = new Date();
+}
+// sets date by default to today's date
+
 let markers = [];
+
+
+async function reverseGeocode(lng, lat)
+{
+  let reverseGeoCoding = 'https://api.mapbox.com/search/geocode/v6/reverse?longitude=' + lng + '&latitude=' + lat + '&access_token=' + ACCESS_TOKEN + '';
+      // API call route to convert lat and lng into zipcodes
+      const response = await fetch(reverseGeoCoding);
+      const data = await response.json();
+      return String(data.features[0]?.properties?.context?.postcode?.name);
+      // fix later, remove hardcoding for location JSON data and add error fetching
+
+      // .then(response => {
+      //   if (!response.ok) {
+      //     throw new Error('Network response was not ok');
+      //   }
+      //   return response.json();
+      // })
+      // .then(data => {
+      //   console.log(data);
+      //   foundZipcode = data.features[0]?.properties?.context?.postcode?.name;
+      //   alert(String(foundZipcode));
+      //   return String(foundZipcode);
+      // })
+      // .catch(error => {
+      //   console.error('No zipcode was located from the JSON that was returned' + error);
+      //   foundZipcode = "none";
+      //   return String(foundZipcode);
+
+      // });
+
+}
 async function fetchAndDisplayMarkers() {
   try {
     console.log("Fetching data from: /get-volunteer-tasks");
@@ -63,35 +99,12 @@ async function fetchAndDisplayMarkers() {
       const { lat, lng } = location;
       // retreives langitude and longitude
 
-      let reverseGeoCoding = 'https://api.mapbox.com/search/geocode/v6/reverse?longitude=' + lng + '&latitude=' + lat + '&access_token=' + ACCESS_TOKEN + '';
-      let foundZipcode = null;
-      // API call route to convert lat and lng into zipcodes
-      fetch(reverseGeoCoding)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log(data);
-        foundZipcode = String(data.features[0]?.properties?.context?.postcode?.name);
-      })
-      .catch(error => {
-        console.error('No zipcode was located from the JSON that was returned' + error);
-        foundZipcode = "none";
+      const foundZipcode = await reverseGeocode(lng, lat);
 
-      });
-
-      alert(foundZipcode);
-
-
-
+      
       // Skip if required fields are missing
       if (!storeAddress || !location || !category || !date)
         continue;
-
-
       // Apply filters
       if (selectedCategory !== "All" && category !== selectedCategory || (selectedDate !== "none" && taskDate !== selectedDate) || (foundZipcode !== selectedZipcode)) {
 
