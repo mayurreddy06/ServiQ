@@ -259,3 +259,8 @@ footer {
 .side-panel-open .icon-close {
   display: initial !important;
 }
+
+#user-input-label
+{
+  margin-left: 380px;
+}

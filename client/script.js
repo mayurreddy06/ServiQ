@@ -27,25 +27,6 @@ async function reverseGeocode(lng, lat)
       return String(data.features[0]?.properties?.context?.postcode?.name);
       // fix later, remove hardcoding for location JSON data and add error fetching
 
-      // .then(response => {
-      //   if (!response.ok) {
-      //     throw new Error('Network response was not ok');
-      //   }
-      //   return response.json();
-      // })
-      // .then(data => {
-      //   console.log(data);
-      //   foundZipcode = data.features[0]?.properties?.context?.postcode?.name;
-      //   alert(String(foundZipcode));
-      //   return String(foundZipcode);
-      // })
-      // .catch(error => {
-      //   console.error('No zipcode was located from the JSON that was returned' + error);
-      //   foundZipcode = "none";
-      //   return String(foundZipcode);
-
-      // });
-
 }
 async function fetchAndDisplayMarkers() {
   try {
@@ -82,13 +63,15 @@ async function fetchAndDisplayMarkers() {
     let selectedZipcode = document.getElementById('zipcode').value;
     selectedZipcode = String(selectedZipcode);
 
+    let userSearch = document.getElementById("user-input");
+
     // Clears existing markers from the map
     markers.forEach(marker => marker.remove());
     markers = [];
 
 
     for (const key in volunteerTasks) {
-      const { storeAddress, location, category, date} = volunteerTasks[key];
+      const { storeAddress, location, category, date, task} = volunteerTasks[key];
       // Retrieves specific values for each Volunteer Activity submitted for the firebase data
 
 
@@ -105,39 +88,51 @@ async function fetchAndDisplayMarkers() {
       let useCalendar = document.getElementById("toggle-date").checked;
       let useZipcode = document.getElementById("toggle-zipcode").checked;
 
-      
+      let continueFilter = false;
 
       // Skip if required fields are missing
       if (!storeAddress || !location || !category || !date)
         continue;
 
-      if(useCategory)
-      {
-        if (category !== selectedCategory)
-        {
-          continue;
-        }
+      let userSearch = userSearch.split(/\s+/g),
+      taskSearch = task.split(/\s+/g),
+      i,j;
+      alert(userSearch);
+      alert(taskSearch);
+      for (i = 0; i < userSearch.length; i++) {
+          for (j = 0; j < taskSearch.length; j++) {
+              if (userSearch[i].toLowerCase() === taskSearch[j].toLowerCase()) {
+                continueFilter = true;
+              }
+          }
       }
-      if(useCalendar)
-        {
-          if (taskDate !== selectedDate)
-          {
-            continue;
-          }
-        }
-      if(useZipcode)
-          {
-            if (foundZipcode !== selectedZipcode)
-            {
-              continue;
-            }
-          }
-      // if ((useCategory === false && category !== selectedCategory) || (useCalendar == false && taskDate !== selectedDate)) {
-      //   alert("executed");
-      //   continue; 
+
+      // if(useCategory)
+      // {
+      //   if (category !== selectedCategory)
+      //   {
+      //     continue;
+      //   }
       // }
-      // Add marker to the map
-      const marker = new mapboxgl.Marker()
+      // if(useCalendar)
+      //   {
+      //     if (taskDate !== selectedDate)
+      //     {
+      //       continue;
+      //     }
+      //   }
+      // if(useZipcode)
+      //     {
+      //       if (foundZipcode !== selectedZipcode)
+      //       {
+      //         continue;
+      //       }
+      //     }
+      
+      if (continueFilter)
+      {
+        // Add marker to the map
+        const marker = new mapboxgl.Marker()
         .setLngLat([lng, lat])
         .setPopup(
           new mapboxgl.Popup({ offset: 25 })
@@ -149,10 +144,9 @@ async function fetchAndDisplayMarkers() {
             `)
         )
         .addTo(map);
-
-
       // Store the marker in the array for later removal
       markers.push(marker);
+      }
     }
   } catch (error) {
     console.error('Error fetching or displaying markers:', error);

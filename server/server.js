@@ -24,7 +24,7 @@ app.use(express.json());
 
 // Serve the main HTML file
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'signlog.html'));
+  res.sendFile(path.join(__dirname, '../client', 'websiteDesignTest.html'));
 });
 
 // Saves additional account data in database
