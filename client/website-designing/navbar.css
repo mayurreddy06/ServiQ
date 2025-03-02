@@ -9,7 +9,7 @@ header {
     padding: 0px 20px; /* Add padding to prevent content from touching edges */
     padding-bottom: 10px;
     box-sizing: border-box; /* Ensure padding is included in the width */
-    border-bottom: 1px solid lightgray;
+    border-bottom: 2px solid rgb(176, 172, 172);
     background-color: #f5f1ee;
     z-index: 100;
 }
