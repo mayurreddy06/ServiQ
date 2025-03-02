@@ -5,27 +5,27 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Event Posting</title>
         <link rel="stylesheet" href="/client/websitestyle.css/taskpage.css">
-        <link rel="stylesheet" href="navbar.css">
+        <link rel="stylesheet" href="/client/website-designing/navbar.css">
+        <link rel="stylesheet" href="/client/website-designing/general.css">
         <!-- Mapbox CSS -->
         <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
         <!-- Google Places API -->
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwHozpYoJS8xgURnkkICo7L0vw8xW2Oak&libraries=places"></script>
       </head>
-    <body>
+    <body class="taskpage-body">
 
-        <div class="navbar">
-            <div class="navbar-logo">
-                <img src="/client/ServiQ_logo.png" class="logo">
+        <header>
+            <div class="left-header">
+                <img src="/client/ServiQ_logo.png">
             </div>
-            <div class="navbar-links">
-                <ul>
-                    <li><a href="homepage.html">Home</a></li>
-                    <li><a href="map.html">Volunteer Map</a></li>
-                    <li><a href="taskpost.html">Tasks</a></li>
-                    <li><a href="signlog.html">Login</a></li>
-                </ul>
+            <div class="center-space"></div>
+            <div class="right-header">
+                <div><a href="/client/website-designing/homepage.html">Home</a></div>
+                <div><a href="/client/map.html">Volunteer</a></div>
+                <div><a href="/client/taskpost.html">Tasks</a></div>
+                <div><a href="/client/signlog.html">Login</a></div>
             </div>
-        </div>
+        </header>
         <div id="map">    
         </div>
         <div class="event-text">
@@ -33,29 +33,63 @@
         </div>
         
         <div>        
-            <form id="task-post">
+            <form class="task-post">
                 <div class="location">
-                    <label for="autocomplete">Enter a Location</label>
-                    <input type="text" id="autocomplete" name="store-location" required>
+                    <label>Enter a Location</label>
+                    <input type="text"  name="store-location" required>
                 </div>
                 <div class="date">
                     <label for="date">Date</label>
                     <input type="date" id="date">
                 </div>
-                <div class="time">
-                    <div>
-                        <label for="Start Time">Start Time</label>
-                        <input type="time" id="start-time">
-                    
-                        <label for="End Time">End Time</label>
-                        <input type="time" id="end-time">
+
+                <!--Custom Time Selection -> uses css & js-->
+                <div class="time-picker-container">
+                    <div class="time-picker">
+                        <label>Start Time</label>
+                        <div class="time-selection">
+                            <div class="column">
+                                <div class="arrow" onmousedown="startChangeTime('start-hour', 1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9650;</div>
+                                <div class="time-box" id="start-hour">00</div>
+                                <div class="arrow" onmousedown="startChangeTime('start-hour', -1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9660;</div>
+                            </div>
+                            <div class="column">
+                                <div class="arrow" onmousedown="startChangeTime('start-minute', 1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9650;</div>
+                                <div class="time-box" id="start-minute">00</div>
+                                <div class="arrow" onmousedown="startChangeTime('start-minute', -1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9660;</div>
+                            </div>
+                            <div class="column">
+                                <div class="arrow" onmousedown="startChangeTime('start-ampm', 1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9650;</div>
+                                <div class="time-box" id="start-ampm">AM</div>
+                                <div class="arrow" onmousedown="startChangeTime('start-ampm', -1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9660;</div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="time-picker">
+                        <label>End Time</label>
+                        <div class="time-selection">
+                            <div class="column">
+                                <div class="arrow" onmousedown="startChangeTime('end-hour', 1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9650;</div>
+                                <div class="time-box" id="end-hour">00</div>
+                                <div class="arrow" onmousedown="startChangeTime('end-hour', -1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9660;</div>
+                            </div>
+                            <div class="column">
+                                <div class="arrow" onmousedown="startChangeTime('end-minute', 1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9650;</div>
+                                <div class="time-box" id="end-minute">00</div>
+                                <div class="arrow" onmousedown="startChangeTime('end-minute', -1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9660;</div>
+                            </div>
+                            <div class="column">
+                                <div class="arrow" onmousedown="startChangeTime('end-ampm', 1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9650;</div>
+                                <div class="time-box" id="end-ampm">PM</div>
+                                <div class="arrow" onmousedown="startChangeTime('end-ampm', -1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9660;</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                
-
-                
-
+            
+                <!--All available categories-->
                 <div class="category-group">
                     <label>Select Category:</label>
                     <div class="category-boxes">
@@ -203,6 +237,11 @@
                
             </form>
         </div>
+        <script src="/client/websitestyle.css/taskpageJS.js"></script>
+
+        <footer>
+            2025 ServiQ. All rights reserved.
+        </footer>
 
           <!-- Include Mapbox JS -->
             <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>

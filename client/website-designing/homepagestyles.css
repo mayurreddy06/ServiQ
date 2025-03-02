@@ -1,4 +1,7 @@
-.statement-content{
+body{
+    background-color: rgb(156, 175, 136);
+
+}.statement-content{
     margin-top:100px;
 }
 
