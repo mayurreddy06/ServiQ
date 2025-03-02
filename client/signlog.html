@@ -3,19 +3,23 @@
     <head>
         <title>Login</title>
         <link rel="stylesheet" href="login.css">
-        <link rel="stylesheet" href="navbar.css">
+        <link rel="stylesheet" href="/client/website-designing/navbar.css">
+        <link rel="stylesheet" href="/client/website-designing/general.css"
     </head>
     <body>
         <div>
-            <div class="navbar">
-                <img src="ServiQ_logo.png" class="logo">
-                <ul>
-                    <li><a href="homepage.html">Home</a></li>
-                    <li><a href="map.html">Volunteer Map</a></li>
-                    <li><a href="taskpost.html">Tasks</a></li>
-                    <li><a href="signlog.html">Login</a></li>
-                </ul>
-            </div>
+            <header>
+                <div class="left-header">
+                    <img src="/client/ServiQ_logo.png">
+                </div>
+                <div class="center-space"></div>
+                <div class="right-header">
+                    <div><a href="/client/website-designing/homepage.html">Home</a></div>
+                    <div><a href="/client/map.html">Volunteer</a></div>
+                    <div><a href="/client/taskpost.html">Tasks</a></div>
+                    <div><a href="/client/signlog.html">Login</a></div>
+                </div>
+            </header>
             <div class="form-box">
                 <form id="signin-form">
                     <span class="text-center">Login</span>
@@ -33,5 +37,8 @@
 
             <script type="module" src="signin_script.js"></script>
         </div>
+        <footer>
+            2025 ServiQ. All rights reserved.
+        </footer>
     </body>
 </html>

@@ -1,0 +1,19 @@
+body{
+    padding-top:80px;
+    background-color: rgb(156, 175, 136);
+    
+}
+
+footer{
+    position: fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    padding: 10px 0px;
+    background-color: #f5f1ee;
+    border-top: 2px solid rgb(176, 172, 172);
+    color: black;
+    text-align: center;
+    font-size: 14px;
+    
+}
