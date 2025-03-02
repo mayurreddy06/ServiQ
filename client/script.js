@@ -138,17 +138,33 @@ async function fetchAndDisplayMarkers() {
       // }
       // Add marker to the map
       const marker = new mapboxgl.Marker()
-        .setLngLat([lng, lat])
-        .setPopup(
-          new mapboxgl.Popup({ offset: 25 })
-            .setHTML(`
-              <div class="volunteer-popup">
-                <p><strong>Location:</strong> ${storeAddress}</p>
-                <p><strong>Category:</strong> ${category}</p>
-              </div>
-            `)
-        )
-        .addTo(map);
+      .setLngLat([lng, lat])
+      .setPopup(
+        new mapboxgl.Popup({ offset: 25 })
+          .setHTML(`
+            <div class="volunteer-popup">
+              <p><strong>Location:</strong> ${storeAddress}</p>
+              <p><strong>Category:</strong> ${category}</p>
+              <input type="email" id="emailInput" placeholder="Enter your email" style="width: 100%; padding: 5px; margin-top: 5px;" />
+              <button id="registerBtn" style="width: 100%; padding: 5px; margin-top: 5px; background-color: blue; color: white; border: none; cursor: pointer;">
+                Register
+              </button>
+            </div>
+          `)
+      )
+      .addTo(map);
+
+      map.on('popupopen', () => {
+        document.getElementById('registerBtn').addEventListener('click', () => {
+          const email = document.getElementById('emailInput').value;
+          if (email) {
+            alert(`Registered with email: ${email}`);
+            // You can also send this data to a server using fetch or an API call
+          } else {
+            alert("Please enter an email.");
+          }
+        });
+      });
 
 
       // Store the marker in the array for later removal
