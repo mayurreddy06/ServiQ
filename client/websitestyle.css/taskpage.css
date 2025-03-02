@@ -24,8 +24,7 @@ h1 {
 }
 
 .location,
-.date,
-.time {
+.date{
     border: 1px solid blue;
     margin-bottom: 10px;
 }
