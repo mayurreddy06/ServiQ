@@ -25,12 +25,12 @@ h1 {
 
 .location,
 .date{
-    border: 1px solid blue;
+    /*border: 1px solid blue;*/
     margin-bottom: 10px;
 }
 
 .category-boxes {
-    border: 1px solid red;
+    /*border: 1px solid red;*/
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
@@ -53,7 +53,7 @@ h1 {
     padding: 6px 8px;
     border-radius: 6px;
     transition: background 0.2s ease;
-    justify-content: center;
+    justify-content: start;
     text-align: center;
     min-width: 100px;
 }

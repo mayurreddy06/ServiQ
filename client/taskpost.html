@@ -35,8 +35,8 @@
         <div>        
             <form class="task-post">
                 <div class="location">
-                    <label>Enter a Location</label>
-                    <input type="text"  name="store-location" required>
+                    <label for="autocomplete">Enter a Location</label>
+                    <input type="text" id="autocomplete" name="store-location" required>
                 </div>
                 <div class="date">
                     <label for="date">Date</label>
@@ -200,29 +200,13 @@
                                 <span>Health</span>
                             </label>
                         </div>
-                
-                        <div>
-                            <input type="checkbox" id="checkbox-circle2" class="inp-cbx" name="check">
-                            <label class="cbx" for="checkbox-circle2">
-                                <span>
-                                    <svg width="12px" height="10px">
-                                        <use xlink:href="#check"></use>
-                                    </svg>
-                                </span>
-                                <span>Check one</span>
-                            </label>
-                        </div>
+                        
                     </div>
                 </div>
-                
+                <!--End of Categories-->
                   
-                  <!-- SVG Sprites -->
-                  <svg class="inline-svg" style="display: none;">
-                    <symbol id="check" viewBox="0 0 12 10">
-                      <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
-                    </symbol>
-                  </svg>
-
+                  
+                <!--Event Disc. and Volunteer Count-->
                 <div>
                     <label for="description">Event Description</label>
                     <input type="text" id="description" name="Description" required>
@@ -235,9 +219,17 @@
 
                 <button type="submit" name="submit">Submit Event</button>
                
+
+
+                <!-- SVG Sprites -->
+                <svg class="inline-svg" style="display: none;">
+                    <symbol id="check" viewBox="0 0 12 10">
+                      <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                    </symbol>
+                  </svg>
             </form>
         </div>
-        <script src="/client/websitestyle.css/taskpageJS.js"></script>
+        
 
         <footer>
             2025 ServiQ. All rights reserved.
@@ -245,7 +237,8 @@
 
           <!-- Include Mapbox JS -->
             <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-            <!-- Link to external JS file -->
+            <!-- Link to external JS files -->
             <script src="script.js"></script>
+            <script src="/client/websitestyle.css/taskpageJS.js"></script>
     </body>
 </html>
