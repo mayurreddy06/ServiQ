@@ -104,5 +104,57 @@
       fetchAndDisplayMarkers();
     });
   </script>
+
+  <!-- Custom Floating Modal -->
+<div id="customPopup" class="custom-popup">
+  <div class="custom-popup-content">
+    <span class="close-popup" onclick="closeCustomPopup()">&times;</span>
+    <h2>Volunteer Registration</h2>
+    <p><strong>Location:</strong> <span id="popupLocation"></span></p>
+    <p><strong>Category:</strong> <span id="popupCategory"></span></p>
+    <input type="email" id="popupEmail" placeholder="Enter your email">
+    <button id="registerBtn">Register</button>
+  </div>
+</div>
+
+<!-- Add Custom Popup Styles -->
+<style>
+  .custom-popup {
+    display: none; /* Initially hidden */
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+    border-radius: 10px;
+    z-index: 1000;
+  }
+  .custom-popup-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .close-popup {
+    cursor: pointer;
+    font-size: 24px;
+    float: right;
+  }
+  #popupEmail {
+    padding: 10px;
+    margin-top: 10px;
+    width: 100%;
+  }
+  #registerBtn {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: blue;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+</style>
+
 </body>
 </html>
