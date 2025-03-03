@@ -205,6 +205,47 @@ app.get('/get-volunteer-tasks', async (req, res) => {
 //   }
 // });
 
+require('dotenv').config();
+
+console.log("EMAIL:", process.env.EMAIL);
+console.log("EMAIL_PASSWORD:", process.env.EMAIL_PASSWORD);
+
+
+const nodemailer = require('nodemailer');
+
+// Email sending route
+app.post('/send-email', async (req, res) => {
+  const { email, storeAddress, category } = req.body;
+
+  if (!email) {
+    return res.status(400).send("Email is required.");
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD, // Use an App Password instead of your real password
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: email,
+      subject: "Volunteer Registration Confirmation",
+      text: `You have registered for a volunteer opportunity at:\n\nLocation: ${storeAddress}\nCategory: ${category}\n\nThank you for volunteering!`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.status(200).send("Email sent successfully.");
+  } catch (error) {
+    console.error("Email sending error:", error);
+    res.status(500).send("Error sending email.");
+  }
+});
+
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);

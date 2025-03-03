@@ -2,6 +2,9 @@
 const ACCESS_TOKEN = 'pk.eyJ1IjoidmlzaGFscHV0dGFndW50YSIsImEiOiJjbTUxaDUxMGQxeGpnMmtwcHVycGhqaHhsIn0.IWxQPRNmfEJWT-k8sTCGlA';
 mapboxgl.accessToken = ACCESS_TOKEN;
 
+console.log("✅ Script loaded! Waiting for popup...");
+
+
 
 const map = new mapboxgl.Map({
   container: 'map',
@@ -139,32 +142,56 @@ async function fetchAndDisplayMarkers() {
       // Add marker to the map
       const marker = new mapboxgl.Marker()
       .setLngLat([lng, lat])
-      .setPopup(
-        new mapboxgl.Popup({ offset: 25 })
-          .setHTML(`
-            <div class="volunteer-popup">
-              <p><strong>Location:</strong> ${storeAddress}</p>
-              <p><strong>Category:</strong> ${category}</p>
-              <input type="email" id="emailInput" placeholder="Enter your email" style="width: 100%; padding: 5px; margin-top: 5px;" />
-              <button id="registerBtn" style="width: 100%; padding: 5px; margin-top: 5px; background-color: blue; color: white; border: none; cursor: pointer;">
-                Register
-              </button>
-            </div>
-          `)
-      )
       .addTo(map);
+    
+    // Attach click event to open our custom popup
+    marker.getElement().addEventListener('click', () => {
+      console.log("📌 Marker clicked! Opening custom popup...");
+    
+      // Open the custom popup with this marker’s data
+      openCustomPopup(storeAddress, category);
+    });
+    
 
       map.on('popupopen', () => {
-        document.getElementById('registerBtn').addEventListener('click', () => {
-          const email = document.getElementById('emailInput').value;
-          if (email) {
-            alert(`Registered with email: ${email}`);
-            // You can also send this data to a server using fetch or an API call
-          } else {
-            alert("Please enter an email.");
+        console.log("📌 Popup opened! Waiting for it to load...");
+      
+        let checkPopup = setInterval(() => {
+          const popup = document.querySelector('.mapboxgl-popup');
+          const popupContent = document.querySelector('.mapboxgl-popup-content');
+          const popupCloseButton = document.querySelector('.mapboxgl-popup-close-button');
+      
+          if (popup && popupContent) {
+            console.log("✅ Popup found! Making it interactive...");
+      
+            popup.style.pointerEvents = "auto"; // Allow clicks
+            popupContent.style.pointerEvents = "auto"; // Allow interaction
+            popupContent.removeAttribute('aria-hidden');
+      
+            if (popupCloseButton) {
+              popupCloseButton.removeAttribute('aria-hidden');
+              popupCloseButton.setAttribute('tabindex', '0');
+              console.log("✅ Close button is interactive!");
+            }
+      
+            clearInterval(checkPopup); // Stop checking since the popup is found
           }
+        }, 300); // Check every 300ms until the popup appears
+      
+        // Stop checking if the popup closes
+        map.on('popupclose', () => {
+          clearInterval(checkPopup);
+          console.log("✅ Stopped checking for popup (Popup closed).");
         });
       });
+      
+      
+      
+      
+      
+      
+      
+      
 
 
       // Store the marker in the array for later removal
@@ -280,4 +307,58 @@ async function sendVolunteerData() {
 // Attach the form submission handler
 // document.querySelector('form').addEventListener('submit', sendVolunteerData);
 // document.querySelector('form').addEventListener('submit', sendUserInput);
+// Function to open the custom popup
+function openCustomPopup(storeAddress, category) {
+  console.log("📌 Opening custom popup for:", storeAddress);
+
+  // Set content
+  document.getElementById('popupLocation').innerText = storeAddress;
+  document.getElementById('popupCategory').innerText = category;
+
+  // Show the popup
+  document.getElementById('customPopup').style.display = 'block';
+
+  // Attach event listener to Register button
+  document.getElementById('registerBtn').onclick = async function () {
+    console.log("📩 Register button clicked!");
+
+    const email = document.getElementById('popupEmail').value.trim();
+    if (!email) {
+      alert("Please enter an email.");
+      return;
+    }
+
+    console.log(`📨 Sending request to /send-email for: ${email}`);
+
+    try {
+      const response = await fetch('/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email,
+          storeAddress: storeAddress,
+          category: category
+        }),
+      });
+
+      console.log("📬 Response received:", response);
+
+      if (response.ok) {
+        alert("Registration successful! Check your email.");
+        closeCustomPopup();
+      } else {
+        alert("❌ Error sending email.");
+      }
+    } catch (error) {
+      console.error("❌ Fetch error:", error);
+      alert("Something went wrong.");
+    }
+  };
+}
+
+// Function to close the custom popup
+function closeCustomPopup() {
+  document.getElementById('customPopup').style.display = 'none';
+}
+
 window.addEventListener('load', initAutocomplete);
