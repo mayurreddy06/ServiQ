@@ -92,6 +92,8 @@ async function fetchAndDisplayMarkers() {
 
     for (const key in volunteerTasks) {
       const { storeAddress, location, category, date} = volunteerTasks[key];
+
+      
       // Retrieves specific values for each Volunteer Activity submitted for the firebase data
 
 

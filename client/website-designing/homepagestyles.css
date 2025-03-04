@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+
 body{
     background-color: rgb(156, 175, 136);
 
@@ -9,14 +12,39 @@ body{
     margin-top:20px;
 }
 .big-statement{
-    font-size: 28px;
-    position:relative;
+    font-size: 22px;
+    position:absolute;
     margin-left:60%;
-
+    margin-top:-5%;
+    font-family: 'Poppins', sans-serif; /* Using a Google Font */
 }
 
 .small-statement{
-    font-size:16px;
+    font-size:13px;
     position:absolute;
     left:20px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.button-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center; /* Centers the button */
+}
+
+.cta-button {
+    background-color: #4CAF50; /* Green color for eco-friendly vibes */
+    color: white;
+    font-size: 18px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    font-family: 'Poppins', sans-serif;
+}
+
+.cta-button:hover {
+    background-color: #3e8e41; /* Darker green on hover */
+    transform: scale(1.05);
 }
