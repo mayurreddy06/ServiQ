@@ -223,28 +223,38 @@ app.post('/send-email', async (req, res) => {
   }
 
   try {
-    // 🔹 Convert email to a Firebase-safe format (replace . with _)
     const safeEmail = email.replace(/\./g, "_");
 
-    // Reference the volunteer task in Firebase
-    const taskRef = db.ref(`volunteer_opportunities/${taskId}/registrations`);
+    // 🔹 Fetch volunteer task details from Firebase
+    const taskRef = db.ref(`volunteer_opportunities/${taskId}`);
     const taskSnapshot = await taskRef.once("value");
-    let taskData = taskSnapshot.val() || { count: 0, volunteers: {} };
+    const taskData = taskSnapshot.val();
 
-    // Check if the email is already registered
-    if (taskData.volunteers && taskData.volunteers[safeEmail]) {
+    if (!taskData) {
+      return res.status(404).send("Task not found.");
+    }
+
+    // Extract relevant data
+    const { start_time, end_time, date } = taskData;
+
+    // 🔹 Fetch existing registrations
+    const regRef = taskRef.child("registrations");
+    const regSnapshot = await regRef.once("value");
+    let regData = regSnapshot.val() || { count: 0, volunteers: {} };
+
+    if (regData.volunteers && regData.volunteers[safeEmail]) {
       return res.status(400).send("You have already registered for this task.");
     }
 
-    // Increment the counter and add the email
-    taskData.count += 1;
-    taskData.volunteers[safeEmail] = true;
-    await taskRef.set(taskData);
+    // Increment registration count and save email
+    regData.count += 1;
+    regData.volunteers[safeEmail] = true;
+    await regRef.set(regData);
 
-    // Generate an unregister link (decode the email before sending)
+    // Generate an unregister link
     const unregisterLink = `http://localhost:${PORT}/unregister?email=${encodeURIComponent(email)}&taskId=${taskId}`;
 
-    // Send Email with Unregister Link
+    // 🔹 Send Email with Event Date & Time
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -259,7 +269,9 @@ app.post('/send-email', async (req, res) => {
       subject: "Volunteer Registration Confirmation",
       html: `
         <p>You have successfully registered for a volunteer task at <b>${storeAddress}</b> in the <b>${category}</b> category.</p>
-        <p>You are volunteer #${taskData.count}.</p>
+        <p><strong>📅 Date:</strong> ${date}</p>
+        <p><strong>⏰ Time:</strong> ${start_time} - ${end_time}</p>
+        <p>You are volunteer #${regData.count}.</p>
         <p>If you need to unregister, click the link below:</p>
         <p><a href="${unregisterLink}">Unregister from this task</a></p>
       `,
@@ -268,7 +280,7 @@ app.post('/send-email', async (req, res) => {
     await transporter.sendMail(mailOptions);
     console.log(`📧 Email sent to ${email}`);
 
-    res.status(200).send({ message: "Email sent successfully.", count: taskData.count });
+    res.status(200).send({ message: "Email sent successfully.", count: regData.count });
 
   } catch (error) {
     console.error("❌ Email sending error:", error);
