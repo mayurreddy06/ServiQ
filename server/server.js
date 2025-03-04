@@ -62,6 +62,14 @@ app.get('/signup.html', (req, res) => {
   res.sendFile(path.join(__dirname, '../client', 'signup.html'));
 });
 
+app.get('/map.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client', 'map.html'));
+});
+
+app.get('/map.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client', 'taskpost.html'));
+});
+
 // Route to add a shopping discount
 app.post('/add-discount', async (req, res) => {
   const { storeName, discountAmount, lat, lng, timestamp } = req.body;
