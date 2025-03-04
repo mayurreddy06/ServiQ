@@ -69,7 +69,6 @@ async function fetchAndDisplayMarkers() {
     markers.forEach(marker => marker.remove());
     markers = [];
 
-
     for (const key in volunteerTasks) {
       const { storeAddress, location, category, date, task} = volunteerTasks[key];
       // Retrieves specific values for each Volunteer Activity submitted for the firebase data
@@ -94,14 +93,14 @@ async function fetchAndDisplayMarkers() {
       if (!storeAddress || !location || !category || !date)
         continue;
 
+      
       let userSearch = userSearch.split(/\s+/g),
       taskSearch = task.split(/\s+/g),
       i,j;
-      alert(userSearch);
-      alert(taskSearch);
       for (i = 0; i < userSearch.length; i++) {
           for (j = 0; j < taskSearch.length; j++) {
               if (userSearch[i].toLowerCase() === taskSearch[j].toLowerCase()) {
+                alert("hi")
                 continueFilter = true;
               }
           }

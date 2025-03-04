@@ -1,0 +1,4 @@
+#map {
+    flex: 1;
+    height: calc(100vh - 100px);
+  }
