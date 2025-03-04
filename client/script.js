@@ -92,6 +92,8 @@ async function fetchAndDisplayMarkers() {
 
     for (const key in volunteerTasks) {
       const { storeAddress, location, category, date} = volunteerTasks[key];
+
+      
       // Retrieves specific values for each Volunteer Activity submitted for the firebase data
 
 
@@ -144,13 +146,13 @@ async function fetchAndDisplayMarkers() {
       .setLngLat([lng, lat])
       .addTo(map);
     
-    // Attach click event to open our custom popup
     marker.getElement().addEventListener('click', () => {
-      console.log("📌 Marker clicked! Opening custom popup...");
+        console.log("📌 Marker clicked! Opening custom popup...");
     
-      // Open the custom popup with this marker’s data
-      openCustomPopup(storeAddress, category);
+        // Open the custom popup and pass the `taskId`
+        openCustomPopup(storeAddress, category, key);
     });
+    
     
 
       map.on('popupopen', () => {
@@ -308,53 +310,48 @@ async function sendVolunteerData() {
 // document.querySelector('form').addEventListener('submit', sendVolunteerData);
 // document.querySelector('form').addEventListener('submit', sendUserInput);
 // Function to open the custom popup
-function openCustomPopup(storeAddress, category) {
+function openCustomPopup(storeAddress, category, taskId) {
   console.log("📌 Opening custom popup for:", storeAddress);
 
-  // Set content
   document.getElementById('popupLocation').innerText = storeAddress;
   document.getElementById('popupCategory').innerText = category;
 
-  // Show the popup
   document.getElementById('customPopup').style.display = 'block';
 
-  // Attach event listener to Register button
   document.getElementById('registerBtn').onclick = async function () {
-    console.log("📩 Register button clicked!");
+      console.log("📩 Register button clicked!");
 
-    const email = document.getElementById('popupEmail').value.trim();
-    if (!email) {
-      alert("Please enter an email.");
-      return;
-    }
-
-    console.log(`📨 Sending request to /send-email for: ${email}`);
-
-    try {
-      const response = await fetch('/send-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: email,
-          storeAddress: storeAddress,
-          category: category
-        }),
-      });
-
-      console.log("📬 Response received:", response);
-
-      if (response.ok) {
-        alert("Registration successful! Check your email.");
-        closeCustomPopup();
-      } else {
-        alert("❌ Error sending email.");
+      const email = document.getElementById('popupEmail').value.trim();
+      if (!email) {
+          alert("Please enter an email.");
+          return;
       }
-    } catch (error) {
-      console.error("❌ Fetch error:", error);
-      alert("Something went wrong.");
-    }
+
+      console.log(`📨 Sending request to /send-email for: ${email}`);
+
+      try {
+          const response = await fetch("http://localhost:3000/send-email", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, storeAddress, category, taskId }),
+          });
+
+          const result = await response.json();
+          console.log("📬 Response received:", result);
+
+          if (response.ok) {
+              alert(`Registration successful! You are volunteer #${result.count}.`);
+              closeCustomPopup();
+          } else {
+              alert(result.message || "❌ Error sending email.");
+          }
+      } catch (error) {
+          console.error("❌ Fetch error:", error);
+          alert("Something went wrong.");
+      }
   };
 }
+
 
 // Function to close the custom popup
 function closeCustomPopup() {

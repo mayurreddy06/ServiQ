@@ -222,19 +222,52 @@ console.log("EMAIL_PASSWORD:", process.env.EMAIL_PASSWORD);
 const nodemailer = require('nodemailer');
 
 // Email sending route
+// Email sending route & Volunteer Registration Tracking
 app.post('/send-email', async (req, res) => {
-  const { email, storeAddress, category } = req.body;
+  const { email, storeAddress, category, taskId } = req.body;
 
-  if (!email) {
-    return res.status(400).send("Email is required.");
+  if (!email || !storeAddress || !category || !taskId) {
+    return res.status(400).send("Missing required fields.");
   }
 
   try {
+    const safeEmail = email.replace(/\./g, "_");
+
+    // 🔹 Fetch volunteer task details from Firebase
+    const taskRef = db.ref(`volunteer_opportunities/${taskId}`);
+    const taskSnapshot = await taskRef.once("value");
+    const taskData = taskSnapshot.val();
+
+    if (!taskData) {
+      return res.status(404).send("Task not found.");
+    }
+
+    // Extract relevant data
+    const { start_time, end_time, date } = taskData;
+
+    // 🔹 Fetch existing registrations
+    const regRef = taskRef.child("registrations");
+    const regSnapshot = await regRef.once("value");
+    let regData = regSnapshot.val() || { count: 0, volunteers: {} };
+
+    if (regData.volunteers && regData.volunteers[safeEmail]) {
+      return res.status(400).send("You have already registered for this task.");
+    }
+
+    // Increment registration count and save email
+    regData.count += 1;
+    regData.volunteers[safeEmail] = true;
+    await regRef.set(regData);
+
+    // Generate an unregister link
+    const unregisterLink = `http://localhost:${PORT}/unregister?email=${encodeURIComponent(email)}&taskId=${taskId}`;
+
+    // 🔹 Send Email with Event Date & Time
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASSWORD, // Use an App Password instead of your real password
+        pass: process.env.EMAIL_PASSWORD, 
       },
     });
 
@@ -242,16 +275,71 @@ app.post('/send-email', async (req, res) => {
       from: process.env.EMAIL,
       to: email,
       subject: "Volunteer Registration Confirmation",
-      text: `You have registered for a volunteer opportunity at:\n\nLocation: ${storeAddress}\nCategory: ${category}\n\nThank you for volunteering!`,
+      html: `
+        <p>You have successfully registered for a volunteer task at <b>${storeAddress}</b> in the <b>${category}</b> category.</p>
+        <p><strong>📅 Date:</strong> ${date}</p>
+        <p><strong>⏰ Time:</strong> ${start_time} - ${end_time}</p>
+        <p>You are volunteer #${regData.count}.</p>
+        <p>If you need to unregister, click the link below:</p>
+        <p><a href="${unregisterLink}">Unregister from this task</a></p>
+      `,
     };
 
     await transporter.sendMail(mailOptions);
-    res.status(200).send("Email sent successfully.");
+    console.log(`📧 Email sent to ${email}`);
+
+    res.status(200).send({ message: "Email sent successfully.", count: regData.count });
+
   } catch (error) {
-    console.error("Email sending error:", error);
+    console.error("❌ Email sending error:", error);
     res.status(500).send("Error sending email.");
   }
 });
+
+
+// Unregister Route: Allows users to unregister from a volunteer task
+app.get("/unregister", async (req, res) => {
+  const { email, taskId } = req.query;
+
+  if (!email || !taskId) {
+    return res.status(400).send("Missing required parameters.");
+  }
+
+  try {
+    // Convert email to Firebase-safe format
+    const safeEmail = email.replace(/\./g, "_");
+
+    // Reference the volunteer task in Firebase
+    const taskRef = db.ref(`volunteer_opportunities/${taskId}/registrations`);
+    const taskSnapshot = await taskRef.once("value");
+    let taskData = taskSnapshot.val();
+
+    // If task doesn't exist or email isn't registered, return an error
+    if (!taskData || !taskData.volunteers || !taskData.volunteers[safeEmail]) {
+      return res.status(400).send("You are not registered for this task.");
+    }
+
+    // Remove email from registered volunteers
+    delete taskData.volunteers[safeEmail];
+    taskData.count = Math.max(0, taskData.count - 1); // Ensure count never goes negative
+
+    // Update Firebase
+    await taskRef.set(taskData);
+
+    console.log(`📉 ${email} unregistered from task ${taskId}. Count is now ${taskData.count}`);
+
+    res.send(`
+      <h2>You have successfully unregistered from the volunteer task.</h2>
+      <p>Your updated volunteer count is now ${taskData.count}.</p>
+    `);
+
+  } catch (error) {
+    console.error("❌ Error:", error);
+    res.status(500).send("Error processing unregistration.");
+  }
+});
+
+
 
 
 // Start the server
