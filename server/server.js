@@ -19,12 +19,27 @@ const db = admin.database();
 module.exports = db;
 
 // Middleware to serve static files and parse JSON body
-app.use(express.static(path.join(__dirname, '../client')));
+app.use(express.static(path.join(__dirname, '..'))); // Serve static files from the "client" directory
+app.use('/css', express.static(path.join(__dirname, '../css'))); // Serve CSS files
+app.use('/js', express.static(path.join(__dirname, '../js'))); // Serve JS files
+app.use('/website-designing', express.static(path.join(__dirname, '../website-designing'))); // Serve website-designing files
 app.use(express.json());
 
 // Serve the main HTML file
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'map.html'));
+  res.sendFile(path.join(__dirname, '..', '/client/map.html'));
+});
+
+app.get('/signup.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'signup.html'));
+});
+
+app.get('/signlog.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'signlog.html'));
+});
+
+app.get('/websiteDesignTest.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'websiteDesignTest.html'));
 });
 
 // Saves additional account data in database
@@ -47,19 +62,6 @@ app.post('/add-account', async (req, res) => {
     console.error('Error saving user data:', error);
     return res.status(500).send(error.message);
   }
-});
-
-// Mapbox Key Route
-app.get('/websiteDesignTest.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'websiteDesignTest.html'));
-});
-
-app.get('/signlog.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'signlog.html'));
-});
-
-app.get('/signup.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'signup.html'));
 });
 
 // Route to add a shopping discount
@@ -186,34 +188,6 @@ app.get('/get-volunteer-tasks', async (req, res) => {
   }
 });
 
-// Route to add user inputted data
-// app.post('/add-user-data', async (req, res) => {
-//   const { timestamp, searchBar } = req.body;
-
-//   if (!timestamp || !searchBar) {
-//     return res.status(400).send('Missing required fields');
-//   }
-
-//   try {
-//     const ref = db.ref('user_input');
-//     await ref.push({ timestamp, searchBar });
-
-//     res.status(200).send('User data added successfully');
-//   } catch (error) {
-//     console.error('Error adding user data:', error);
-//     res.status(500).send('Error adding user data');
-//   }
-// });
-
-require('dotenv').config();
-
-console.log("EMAIL:", process.env.EMAIL);
-console.log("EMAIL_PASSWORD:", process.env.EMAIL_PASSWORD);
-
-
-const nodemailer = require('nodemailer');
-
-// Email sending route
 // Email sending route & Volunteer Registration Tracking
 app.post('/send-email', async (req, res) => {
   const { email, storeAddress, category, taskId } = req.body;
@@ -223,7 +197,7 @@ app.post('/send-email', async (req, res) => {
   }
 
   try {
-    // 🔹 Convert email to a Firebase-safe format (replace . with _)
+    // Convert email to a Firebase-safe format (replace . with _)
     const safeEmail = email.replace(/\./g, "_");
 
     // Reference the volunteer task in Firebase
@@ -276,7 +250,6 @@ app.post('/send-email', async (req, res) => {
   }
 });
 
-
 // Unregister Route: Allows users to unregister from a volunteer task
 app.get("/unregister", async (req, res) => {
   const { email, taskId } = req.query;
@@ -318,9 +291,6 @@ app.get("/unregister", async (req, res) => {
     res.status(500).send("Error processing unregistration.");
   }
 });
-
-
-
 
 // Start the server
 app.listen(PORT, () => {
