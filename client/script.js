@@ -2,6 +2,9 @@
 const ACCESS_TOKEN = 'pk.eyJ1IjoidmlzaGFscHV0dGFndW50YSIsImEiOiJjbTUxaDUxMGQxeGpnMmtwcHVycGhqaHhsIn0.IWxQPRNmfEJWT-k8sTCGlA';
 mapboxgl.accessToken = ACCESS_TOKEN;
 
+console.log("✅ Script loaded! Waiting for popup...");
+
+
 
 const map = new mapboxgl.Map({
   container: 'map',
@@ -257,4 +260,58 @@ async function sendVolunteerData() {
 // Attach the form submission handler
 // document.querySelector('form').addEventListener('submit', sendVolunteerData);
 // document.querySelector('form').addEventListener('submit', sendUserInput);
+// Function to open the custom popup
+function openCustomPopup(storeAddress, category) {
+  console.log("📌 Opening custom popup for:", storeAddress);
+
+  // Set content
+  document.getElementById('popupLocation').innerText = storeAddress;
+  document.getElementById('popupCategory').innerText = category;
+
+  // Show the popup
+  document.getElementById('customPopup').style.display = 'block';
+
+  // Attach event listener to Register button
+  document.getElementById('registerBtn').onclick = async function () {
+    console.log("📩 Register button clicked!");
+
+    const email = document.getElementById('popupEmail').value.trim();
+    if (!email) {
+      alert("Please enter an email.");
+      return;
+    }
+
+    console.log(`📨 Sending request to /send-email for: ${email}`);
+
+    try {
+      const response = await fetch('/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email,
+          storeAddress: storeAddress,
+          category: category
+        }),
+      });
+
+      console.log("📬 Response received:", response);
+
+      if (response.ok) {
+        alert("Registration successful! Check your email.");
+        closeCustomPopup();
+      } else {
+        alert("❌ Error sending email.");
+      }
+    } catch (error) {
+      console.error("❌ Fetch error:", error);
+      alert("Something went wrong.");
+    }
+  };
+}
+
+// Function to close the custom popup
+function closeCustomPopup() {
+  document.getElementById('customPopup').style.display = 'none';
+}
+
 window.addEventListener('load', initAutocomplete);

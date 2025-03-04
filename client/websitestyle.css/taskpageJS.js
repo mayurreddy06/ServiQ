@@ -38,3 +38,27 @@ function changeTime(type, delta) {
 
     timeBox.textContent = component === 'ampm' ? value : value.toString().padStart(2, '0');
 }
+
+// Include Flatpickr for the date and time pickers
+document.addEventListener('DOMContentLoaded', function () {
+    // Initialize Flatpickr on the date input
+    flatpickr('#date', {
+        dateFormat: 'Y-m-d', // Optional format for the date
+        minDate: 'today',    // Optional: Prevent selecting past dates
+    });
+
+    // Initialize Flatpickr on the start and end time inputs (if you have them as time pickers)
+    flatpickr('#start-hour', {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: 'H:i', // Hour:Minute format
+        time_24hr: true,    // 24-hour time format
+    });
+
+    flatpickr('#end-hour', {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: 'H:i', // Hour:Minute format
+        time_24hr: true,    // 24-hour time format
+    });
+});
