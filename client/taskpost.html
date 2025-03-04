@@ -11,7 +11,9 @@
         <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
         <!-- Google Places API -->
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwHozpYoJS8xgURnkkICo7L0vw8xW2Oak&libraries=places"></script>
-      </head>
+        <!-- Flatpickr CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    </head>
     <body class="taskpage-body">
 
         <header>
@@ -38,15 +40,15 @@
                     <label for="autocomplete">Enter a Location</label>
                     <input type="text" id="autocomplete" name="store-location" required>
                 </div>
-                <div class="date">
+                <div class="calendar">
                     <label for="date">Date</label>
-                    <input type="date" id="date">
+                    <input type="text" id="date" class="flatpickr">
                 </div>
 
                 <!--Custom Time Selection -> uses css & js-->
                 <div class="time-picker-container">
                     <div class="time-picker">
-                        <label>Start Time</label>
+                        <label class="time-text">Start Time</label>
                         <div class="time-selection">
                             <div class="column">
                                 <div class="arrow" onmousedown="startChangeTime('start-hour', 1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9650;</div>
@@ -67,7 +69,7 @@
                     </div>
                 
                     <div class="time-picker">
-                        <label>End Time</label>
+                        <label class="time-text">End Time</label>
                         <div class="time-selection">
                             <div class="column">
                                 <div class="arrow" onmousedown="startChangeTime('end-hour', 1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9650;</div>
@@ -91,7 +93,7 @@
             
                 <!--All available categories-->
                 <div class="category-group">
-                    <label>Select Category:</label>
+                    <div class="category-label">Select Category</div>
                     <div class="category-boxes">
                         <div>
                             <input type="checkbox" id="comm-service" class="inp-cbx" name="category" value="comm-service">
@@ -235,10 +237,23 @@
             2025 ServiQ. All rights reserved.
         </footer>
 
-          <!-- Include Mapbox JS -->
+            <!-- Include Mapbox JS -->
             <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-            <!-- Link to external JS files -->
             <script src="script.js"></script>
+            
+            
+            <script>
+                // Initialize Flatpickr on the date input field
+                flatpickr("#date", {
+                    dateFormat: "Y-m-d", // Customize the date format
+                    minDate: "today", // Restrict selection to today and future dates
+                    // Add more options as needed
+                });
+            </script>
+
+            <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
             <script src="/client/websitestyle.css/taskpageJS.js"></script>
+
     </body>
 </html>
