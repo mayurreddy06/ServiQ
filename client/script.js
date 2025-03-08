@@ -1,9 +1,7 @@
-// Existing map initialization and interaction code
 const ACCESS_TOKEN = 'pk.eyJ1IjoidmlzaGFscHV0dGFndW50YSIsImEiOiJjbTUxaDUxMGQxeGpnMmtwcHVycGhqaHhsIn0.IWxQPRNmfEJWT-k8sTCGlA';
 mapboxgl.accessToken = ACCESS_TOKEN;
 
 console.log("✅ Script loaded! Waiting for popup...");
-
 
 
 const map = new mapboxgl.Map({
@@ -15,126 +13,83 @@ const map = new mapboxgl.Map({
 
 window.onload = function () {
   document.getElementById("event-date").valueAsDate = new Date();
+  fetchAndDisplayMarkers();
 }
 // sets date by default to today's date
 
 let markers = [];
 
-
-async function reverseGeocode(lng, lat)
-{
+async function reverseGeocode(lng, lat) {
   let reverseGeoCoding = 'https://api.mapbox.com/search/geocode/v6/reverse?longitude=' + lng + '&latitude=' + lat + '&access_token=' + ACCESS_TOKEN + '';
-      // API call route to convert lat and lng into zipcodes
-      const response = await fetch(reverseGeoCoding);
-      const data = await response.json();
-      return String(data.features[0]?.properties?.context?.postcode?.name);
-      // fix later, remove hardcoding for location JSON data and add error fetching
-
+  const response = await fetch(reverseGeoCoding);
+  const data = await response.json();
+  return String(data.features[0]?.properties?.context?.postcode?.name);
 }
-async function fetchAndDisplayMarkers() {
+
+async function fetchAndDisplayMarkers(searchQuery = null) {
   try {
     console.log("Fetching data from: /get-volunteer-tasks");
-    // Debugging: Check the fetch URL
-
-
     const response = await fetch('/get-volunteer-tasks');
-    // The endpoint being called
     if (!response.ok) {
       console.error('Failed to fetch volunteer tasks:', await response.text());
       return;
     }
 
-
     const volunteerTasks = await response.json();
     console.log("Received Data:", volunteerTasks);
-    // Debugging: Check what data is received
 
-
-    /**
-     * Recieves user input for category and date. Utilizes try catch for date if set to default.
-    */
     const selectedCategory = document.getElementById('category-type').value;
     let selectedDate = "";
-    try
-    {
+    try {
       selectedDate = new Date(document.getElementById('event-date').value).toISOString().split('T')[0];
-    }
-    catch (error)
-    {
+    } catch (error) {
       selectedDate = "none";
     }
     let selectedZipcode = document.getElementById('zipcode').value;
     selectedZipcode = String(selectedZipcode);
 
-    let userSearch = document.getElementById("user-input");
-
-    // Clears existing markers from the map
+    // Clear existing markers
     markers.forEach(marker => marker.remove());
     markers = [];
 
     for (const key in volunteerTasks) {
-      const { storeAddress, location, category, date, task} = volunteerTasks[key];
-      // Retrieves specific values for each Volunteer Activity submitted for the firebase data
-
-
+      const { storeAddress, location, category, date, task } = volunteerTasks[key];
       let taskDate = new Date(date).toISOString().split('T')[0];
-      // converts date to an actual date to be compared to
-
-
       const { lat, lng } = location;
-      // retreives langitude and longitude
-
       const foundZipcode = await reverseGeocode(lng, lat);
 
       let useCategory = document.getElementById("toggle-category").checked;
       let useCalendar = document.getElementById("toggle-date").checked;
       let useZipcode = document.getElementById("toggle-zipcode").checked;
 
-      let continueFilter = false;
-
       // Skip if required fields are missing
-      if (!storeAddress || !location || !category || !date)
-        continue;
+      if (!storeAddress || !location || !category || !date || !task) continue;
 
-      
-      let userSearch = userSearch.split(/\s+/g),
-      taskSearch = task.split(/\s+/g),
-      i,j;
-      for (i = 0; i < userSearch.length; i++) {
-          for (j = 0; j < taskSearch.length; j++) {
-              if (userSearch[i].toLowerCase() === taskSearch[j].toLowerCase()) {
-                alert("hi")
-                continueFilter = true;
-              }
-          }
+      // Apply search query filter (if provided)
+      if (searchQuery && searchQuery.trim() !== "") {
+
+        const searchQueryLower = searchQuery.trim().toLowerCase();
+        
+        const categoryLower = category.toLowerCase();
+        const taskLower = task.toLowerCase();
+
+        console.log("Search Query:", searchQueryLower);
+        console.log("Category:", categoryLower);
+        console.log("Task:", taskLower);
+
+        // Skip if the search query doesn't match the category or task
+        if (!searchQueryLower.includes(categoryLower) && !searchQueryLower.includes(taskLower)) {
+          continue;
+        }
       }
 
-      // if(useCategory)
-      // {
-      //   if (category !== selectedCategory)
-      //   {
-      //     continue;
-      //   }
-      // }
-      // if(useCalendar)
-      //   {
-      //     if (taskDate !== selectedDate)
-      //     {
-      //       continue;
-      //     }
-      //   }
-      // if(useZipcode)
-      //     {
-      //       if (foundZipcode !== selectedZipcode)
-      //       {
-      //         continue;
-      //       }
-      //     }
-      
-      if (continueFilter)
-      {
-        // Add marker to the map
-        const marker = new mapboxgl.Marker()
+      // Apply other filters (category, date, zipcode)
+      if (useCategory && category !== selectedCategory) continue;
+      if (useCalendar && taskDate !== selectedDate) continue;
+      if (useZipcode && foundZipcode !== selectedZipcode) continue;
+
+      // Add marker to the map
+      const marker = new mapboxgl.Marker()
         .setLngLat([lng, lat])
         .setPopup(
           new mapboxgl.Popup({ offset: 25 })
@@ -146,20 +101,21 @@ async function fetchAndDisplayMarkers() {
             `)
         )
         .addTo(map);
-      // Store the marker in the array for later removal
       markers.push(marker);
-      }
     }
   } catch (error) {
     console.error('Error fetching or displaying markers:', error);
   }
 }
+
 // Add navigation controls to the map
-map.on('load', fetchAndDisplayMarkers);
+// map.on('load', fetchAndDisplayMarkers);
 map.addControl(new mapboxgl.NavigationControl());
 map.addControl(new mapboxgl.FullscreenControl());
+
 let lat = null;
 let lng = null;
+
 function initAutocomplete() {
   const input = document.getElementById('autocomplete');
   const autocomplete = new google.maps.places.Autocomplete(input);
@@ -182,11 +138,79 @@ function initAutocomplete() {
   });
 }
 
+// Search suggestions functionality
+const searchBar = document.getElementById('search-bar');
+const suggestionsDropdown = document.getElementById('search-suggestions');
+
+function debounce(func, delay) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), delay);
+  };
+}
+
+async function fetchSearchSuggestions(query) {
+  if (!query) {
+    suggestionsDropdown.innerHTML = '';
+    suggestionsDropdown.style.display = 'none';
+    return;
+  }
+
+  try {
+    const response = await fetch(`/search-suggestions?query=${encodeURIComponent(query)}`);
+    const suggestions = await response.json();
+
+    if (suggestions.length > 0) {
+      suggestionsDropdown.innerHTML = suggestions
+        .map(suggestion => `
+          <div class="suggestion-item" data-category="${suggestion.category}" data-task="${suggestion.task}">
+            <strong>${suggestion.category}</strong>: ${suggestion.task}
+          </div>
+        `)
+        .join('');
+      suggestionsDropdown.style.display = 'block';
+    } else {
+      suggestionsDropdown.innerHTML = '<div class="suggestion-item">No results found</div>';
+      suggestionsDropdown.style.display = 'block';
+    }
+  } catch (error) {
+    console.error('Error fetching suggestions:', error);
+    suggestionsDropdown.innerHTML = '<div class="suggestion-item">Error fetching suggestions</div>';
+    suggestionsDropdown.style.display = 'block';
+  }
+}
+
+searchBar.addEventListener('input', debounce(() => {
+  const query = searchBar.value.trim();
+  fetchSearchSuggestions(query);
+}, 300));
+
+suggestionsDropdown.addEventListener('click', (event) => {
+  const suggestionItem = event.target.closest('.suggestion-item');
+  if (suggestionItem) {
+    const category = suggestionItem.dataset.category;
+    const task = suggestionItem.dataset.task;
+
+    // Set the search bar value to the selected suggestion
+    searchBar.value = `${category}: ${task}`;
+
+    // Hide the dropdown
+    suggestionsDropdown.style.display = 'none';
+
+    // Filter markers based on the selected suggestion
+    fetchAndDisplayMarkers(`${category} ${task}`);
+  }
+});
+
+document.addEventListener('click', (event) => {
+  if (!event.target.closest('.search-container')) {
+    suggestionsDropdown.style.display = 'none';
+  }
+});
 
 // Function to send user inputted volunteer data to the server
 async function sendVolunteerData() {
-
-
   const storeAddress = document.getElementById('autocomplete').value;
   const category = document.getElementById('category').value;
   const start_time = document.getElementById('start-time').value;
@@ -196,13 +220,11 @@ async function sendVolunteerData() {
   const date = document.getElementById('date-input').value;
   const timestamp = Date.now(); // Current time in milliseconds
 
-  if (lat == null || lng == null){
+  if (lat == null || lng == null) {
     alert("Please select a valid location from the autocomplete suggestion.");
   }
 
-
-  const volunteerData = { storeAddress, category, start_time, end_time, spots, timestamp, task, location: {lat, lng}, date};
-
+  const volunteerData = { storeAddress, category, start_time, end_time, spots, timestamp, task, location: { lat, lng }, date };
 
   try {
     const response = await fetch('/add-volunteer-data', {
@@ -210,7 +232,6 @@ async function sendVolunteerData() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(volunteerData),
     });
-
 
     if (response.ok) {
       console.log('Volunteer opportunity added successfully');
@@ -225,53 +246,15 @@ async function sendVolunteerData() {
   }
 }
 
-// Function send the user-inputted search query to the server
-// async function sendUserInput(event) {
-//   event.preventDefault();
-//   const searchBar = document.getElementById('search-bar').value;
-//   const timestamp = Date.now(); // Current time in milliseconds
-
-
-//   const volunteerData = { timestamp, searchBar};
-
-
-//   try {
-//     const response = await fetch('/add-user-data', {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify(volunteerData),
-//     });
-
-
-//     if (response.ok) {
-//       console.log('Volunteer opportunity added successfully');
-//       alert('Volunteer opportunity added successfully!');
-//     } else {
-//       console.error('Failed to add volunteer data:', await response.text());
-//       alert('Failed to add volunteer data. Please try again.');
-//     }
-//   } catch (error) {
-//     console.error('Error:', error);
-//     alert('An error occurred. Please try again.');
-//   }
-// }
-
-
-// Attach the form submission handler
-// document.querySelector('form').addEventListener('submit', sendVolunteerData);
-// document.querySelector('form').addEventListener('submit', sendUserInput);
 // Function to open the custom popup
-function openCustomPopup(storeAddress, category) {
+function openCustomPopup(storeAddress, category, taskId) {
   console.log("📌 Opening custom popup for:", storeAddress);
 
-  // Set content
   document.getElementById('popupLocation').innerText = storeAddress;
   document.getElementById('popupCategory').innerText = category;
 
-  // Show the popup
   document.getElementById('customPopup').style.display = 'block';
 
-  // Attach event listener to Register button
   document.getElementById('registerBtn').onclick = async function () {
     console.log("📩 Register button clicked!");
 
@@ -284,23 +267,20 @@ function openCustomPopup(storeAddress, category) {
     console.log(`📨 Sending request to /send-email for: ${email}`);
 
     try {
-      const response = await fetch('/send-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: email,
-          storeAddress: storeAddress,
-          category: category
-        }),
+      const response = await fetch("http://localhost:3000/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, storeAddress, category, taskId }),
       });
 
-      console.log("📬 Response received:", response);
+      const result = await response.json();
+      console.log("📬 Response received:", result);
 
       if (response.ok) {
-        alert("Registration successful! Check your email.");
+        alert(`Registration successful! You are volunteer #${result.count}.`);
         closeCustomPopup();
       } else {
-        alert("❌ Error sending email.");
+        alert(result.message || "❌ Error sending email.");
       }
     } catch (error) {
       console.error("❌ Fetch error:", error);

@@ -259,8 +259,35 @@ footer {
 .side-panel-open .icon-close {
   display: initial !important;
 }
+.search-container {
+  position: relative;
+  width: 300px;
+}
 
-#user-input-label
-{
-  margin-left: 380px;
+#search-bar {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0px;
+  width: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  z-index: 1000;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.suggestion-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.suggestion-item:hover {
+  background: #f0f0f0;
 }
