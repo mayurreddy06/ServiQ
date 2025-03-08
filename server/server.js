@@ -27,7 +27,7 @@ app.use(express.json());
 
 // Serve the main HTML file
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', '/client/map.html'));
+  res.sendFile(path.join(__dirname, '..', '/client/website-designing/homepage.html'));
 });
 
 app.get('/signup.html', (req, res) => {
