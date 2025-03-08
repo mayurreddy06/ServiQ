@@ -52,7 +52,7 @@ async function addAccount(event) {
     }
     
     console.log('Account added successfully');
-    window.location.href = '/websiteDesignTest.html';
+    window.location.href = '/website-designing/homepage.html';
     
   } catch (error) {
     const errorCode = error.code;
