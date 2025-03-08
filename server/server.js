@@ -19,13 +19,29 @@ const db = admin.database();
 module.exports = db;
 
 // Middleware to serve static files and parse JSON body
-app.use(express.static(path.join(__dirname, '../client')));
+app.use(express.static(path.join(__dirname, '..'))); // Serve static files from the "client" directory
+app.use('/css', express.static(path.join(__dirname, '../css'))); // Serve CSS files
+app.use('/js', express.static(path.join(__dirname, '../js'))); // Serve JS files
+app.use('/website-designing', express.static(path.join(__dirname, '../website-designing'))); // Serve website-designing files
 app.use(express.json());
 
 // Serve the main HTML file
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'map.html'));
+  res.sendFile(path.join(__dirname, '..', '/client/map.html'));
 });
+
+app.get('/signup.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'signup.html'));
+});
+
+app.get('/signlog.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'signlog.html'));
+});
+
+app.get('/websiteDesignTest.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'websiteDesignTest.html'));
+});
+
 
 // Saves additional account data in database
 app.post('/add-account', async (req, res) => {

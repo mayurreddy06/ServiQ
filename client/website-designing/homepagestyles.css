@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
 body{
     background-color: rgb(156, 175, 136);
@@ -27,9 +27,9 @@ body{
 }
 
 .button-container {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center; /* Centers the button */
+    margin-top: 490px;
+    text-align: center; 
+    
 }
 
 .cta-button {
@@ -38,10 +38,11 @@ body{
     font-size: 18px;
     padding: 12px 24px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     transition: 0.3s ease-in-out;
     font-family: 'Poppins', sans-serif;
+    
 }
 
 .cta-button:hover {
