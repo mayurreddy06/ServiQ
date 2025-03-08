@@ -31,15 +31,23 @@ app.get('/', (req, res) => {
 });
 
 app.get('/signup.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'signup.html'));
+  res.sendFile(path.join(__dirname, '..', '/client/signup.html'));
 });
 
 app.get('/signlog.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'signlog.html'));
+  res.sendFile(path.join(__dirname, '..', '/client/signlog.html'));
 });
 
 app.get('/websiteDesignTest.html', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'websiteDesignTest.html'));
+});
+
+app.get('/homepage.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', '/client/website-designing/homepage.html'));
+});
+
+app.get('/taskpost.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', '/client/taskpost.html'));
 });
 
 
