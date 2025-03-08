@@ -73,7 +73,6 @@ app.post('/add-account', async (req, res) => {
   }
 });
 
-// Mapbox Key Route
 app.get('/websiteDesignTest.html', (req, res) => {
   res.sendFile(path.join(__dirname, '../client', 'websiteDesignTest.html'));
 });
@@ -90,8 +89,12 @@ app.get('/map.html', (req, res) => {
   res.sendFile(path.join(__dirname, '../client', 'map.html'));
 });
 
-app.get('/map.html', (req, res) => {
+app.get('/taskpost.html', (req, res) => {
   res.sendFile(path.join(__dirname, '../client', 'taskpost.html'));
+});
+
+app.get('/website-designing/homepage.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client', '/website-designing/homepage.html'));
 });
 
 // Route to add a shopping discount

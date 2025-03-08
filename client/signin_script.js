@@ -17,7 +17,7 @@ async function login(event){
 
         console.log("Logged in successfully: ", user);
 
-        window.location.href = '/homepage.html';
+        window.location.href = '/website-designing/homepage.html';
     } catch(error){
         console.error("Error logging in:", error.message);
     }
