@@ -27,27 +27,31 @@ app.use(express.json());
 
 // Serve the main HTML file
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', '/client/website-designing/homepage.html'));
-});
-
-app.get('/signup.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', '/client/signup.html'));
-});
-
-app.get('/signlog.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', '/client/signlog.html'));
+  res.sendFile(path.join(__dirname, '..', '/client/homepage.html'));
 });
 
 app.get('/websiteDesignTest.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'websiteDesignTest.html'));
+  res.sendFile(path.join(__dirname, '../client', 'websiteDesignTest.html'));
 });
 
-app.get('/homepage.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', '/client/website-designing/homepage.html'));
+app.get('/signlog.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client', 'signlog.html'));
+});
+
+app.get('/signup.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client', 'signup.html'));
+});
+
+app.get('/map.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client', 'map.html'));
 });
 
 app.get('/taskpost.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', '/client/taskpost.html'));
+  res.sendFile(path.join(__dirname, '../client', 'taskpost.html'));
+});
+
+app.get('/homepage.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client', 'homepage.html'));
 });
 
 
@@ -71,30 +75,6 @@ app.post('/add-account', async (req, res) => {
     console.error('Error saving user data:', error);
     return res.status(500).send(error.message);
   }
-});
-
-app.get('/websiteDesignTest.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'websiteDesignTest.html'));
-});
-
-app.get('/signlog.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'signlog.html'));
-});
-
-app.get('/signup.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'signup.html'));
-});
-
-app.get('/map.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'map.html'));
-});
-
-app.get('/taskpost.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'taskpost.html'));
-});
-
-app.get('/website-designing/homepage.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', '/website-designing/homepage.html'));
 });
 
 // Route to add a shopping discount

@@ -1,34 +1,66 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>ServiQ</title>
-        <link rel="stylesheet" href="navbar.css">
-        <link rel="stylesheet" href="homestyles.css">
-        <!-- Mapbox CSS -->
-        <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
-        <!-- Google Places API -->
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwHozpYoJS8xgURnkkICo7L0vw8xW2Oak&libraries=places"></script>
+        <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiQ</title>
+    <link rel="stylesheet" href="/client/general.css">
+    <link rel="stylesheet" href="/client/navbar.css">
+    <link rel="stylesheet" href="/client/homepagestyles.css">
     </head>
     <body>
-        <div class="banner">
-            <div class="bubble">
-                <div class="navbar">
-                    <img src="ServiQ_logo.png" class="logo">
-                    <ul>
-                        <li><a href="homepage.html">Home</a></li>
-                        <li><a href="map.html">Volunteer Map</a></li>
-                        <li><a href="taskpost.html">Tasks</a></li>
-                        <li><a href="signlog.html">Login</a></li>
-                    </ul>
-                </div>
-                <div class="content">
-                    <h1>Help the Community</h1>
-                    <p>add smth here</p>
-                    <div>
-                        <button type="button"><span></span>Find Now</button>
-                    </div>    
-                </div>
+        <header>
+            <div class="left-header">
+                <img src="/client/ServiQ_logo.png">
             </div>
-        </div>
+            <div class="center-space"></div>
+            <div class="right-header">
+                <div><a href="/client/homepage.html">Home</a></div>
+                <div><a href="/client/map.html">Volunteer</a></div>
+                <div><a href="/client/taskpost.html">Tasks</a></div>
+                <div><a href="/client/signlog.html">Login</a></div>
+            </div>
+        </header>
+
+        <section class="content">
+            <div class="statement-content">
+                <div class="homepage-image">
+                    <img> Add an image here
+                </div>
+                <div class="big-statement">Strength Through Service
+                    <div class="small-statement">
+                        <br>
+                        ServiQ's mission is to inspire a culture of 
+                        service and community. By promoting accessible 
+                        volunteering opportunities, we strive to 
+                        empower people like you to help strengthen 
+                        and support the connections we create.
+                        <br>
+                        <br>
+                        Every act is noticed. Every act is a symbol 
+                        of change. Every act comes from the heart. 
+                        It's up to us to build the world of our dreams.
+                        <br>
+                        Be the reason for change. 
+                        <br>
+                        <br>
+                        -ServiQ
+
+                    </div>
+                </div>
+                <div class="button-container">
+                    <a href="/client/map.html">
+                        <button class="cta-button">Find Your Next Event</button>
+                    </a>
+                </div>
+                
+            </div>
+        </section>
+
+        <script type="module" src="signin_script.js"></script>
+
+        <footer>
+            2025 ServiQ. All rights reserved.
+        </footer>
     </body>
 </html>
