@@ -33,38 +33,49 @@ const db = admin.database();
 module.exports = db;
 
 // Middleware to serve static files and parse JSON body
-app.use(express.static(path.join(__dirname, '../client')));
+app.use(express.static(path.join(__dirname, 'assets')));
 app.use(express.json());
 
 // Serve the main HTML file
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', '/client/homepage.html'));
-});
-
-app.get('/websiteDesignTest.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'websiteDesignTest.html'));
+  res.sendFile(path.join(__dirname, 'assets/html/', 'homepage.html'));
 });
 
 app.get('/signlog.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'signlog.html'));
-});
-
-app.get('/signup.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'signup.html'));
+  res.sendFile(path.join(__dirname, 'assets/html/', 'signlog.html'));
 });
 
 app.get('/map.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'map.html'));
+  res.sendFile(path.join(__dirname, 'assets/html/', 'map.html'));
 });
 
 app.get('/taskpost.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'taskpost.html'));
+  res.sendFile(path.join(__dirname, 'assets/html/', 'taskpost.html'));
 });
 
-app.get('/homepage.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'homepage.html'));
-});
+// app.get('/websiteDesignTest.html', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../client', 'websiteDesignTest.html'));
+// });
 
+// app.get('/signlog.html', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'assets/html/', 'signlog.html'));
+// });
+
+// app.get('/signup.html', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../client', 'signup.html'));
+// });
+
+// app.get('/map.html', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'assets/html/', 'map.html'));
+// });
+
+// app.get('/taskpost.html', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../client', 'taskpost.html'));
+// });
+
+// app.get('/homepage.html', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../client', 'homepage.html'));
+// });
 
 // Saves additional account data in database
 app.post('/add-account', async (req, res) => {
@@ -84,70 +95,72 @@ app.post('/add-account', async (req, res) => {
     return res.status(200).send("User data saved successfully");
   } catch (error) {
     console.error('Error saving user data:', error);
-    return res.status(500).send(error.message);
-  }
-});
-
-// Route to add a shopping discount
-app.post('/add-discount', async (req, res) => {
-  const { storeName, discountAmount, lat, lng, timestamp } = req.body;
-
-  if (!storeName || !discountAmount || !lat || !lng || !timestamp) {
-    return res.status(400).send('Missing required fields');
-  }
-
-  try {
-    const ref = db.ref('shopping_discounts');
-    await ref.push({ storeName, discountAmount, location: { lat, lng }, timestamp });
-
-    // Run Python script after adding new data
-    exec('python Agent.py', (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error executing Python script: ${error.message}`);
-      }
-      if (stderr) {
-        console.error(`Python Script Error: ${stderr}`);
-      }
-      console.log(`Python Script Output: ${stdout}`);
+    return res.json({
+      message: "Failed to user login info to Firebase"
     });
-
-    res.status(200).send('Discount added successfully');
-  } catch (error) {
-    console.error('Error adding discount:', error);
-    res.status(500).send('Error adding discount');
   }
 });
+
+// // Route to add a shopping discount
+// app.post('/add-discount', async (req, res) => {
+//   const { storeName, discountAmount, lat, lng, timestamp } = req.body;
+
+//   if (!storeName || !discountAmount || !lat || !lng || !timestamp) {
+//     return res.status(400).send('Missing required fields');
+//   }
+
+//   try {
+//     const ref = db.ref('shopping_discounts');
+//     await ref.push({ storeName, discountAmount, location: { lat, lng }, timestamp });
+
+//     // Run Python script after adding new data
+//     exec('python Agent.py', (error, stdout, stderr) => {
+//       if (error) {
+//         console.error(`Error executing Python script: ${error.message}`);
+//       }
+//       if (stderr) {
+//         console.error(`Python Script Error: ${stderr}`);
+//       }
+//       console.log(`Python Script Output: ${stdout}`);
+//     });
+
+//     res.status(200).send('Discount added successfully');
+//   } catch (error) {
+//     console.error('Error adding discount:', error);
+//     res.status(500).send('Error adding discount');
+//   }
+// });
 
 // Route to fetch all discounts
-app.get('/get-discounts', async (req, res) => {
-  try {
-    const ref = db.ref('shopping_discounts');
-    const snapshot = await ref.once('value');
-    const discounts = snapshot.val();
+// app.get('/get-discounts', async (req, res) => {
+//   try {
+//     const ref = db.ref('shopping_discounts');
+//     const snapshot = await ref.once('value');
+//     const discounts = snapshot.val();
 
-    if (!discounts) {
-      return res.status(200).json([]); // No discounts found
-    }
+//     if (!discounts) {
+//       return res.status(200).json([]); // No discounts found
+//     }
 
-    const currentTime = Date.now();
-    const validDiscounts = {};
+//     const currentTime = Date.now();
+//     const validDiscounts = {};
 
-    // Filter and remove expired discounts
-    for (const key in discounts) {
-      const { timestamp } = discounts[key];
-      if (currentTime - timestamp < 24 * 60 * 60 * 1000) {
-        validDiscounts[key] = discounts[key];
-      } else {
-        await ref.child(key).remove(); // Remove expired items
-      }
-    }
+//     // Filter and remove expired discounts
+//     for (const key in discounts) {
+//       const { timestamp } = discounts[key];
+//       if (currentTime - timestamp < 24 * 60 * 60 * 1000) {
+//         validDiscounts[key] = discounts[key];
+//       } else {
+//         await ref.child(key).remove(); // Remove expired items
+//       }
+//     }
 
-    res.status(200).json(validDiscounts);
-  } catch (error) {
-    console.error('Error fetching discounts:', error);
-    res.status(500).send('Error fetching discounts');
-  }
-});
+//     res.status(200).json(validDiscounts);
+//   } catch (error) {
+//     console.error('Error fetching discounts:', error);
+//     res.status(500).send('Error fetching discounts');
+//   }
+// });
 
 // Function to clean expired discounts every hour
 const cleanExpiredItems = async () => {
@@ -180,7 +193,9 @@ app.post('/add-volunteer-data', async (req, res) => {
   const { storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description } = req.body;
 
   if (!storeAddress || !category || !start_time || !end_time || !spots || !timestamp || !task || !location || !date || !description) {
-    return res.status(400).send('Missing required fields');
+    return res.json({
+      message: "one or more of the required fields is missing"
+    });
   }
 
   try {
@@ -188,20 +203,20 @@ app.post('/add-volunteer-data', async (req, res) => {
     const newTaskRef = ref.push(); // Capture the reference to the new data
     await newTaskRef.set({ storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description });
 
-    // Index into Typesense (only timestamp, category, and task)
-    const typesenseDocument = {
-      id: newTaskRef.key, // Use Firebase key as the Typesense document ID
-      timestamp: parseInt(timestamp, 10), // Ensure timestamp is an integer
-      category,
-      task,
-      description,
-    };
+    // // Index into Typesense (only timestamp, category, and task)
+    // const typesenseDocument = {
+    //   id: newTaskRef.key, // Use Firebase key as the Typesense document ID
+    //   timestamp: parseInt(timestamp, 10), // Ensure timestamp is an integer
+    //   category,
+    //   task,
+    //   description,
+    // };
 
-    console.log('Indexing document into Typesense:', typesenseDocument);
+    // console.log('Indexing document into Typesense:', typesenseDocument);
 
-    // Use typesenseClient to add the document to the collection
-    await typesenseClient.collections('volunteerTasks').documents().create(typesenseDocument);
-    console.log('Document indexed successfully');
+    // // Use typesenseClient to add the document to the collection
+    // await typesenseClient.collections('volunteerTasks').documents().create(typesenseDocument);
+    // console.log('Document indexed successfully');
 
     res.status(200).send('Volunteer opportunity added successfully');
   } catch (error) {

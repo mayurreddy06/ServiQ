@@ -25,7 +25,7 @@ async function reverseGeocode(lng, lat) {
   return String(data.features[0]?.properties?.context?.postcode?.name);
 }
 
-async function fetchAndDisplayMarkers(searchQuery = null) {
+async function fetchAndDisplayMarkers() {
   try {
     console.log("Fetching data from: /get-volunteer-tasks");
     const response = await fetch('/get-volunteer-tasks');
@@ -64,20 +64,20 @@ async function fetchAndDisplayMarkers(searchQuery = null) {
       // Skip if required fields are missing
       if (!storeAddress || !location || !category || !date || !task || !description) continue;
 
-      // Apply search query filter (if provided)
-      if (searchQuery && searchQuery.trim() !== "") {
-        const searchQueryLower = searchQuery.trim().toLowerCase();
-        const descriptionLower = description.toLowerCase();
+      // // Apply search query filter (if provided)
+      // if (searchQuery && searchQuery.trim() !== "") {
+      //   const searchQueryLower = searchQuery.trim().toLowerCase();
+      //   const descriptionLower = description.toLowerCase();
 
-        console.log("Search Query:", searchQueryLower);
-        console.log("Description:", descriptionLower);
+      //   console.log("Search Query:", searchQueryLower);
+      //   console.log("Description:", descriptionLower);
 
-        // Skip if the search query doesn't match the description
-        if (!descriptionLower.includes(searchQueryLower)) {
-          console.log("Skipping task due to search query mismatch:", volunteerTasks[key]);
-          continue;
-        }
-      }
+      //   // Skip if the search query doesn't match the description
+      //   if (!descriptionLower.includes(searchQueryLower)) {
+      //     console.log("Skipping task due to search query mismatch:", volunteerTasks[key]);
+      //     continue;
+      //   }
+      // }
 
       // Apply other filters (category, date, zipcode)
       if (useCategory && category !== selectedCategory) continue;
