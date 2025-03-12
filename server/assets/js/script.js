@@ -81,9 +81,9 @@ async function fetchAndDisplayMarkers() {
       // }
 
       // Apply other filters (category, date, zipcode)
-      if (useCategory && category !== selectedCategory) continue;
-      if (useCalendar && taskDate !== selectedDate) continue;
-      if (useZipcode && foundZipcode !== selectedZipcode) continue;
+      if (useCategory && (category !== selectedCategory)) continue;
+      if (useCalendar && (taskDate !== selectedDate)) continue;
+      if (useZipcode && (foundZipcode !== selectedZipcode)) continue;
 
       // Add marker to the map
       const marker = new mapboxgl.Marker()
@@ -230,6 +230,15 @@ async function sendVolunteerData() {
   
   const description = document.getElementById('description').value;
   const timestamp = Date.now(); // Current time in milliseconds
+
+  console.log('storeAddress: ' + storeAddress);
+  console.log('date: '+ date);
+  console.log('start_time: '+start_time);
+  console.log('end_time: '+end_time);
+  console.log('category: '+category);
+  console.log('spots ' + spots);
+  console.log('task: ' + task);
+  console.log('description' + description );
 
   if (lat == null || lng == null) {
     alert("Please select a valid location from the autocomplete suggestion.");
