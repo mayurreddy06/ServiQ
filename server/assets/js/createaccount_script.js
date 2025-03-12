@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-import { firebaseConfig } from './js/firebaseConfig.js'
+import { firebaseConfig } from './firebaseConfig.js'
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -52,7 +52,7 @@ async function addAccount(event) {
     }
     
     console.log('Account added successfully');
-    window.location.href = '/website-designing/homepage.html';
+    window.location.href = './homepage.html';
     
   } catch (error) {
     const errorCode = error.code;
