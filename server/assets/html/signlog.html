@@ -12,13 +12,12 @@
         <div>
             <header>
                 <div class="left-header">
-                    <img src="/client/ServiQ_logo.png">
+                    <img src="../images/ServiQ_logo.png">
                 </div>
                 <div class="center-space"></div>
                 <div class="right-header">
                     <div><a href="homepage.html">Home</a></div>
                     <div><a href="map.html">Volunteer</a></div>
-                    <div><a href="taskpost.html">Tasks</a></div>
                     <div><a href="signlog.html">Login</a></div>
                 </div>
             </header>
@@ -32,6 +31,19 @@
                     <div class="entry"><input type="password" name="password" id="password-entry" required></div>
 
                     <button type="submit" class="login-button">Login</button>
+
+                    <div id="login-error" class="error-message" style="margin-top: 20px;
+                    background-color: #f8d7da;
+                    color: #721c24;
+                    padding: 15px;
+                    border: 1px solid #f5c6cb;
+                    border-radius: 5px;
+                    font-size: 14px;
+                    font-weight: bold;
+                    text-align: center;
+                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                    display: none;" 
+                    ></div>
 
                     <p>Don't have an account? <a href="signup.html">Register</a> </p>
                 </form>
