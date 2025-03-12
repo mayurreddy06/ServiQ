@@ -38,29 +38,7 @@ app.use(express.json());
 
 // Serve the main HTML file
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', 'websiteDesignTest.html'));
-});
-
-// Saves additional account data in database
-app.post('/add-account', async (req, res) => {
-  const { uid, email, name, accountType, agencyDescription } = req.body;
-
-  if (!uid || !email || !name) {
-    return res.status(400).send('Missing required fields');
-  }
-
-  try {
-    if (accountType === 'user') {
-      await db.ref(`user_accounts/${uid}`).set({ email, name, accountType });
-    } else if (accountType === 'agency') {
-      await db.ref(`agency_accounts/${uid}`).set({ email, name, accountType, agencyDescription });
-    }
-    
-    return res.status(200).send("User data saved successfully");
-  } catch (error) {
-    console.error('Error saving user data:', error);
-    return res.status(500).send(error.message);
-  }
+  res.sendFile(path.join(__dirname, '..', '/client/homepage.html'));
 });
 
 app.get('/websiteDesignTest.html', (req, res) => {
@@ -83,8 +61,31 @@ app.get('/taskpost.html', (req, res) => {
   res.sendFile(path.join(__dirname, '../client', 'taskpost.html'));
 });
 
-app.get('/website-designing/homepage.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client', '/website-designing/homepage.html'));
+app.get('/homepage.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client', 'homepage.html'));
+});
+
+
+// Saves additional account data in database
+app.post('/add-account', async (req, res) => {
+  const { uid, email, name, accountType, agencyDescription } = req.body;
+
+  if (!uid || !email || !name) {
+    return res.status(400).send('Missing required fields');
+  }
+
+  try {
+    if (accountType === 'user') {
+      await db.ref(`user_accounts/${uid}`).set({ email, name, accountType });
+    } else if (accountType === 'agency') {
+      await db.ref(`agency_accounts/${uid}`).set({ email, name, accountType, agencyDescription });
+    }
+    
+    return res.status(200).send("User data saved successfully");
+  } catch (error) {
+    console.error('Error saving user data:', error);
+    return res.status(500).send(error.message);
+  }
 });
 
 // Route to add a shopping discount
