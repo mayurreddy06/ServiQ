@@ -5,18 +5,18 @@ const { exec } = require('child_process');
 require('dotenv').config();
 const Typesense = require('typesense');
 
-// Initialize Typesense Client
-const typesenseClient = new Typesense.Client({
-  nodes: [
-    {
-      host: 'bgrwny8ik1eu94djp-1.a1.typesense.net', // Replace with your Typesense Cloud node
-      port: '443',                                  // Use 443 for Typesense Cloud
-      protocol: 'https',                            // Use 'https' for Typesense Cloud
-    },
-  ],
-  apiKey: 'OUgsq6Jry5P5LHhMC8SJdpfREGXrb1fq', // Use Admin API Key
-  connectionTimeoutSeconds: 2,
-});
+// // Initialize Typesense Client
+// const typesenseClient = new Typesense.Client({
+//   nodes: [
+//     {
+//       host: 'bgrwny8ik1eu94djp-1.a1.typesense.net', // Replace with your Typesense Cloud node
+//       port: '443',                                  // Use 443 for Typesense Cloud
+//       protocol: 'https',                            // Use 'https' for Typesense Cloud
+//     },
+//   ],
+//   apiKey: 'VXyvCuyJft5EEFTSaXfm0SaadQMSTRRn', // Use Admin API Key
+//   connectionTimeoutSeconds: 2,
+// });
 
 const serviceAccount = require(process.env.FIREBASE_JSON);
 const app = express();
@@ -176,16 +176,16 @@ setInterval(cleanExpiredItems, 60 * 60 * 1000);
 
 // Route to add volunteer data
 app.post('/add-volunteer-data', async (req, res) => {
-  const { storeAddress, category, start_time, end_time, spots, timestamp, task, location, date } = req.body;
+  const { storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description } = req.body;
 
-  if (!storeAddress || !category || !start_time || !end_time || !spots || !timestamp || !task || !location || !date) {
+  if (!storeAddress || !category || !start_time || !end_time || !spots || !timestamp || !task || !location || !date || !description) {
     return res.status(400).send('Missing required fields');
   }
 
   try {
     const ref = db.ref('volunteer_opportunities');
     const newTaskRef = ref.push(); // Capture the reference to the new data
-    await newTaskRef.set({ storeAddress, category, start_time, end_time, spots, timestamp, task, location, date });
+    await newTaskRef.set({ storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description });
 
     // Index into Typesense (only timestamp, category, and task)
     const typesenseDocument = {
@@ -193,6 +193,7 @@ app.post('/add-volunteer-data', async (req, res) => {
       timestamp: parseInt(timestamp, 10), // Ensure timestamp is an integer
       category,
       task,
+      description,
     };
 
     console.log('Indexing document into Typesense:', typesenseDocument);
@@ -369,36 +370,31 @@ app.get("/unregister", async (req, res) => {
   }
 });
 
-// Fetch search suggestions from Typesense
-app.get('/search-suggestions', async (req, res) => {
-  const { query } = req.query;
+// app.get('/search-suggestions', async (req, res) => {
+//   const { query } = req.query;
 
-  if (!query) {
-    return res.status(400).json({ error: 'Query parameter is required' });
-  }
+//   if (!query) {
+//     return res.status(400).json({ error: 'Query parameter is required' });
+//   }
 
-  try {
-    const searchResults = await typesenseClient.collections('volunteerTasks')
-      .documents()
-      .search({
-        q: query,
-        query_by: 'category,task', // Search by these fields
-        per_page: 5,               // Limit the number of suggestions
-      });
-
-    // Extract suggestions from search results
-    const suggestions = searchResults.hits.map(hit => ({
-      category: hit.document.category,
-      task: hit.document.task,
-    }));
-
-    res.json(suggestions);
-  } catch (err) {
-    console.error('Error fetching search suggestions:', err);
-    res.status(500).json({ error: 'Error fetching search suggestions' });
-  }
-});
-
+//   console.log("This is the query: " + query);
+//   try {
+//     let search_parameters = {
+//       'q': query,
+//       'query_by': 'embedding',
+//       'per_page': 5
+//     }
+    
+//     // Use typesenseClient instead of client
+//     const searchResults = await typesenseClient.collections('volunterTasks').documents().search(search_parameters);
+    
+//     const suggestions = searchResults.hits ? searchResults.hits.map(hit => hit.document) : [];
+//     res.json(suggestions);
+//   } catch (err) {
+//     console.error('Error fetching search suggestions:', err);
+//     res.status(500).json({ error: 'Error fetching search suggestions' });
+//   }
+// });
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);

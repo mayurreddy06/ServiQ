@@ -107,14 +107,17 @@
         <input type="time" id="end-time" name="discount" placeholder="Enter End Time">
 
         <label for="Date">Date:</label>
-        <input type="date" id="date-input" name="discount" placeholder="Enter a>
+        <input type="date" id="date-input" name="discount" placeholder="Enter a">
         
 
-        <label for="Task">Task:</label>
+        <label for="task">Task:</label>
         <input type="text" id="task" name="discount" placeholder="Enter Task" required>
 
         <input type="range" id="spots" name="discount" min="1" max="200" value="100">
         <p># of Spots Available: <span id="sliderValue">100</span></p>
+
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="discount" placeholder="Enter Task" required>
 
         <button type="submit" onclick = "sendVolunteerData()">Submit</button>
       </form>

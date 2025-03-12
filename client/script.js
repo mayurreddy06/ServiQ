@@ -10,7 +10,6 @@ const map = new mapboxgl.Map({
   center: [-82.9988, 39.9612],
   zoom: 12,
 });
-
 window.onload = function () {
   document.getElementById("event-date").valueAsDate = new Date();
   fetchAndDisplayMarkers();
@@ -53,7 +52,7 @@ async function fetchAndDisplayMarkers(searchQuery = null) {
     markers = [];
 
     for (const key in volunteerTasks) {
-      const { storeAddress, location, category, date, task } = volunteerTasks[key];
+      const { storeAddress, location, category, date, task, description } = volunteerTasks[key];
       let taskDate = new Date(date).toISOString().split('T')[0];
       const { lat, lng } = location;
       const foundZipcode = await reverseGeocode(lng, lat);
@@ -63,22 +62,19 @@ async function fetchAndDisplayMarkers(searchQuery = null) {
       let useZipcode = document.getElementById("toggle-zipcode").checked;
 
       // Skip if required fields are missing
-      if (!storeAddress || !location || !category || !date || !task) continue;
+      if (!storeAddress || !location || !category || !date || !task || !description) continue;
 
       // Apply search query filter (if provided)
       if (searchQuery && searchQuery.trim() !== "") {
-
         const searchQueryLower = searchQuery.trim().toLowerCase();
-        
-        const categoryLower = category.toLowerCase();
-        const taskLower = task.toLowerCase();
+        const descriptionLower = description.toLowerCase();
 
         console.log("Search Query:", searchQueryLower);
-        console.log("Category:", categoryLower);
-        console.log("Task:", taskLower);
+        console.log("Description:", descriptionLower);
 
-        // Skip if the search query doesn't match the category or task
-        if (!searchQueryLower.includes(categoryLower) && !searchQueryLower.includes(taskLower)) {
+        // Skip if the search query doesn't match the description
+        if (!descriptionLower.includes(searchQueryLower)) {
+          console.log("Skipping task due to search query mismatch:", volunteerTasks[key]);
           continue;
         }
       }
@@ -139,75 +135,81 @@ function initAutocomplete() {
 }
 
 // Search suggestions functionality
-const searchBar = document.getElementById('search-bar');
-const suggestionsDropdown = document.getElementById('search-suggestions');
+// const searchBar = document.getElementById('search-bar');
+// const suggestionsDropdown = document.getElementById('search-suggestions');
 
-function debounce(func, delay) {
-  let timeout;
-  return function (...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(this, args), delay);
-  };
-}
+// function debounce(func, delay) {
+//   let timeout;
+//   return function (...args) {
+//     clearTimeout(timeout);
+//     timeout = setTimeout(() => func.apply(this, args), delay);
+//   };
+// }
 
-async function fetchSearchSuggestions(query) {
-  if (!query) {
-    suggestionsDropdown.innerHTML = '';
-    suggestionsDropdown.style.display = 'none';
-    return;
-  }
+// async function fetchSearchSuggestions(query) {
+//   if (!query) {
+//     suggestionsDropdown.innerHTML = '';
+//     suggestionsDropdown.style.display = 'none';
+//     return;
+//   }
 
-  try {
-    const response = await fetch(`/search-suggestions?query=${encodeURIComponent(query)}`);
-    const suggestions = await response.json();
+//   try {
+//     const response = await fetch(`/search-suggestions?query=` + query);
+//     const suggestions = await response.json();
+//     if (!response.ok) {
+//       const errorText = await response.text(); // Try to get the raw response text
+//       console.error('Error response:', errorText);
+//       // Handle error
+//       return;
+//     }
 
-    if (suggestions.length > 0) {
-      suggestionsDropdown.innerHTML = suggestions
-        .map(suggestion => `
-          <div class="suggestion-item" data-category="${suggestion.category}" data-task="${suggestion.task}">
-            <strong>${suggestion.category}</strong>: ${suggestion.task}
-          </div>
-        `)
-        .join('');
-      suggestionsDropdown.style.display = 'block';
-    } else {
-      suggestionsDropdown.innerHTML = '<div class="suggestion-item">No results found</div>';
-      suggestionsDropdown.style.display = 'block';
-    }
-  } catch (error) {
-    console.error('Error fetching suggestions:', error);
-    suggestionsDropdown.innerHTML = '<div class="suggestion-item">Error fetching suggestions</div>';
-    suggestionsDropdown.style.display = 'block';
-  }
-}
 
-searchBar.addEventListener('input', debounce(() => {
-  const query = searchBar.value.trim();
-  fetchSearchSuggestions(query);
-}, 300));
+//     if (suggestions.length > 0) {
+//       suggestionsDropdown.innerHTML = suggestions
+//         .map(suggestion => `
+//           <div class="suggestion-item" data-description="${suggestion.description}">
+//             <strong>Description:</strong> ${suggestion.description}
+//           </div>
+//         `)
+//         .join('');
+//       suggestionsDropdown.style.display = 'block';
+//     } else {
+//       suggestionsDropdown.innerHTML = '<div class="suggestion-item">No results found</div>';
+//       suggestionsDropdown.style.display = 'block';
+//     }
+//   } catch (error) {
+//     console.error('Error fetching suggestions:', error);
+//     suggestionsDropdown.innerHTML = '<div class="suggestion-item">Error fetching suggestions</div>';
+//     suggestionsDropdown.style.display = 'block';
+//   }
+// }
 
-suggestionsDropdown.addEventListener('click', (event) => {
-  const suggestionItem = event.target.closest('.suggestion-item');
-  if (suggestionItem) {
-    const category = suggestionItem.dataset.category;
-    const task = suggestionItem.dataset.task;
+// searchBar.addEventListener('input', debounce(() => {
+//   const query = searchBar.value.trim();
+//   fetchSearchSuggestions(query);
+// }, 300));
 
-    // Set the search bar value to the selected suggestion
-    searchBar.value = `${category}: ${task}`;
+// suggestionsDropdown.addEventListener('click', (event) => {
+//   const suggestionItem = event.target.closest('.suggestion-item');
+//   if (suggestionItem) {
+//     const description = suggestionItem.dataset.description;
 
-    // Hide the dropdown
-    suggestionsDropdown.style.display = 'none';
+//     // Set the search bar value to the selected suggestion
+//     searchBar.value = description;
 
-    // Filter markers based on the selected suggestion
-    fetchAndDisplayMarkers(`${category} ${task}`);
-  }
-});
+//     // Hide the dropdown
+//     suggestionsDropdown.style.display = 'none';
 
-document.addEventListener('click', (event) => {
-  if (!event.target.closest('.search-container')) {
-    suggestionsDropdown.style.display = 'none';
-  }
-});
+//     // Filter markers based on the selected suggestion
+//     fetchAndDisplayMarkers(description);
+//   }
+// });
+
+// document.addEventListener('click', (event) => {
+//   if (!event.target.closest('.search-container')) {
+//     suggestionsDropdown.style.display = 'none';
+//   }
+// });
 
 // Function to send user inputted volunteer data to the server
 async function sendVolunteerData() {
@@ -218,13 +220,14 @@ async function sendVolunteerData() {
   const spots = document.getElementById('spots').value;
   const task = document.getElementById('task').value;
   const date = document.getElementById('date-input').value;
+  const description = document.getElementById('description').value;
   const timestamp = Date.now(); // Current time in milliseconds
 
   if (lat == null || lng == null) {
     alert("Please select a valid location from the autocomplete suggestion.");
   }
 
-  const volunteerData = { storeAddress, category, start_time, end_time, spots, timestamp, task, location: { lat, lng }, date };
+  const volunteerData = { storeAddress, category, start_time, end_time, spots, timestamp, task, location: { lat, lng }, date, description};
 
   try {
     const response = await fetch('/add-volunteer-data', {
