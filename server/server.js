@@ -3,7 +3,7 @@ const path = require('path');
 const admin = require('firebase-admin');
 const { exec } = require('child_process');
 require('dotenv').config();
-const Typesense = require('typesense');
+// const Typesense = require('typesense');
 
 // // Initialize Typesense Client
 // const typesenseClient = new Typesense.Client({
@@ -36,22 +36,29 @@ module.exports = db;
 app.use(express.static(path.join(__dirname, 'assets')));
 app.use(express.json());
 
-// Serve the main HTML file
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/', 'homepage.html'));
+  res.sendFile(path.join(__dirname, 'assets/html/homepage.html'));
 });
 
 app.get('/signlog.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/', 'signlog.html'));
+  res.sendFile(path.join(__dirname, 'assets/html/signlog.html'));
 });
 
 app.get('/map.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/', 'map.html'));
+  res.sendFile(path.join(__dirname, 'assets/html/map.html'));
 });
 
 app.get('/taskpost.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/', 'taskpost.html'));
+  res.sendFile(path.join(__dirname, 'assets/html/taskpost.html'));
 });
+
+app.get('/homepage.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'assets/html/homepage.html'));
+});
+
+app.get('/signup.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'assets/html/signup.html'));
+})
 
 // app.get('/websiteDesignTest.html', (req, res) => {
 //   res.sendFile(path.join(__dirname, '../client', 'websiteDesignTest.html'));

@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-import { firebaseConfig } from './firebaseConfig.js'
+import { firebaseConfig } from './js/firebaseConfig.js'
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
