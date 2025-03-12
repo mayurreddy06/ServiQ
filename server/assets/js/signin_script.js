@@ -165,14 +165,18 @@ async function login(event) {
         window.location.href = 'homepage.html';
     } catch(error) {
         console.error("Error logging in:", error.message);
-        // Remove loading indicator if login fails
+
         removeLoadingIndicator();
         
-        // Show error message to user
         const errorElement = document.getElementById('login-error');
         if (errorElement) {
-            errorElement.textContent = error.message;
-            errorElement.style.display = 'block';
+          if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
+            errorElement.textContent = "An account with this email doesn't exist or the password is incorrect.";
+          } else {
+              errorElement.textContent = error.message;
+          }
+
+          errorElement.style.display = 'block';
         }
     }
 }
