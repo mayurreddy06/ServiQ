@@ -65,22 +65,7 @@ async function fetchAndDisplayMarkers() {
       // Skip if required fields are missing
       if (!storeAddress || !location || !category || !date || !task || !description) continue;
 
-      // // Apply search query filter (if provided)
-      // if (searchQuery && searchQuery.trim() !== "") {
-      //   const searchQueryLower = searchQuery.trim().toLowerCase();
-      //   const descriptionLower = description.toLowerCase();
-
-      //   console.log("Search Query:", searchQueryLower);
-      //   console.log("Description:", descriptionLower);
-
-      //   // Skip if the search query doesn't match the description
-      //   if (!descriptionLower.includes(searchQueryLower)) {
-      //     console.log("Skipping task due to search query mismatch:", volunteerTasks[key]);
-      //     continue;
-      //   }
-      // }
-
-      // Apply other filters (category, date, zipcode)
+      // Apply filters
       if (useCategory && category !== selectedCategory) continue;
       if (useCalendar && taskDate !== selectedDate) continue;
       if (useZipcode && foundZipcode !== selectedZipcode) continue;
@@ -88,22 +73,20 @@ async function fetchAndDisplayMarkers() {
       // Add marker to the map
       const marker = new mapboxgl.Marker()
         .setLngLat([lng, lat])
-        .setPopup(
-          new mapboxgl.Popup({ offset: 25 })
-            .setHTML(`
-              <div class="volunteer-popup">
-                <p><strong>Location:</strong> ${storeAddress}</p>
-                <p><strong>Category:</strong> ${category}</p>
-              </div>
-            `)
-        )
         .addTo(map);
+
       markers.push(marker);
+
+      // Add click event to show custom popup
+      marker.getElement().addEventListener('click', () => {
+        openCustomPopup(storeAddress, category);
+      });
     }
   } catch (error) {
     console.error('Error fetching or displaying markers:', error);
   }
 }
+
 
 // Add navigation controls to the map
 // map.on('load', fetchAndDisplayMarkers);
