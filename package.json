@@ -4,8 +4,8 @@
   "description": "aihackathon",
   "main": "script.js",
   "scripts": {
-    "start" : "node server/server.js",
-    "server" : "nodemon server/server.js"
+    "start": "node server/server.js",
+    "server": "nodemon server/server.js"
   },
   "keywords": [],
   "author": "",

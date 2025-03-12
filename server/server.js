@@ -270,6 +270,7 @@ app.get('/get-volunteer-tasks', async (req, res) => {
 // });
 
 require('dotenv').config();
+console.log("FIREBASE_JSON:", process.env.FIREBASE_JSON);
 
 console.log("EMAIL:", process.env.EMAIL);
 console.log("EMAIL_PASSWORD:", process.env.EMAIL_PASSWORD);
