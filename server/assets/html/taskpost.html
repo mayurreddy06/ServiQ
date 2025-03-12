@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="../css/taskpage.css">
         <link rel="stylesheet" href="../css/general.css">
         <link rel="stylesheet" href="../css/navbar.css">
+        <link rel="icon" type="image/png" href="../images/ServiQ_logo.png" />
         <!-- Mapbox CSS -->
         <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
         <!-- Google Places API -->
@@ -39,30 +40,31 @@
                 <div class="location">
                     <label for="autocomplete">Enter a Location</label>
                     <input type="text" id="autocomplete" name="store-location" required>
+                    </select>
                 </div>
                 <div class="calendar">
                     <label for="date">Date</label>
-                    <input type="text" id="date" class="flatpickr">
+                    <input type="date" id="date">
                 </div>
 
                 <!--Custom Time Selection -> uses css & js-->
                 <div class="time-picker-container">
                     <div class="time-picker">
                         <label class="time-text">Start Time</label>
-                        <div class="time-selection">
+                        <div class="time-selection" id = "start-time">
                             <div class="column">
                                 <div class="arrow" onmousedown="startChangeTime('start-hour', 1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9650;</div>
-                                <div class="time-box" id="start-hour">00</div>
+                                <div class="time-box start-slect" id="start-hour">00</div>
                                 <div class="arrow" onmousedown="startChangeTime('start-hour', -1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9660;</div>
                             </div>
                             <div class="column">
                                 <div class="arrow" onmousedown="startChangeTime('start-minute', 1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9650;</div>
-                                <div class="time-box" id="start-minute">00</div>
+                                <div class="time-box start-select" id="start-minute">00</div>
                                 <div class="arrow" onmousedown="startChangeTime('start-minute', -1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9660;</div>
                             </div>
                             <div class="column">
                                 <div class="arrow" onmousedown="startChangeTime('start-ampm', 1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9650;</div>
-                                <div class="time-box" id="start-ampm">AM</div>
+                                <div class="time-box start-select" id="start-ampm">AM</div>
                                 <div class="arrow" onmousedown="startChangeTime('start-ampm', -1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9660;</div>
                             </div>
                         </div>
@@ -70,20 +72,20 @@
                 
                     <div class="time-picker">
                         <label class="time-text">End Time</label>
-                        <div class="time-selection">
+                        <div class="time-selection" id = "end-time">
                             <div class="column">
                                 <div class="arrow" onmousedown="startChangeTime('end-hour', 1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9650;</div>
-                                <div class="time-box" id="end-hour">00</div>
+                                <div class="time-box end-select" id="end-hour">00</div>
                                 <div class="arrow" onmousedown="startChangeTime('end-hour', -1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9660;</div>
                             </div>
                             <div class="column">
                                 <div class="arrow" onmousedown="startChangeTime('end-minute', 1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9650;</div>
-                                <div class="time-box" id="end-minute">00</div>
+                                <div class="time-box end-select" id="end-minute">00</div>
                                 <div class="arrow" onmousedown="startChangeTime('end-minute', -1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9660;</div>
                             </div>
                             <div class="column">
                                 <div class="arrow" onmousedown="startChangeTime('end-ampm', 1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9650;</div>
-                                <div class="time-box" id="end-ampm">PM</div>
+                                <div class="time-box end-select" id="end-ampm">PM</div>
                                 <div class="arrow" onmousedown="startChangeTime('end-ampm', -1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9660;</div>
                             </div>
                         </div>
@@ -96,7 +98,7 @@
                     <div class="category-label">Select Category</div>
                     <div class="category-boxes">
                         <div>
-                            <input type="checkbox" id="comm-service" class="inp-cbx" name="category" value="comm-service">
+                            <input type="radio" id="comm-service" class="inp-cbx" name="category" value="comm-service">
                             <label class="cbx" for="comm-service">
                                 <span>
                                     <svg width="12px" height="10px">
@@ -108,7 +110,7 @@
                         </div>
                 
                         <div>
-                            <input type="checkbox" id="climate" class="inp-cbx" name="category" value="climate">
+                            <input type="radio" id="climate" class="inp-cbx" name="category" value="climate">
                             <label class="cbx" for="climate">
                                 <span>
                                     <svg width="12px" height="10px">
@@ -120,7 +122,7 @@
                         </div>
                 
                         <div>
-                            <input type="checkbox" id="wildlife" class="inp-cbx" name="category" value="wildlife">
+                            <input type="radio" id="wildlife" class="inp-cbx" name="category" value="wildlife">
                             <label class="cbx" for="wildlife">
                                 <span>
                                     <svg width="12px" height="10px">
@@ -132,7 +134,7 @@
                         </div>
                 
                         <div>
-                            <input type="checkbox" id="teaching" class="inp-cbx" name="category" value="teaching">
+                            <input type="radio" id="teaching" class="inp-cbx" name="category" value="teaching">
                             <label class="cbx" for="teaching">
                                 <span>
                                     <svg width="12px" height="10px">
@@ -144,7 +146,7 @@
                         </div>
                 
                         <div>
-                            <input type="checkbox" id="environment" class="inp-cbx" name="category" value="environment">
+                            <input type="radio" id="environment" class="inp-cbx" name="category" value="environment">
                             <label class="cbx" for="environment">
                                 <span>
                                     <svg width="12px" height="10px">
@@ -156,7 +158,7 @@
                         </div>
                 
                         <div>
-                            <input type="checkbox" id="social" class="inp-cbx" name="category" value="social">
+                            <input type="radio" id="social" class="inp-cbx" name="category" value="social">
                             <label class="cbx" for="social">
                                 <span>
                                     <svg width="12px" height="10px">
@@ -168,7 +170,7 @@
                         </div>
                 
                         <div>
-                            <input type="checkbox" id="animal" class="inp-cbx" name="category" value="animal">
+                            <input type="radio" id="animal" class="inp-cbx" name="category" value="animal">
                             <label class="cbx" for="animal">
                                 <span>
                                     <svg width="12px" height="10px">
@@ -180,7 +182,7 @@
                         </div>
                 
                         <div>
-                            <input type="checkbox" id="sports" class="inp-cbx" name="category" value="sports">
+                            <input type="radio" id="sports" class="inp-cbx" name="category" value="sports">
                             <label class="cbx" for="sports">
                                 <span>
                                     <svg width="12px" height="10px">
@@ -192,7 +194,7 @@
                         </div>
                 
                         <div>
-                            <input type="checkbox" id="health" class="inp-cbx" name="category" value="health">
+                            <input type="radio" id="health" class="inp-cbx" name="category" value="health">
                             <label class="cbx" for="health">
                                 <span>
                                     <svg width="12px" height="10px">
@@ -209,17 +211,24 @@
                   
                   
                 <!--Event Disc. and Volunteer Count-->
-                <div>
-                    <label for="description">Event Description</label>
-                    <input type="text" id="description" name="Description" required>
-                </div>
 
                 <div>
                     <label for="volunteers">Volunteer Count</label>
-                    <input type="number" id="volunteers" name="number" required>
+                    <input type="number" id="volunteer-count" name="number" required>
+                </div>
+                <div>
+                    <label for="task">Task</label>
+                    <input type="text" id="task" name="number" required>
+                </div>
+                <div>
+                    <label for="description">Event Description</label>
+                    <textarea id = "description"></textarea>
+                    <!-- <input type="text" id="description" name="Description" required> -->
                 </div>
 
-                <button type="submit" name="submit">Submit Event</button>
+                
+
+                <button type="submit" name="submit" onclick = "sendVolunteerData()">Submit Event</button>
                
 
 
@@ -239,17 +248,7 @@
 
             <!-- Include Mapbox JS -->
             <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-            <script src="script.js"></script>
-            
-            
-            <script>
-                // Initialize Flatpickr on the date input field
-                flatpickr("#date", {
-                    dateFormat: "Y-m-d", // Customize the date format
-                    minDate: "today", // Restrict selection to today and future dates
-                    // Add more options as needed
-                });
-            </script>
+            <script src="../js/script.js"></script>
 
             <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 

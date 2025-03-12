@@ -3,7 +3,7 @@ const path = require('path');
 const admin = require('firebase-admin');
 const { exec } = require('child_process');
 require('dotenv').config();
-const Typesense = require('typesense');
+// const Typesense = require('typesense');
 
 // // Initialize Typesense Client
 // const typesenseClient = new Typesense.Client({
