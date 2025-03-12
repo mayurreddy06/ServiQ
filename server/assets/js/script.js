@@ -11,7 +11,8 @@ const map = new mapboxgl.Map({
   zoom: 12,
 });
 window.onload = function () {
-  document.getElementById("event-date").valueAsDate = new Date();
+  alert("hi");
+  document.getElementById("date").valueAsDate = new Date();
   fetchAndDisplayMarkers();
 }
 // sets date by default to today's date
@@ -214,12 +215,19 @@ function initAutocomplete() {
 // Function to send user inputted volunteer data to the server
 async function sendVolunteerData() {
   const storeAddress = document.getElementById('autocomplete').value;
-  const category = document.getElementById('category').value;
-  const start_time = document.getElementById('start-time').value;
-  const end_time = document.getElementById('end-time').value;
-  const spots = document.getElementById('spots').value;
-  const task = document.getElementById('task').value;
   const date = document.getElementById('date-input').value;
+
+  const startTimeNode = document.querySelectorAll(".start-select");
+  const start_time = "" + startTimeNode[0].innerHTML + ":" + starTimeNode[1].innerHTML + ":" + startTimeNode[2].innerHTML;
+
+  const endTimeNode = document.querySelectorAll(".end-select");
+  const end_time = "" + endTimeNode[0].innerHTML + ":" + endTimeNode[1].innerHTML + ":" + endTimeNode[2].innerHTML;
+
+  const category = document.querySelector(".inp-cbx:checked");
+
+  const spots = document.getElementById('volunteer-count').value;
+  const task = document.getElementById('task').value;
+  
   const description = document.getElementById('description').value;
   const timestamp = Date.now(); // Current time in milliseconds
 
