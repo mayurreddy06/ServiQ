@@ -1,8 +1,7 @@
 const ACCESS_TOKEN = 'pk.eyJ1IjoidmlzaGFscHV0dGFndW50YSIsImEiOiJjbTUxaDUxMGQxeGpnMmtwcHVycGhqaHhsIn0.IWxQPRNmfEJWT-k8sTCGlA';
 mapboxgl.accessToken = ACCESS_TOKEN;
 
-console.log("✅ Script loaded! Waiting for popup...");
-
+console.log("✅ Script loaded! Waiting for map to initialize...");
 
 const map = new mapboxgl.Map({
   container: 'map',
@@ -10,12 +9,38 @@ const map = new mapboxgl.Map({
   center: [-82.9988, 39.9612],
   zoom: 12,
 });
-window.onload = function () {
-  alert("hi");
+
+// Wait for both the window to load and the map to be ready
+window.onload = function() {
+  console.log("Window loaded");
   document.getElementById("date").valueAsDate = new Date();
-  fetchAndDisplayMarkers();
 }
-// sets date by default to today's date
+
+// Make sure the map is fully loaded before fetching markers
+map.on('load', function() {
+  console.log("Map loaded, fetching markers...");
+  fetchAndDisplayMarkers();
+});
+
+// Add filter event listeners
+document.addEventListener('DOMContentLoaded', function() {
+  // Add event listeners to all filter controls
+  const filterControls = [
+    'category-type',
+    'event-date',
+    'zipcode',
+    'toggle-category',
+    'toggle-date',
+    'toggle-zipcode'
+  ];
+  
+  filterControls.forEach(id => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.addEventListener('change', fetchAndDisplayMarkers);
+    }
+  });
+});
 
 let markers = [];
 
@@ -38,37 +63,68 @@ async function fetchAndDisplayMarkers() {
     const volunteerTasks = await response.json();
     console.log("Received Data:", volunteerTasks);
 
-    const selectedCategory = document.getElementById('category-type').value;
+    // Get filter values
+    const selectedCategory = document.getElementById('category-type')?.value || '';
     let selectedDate = "";
     try {
-      selectedDate = new Date(document.getElementById('event-date').value).toISOString().split('T')[0];
+      const dateElement = document.getElementById('event-date');
+      selectedDate = dateElement ? new Date(dateElement.value).toISOString().split('T')[0] : "";
     } catch (error) {
       selectedDate = "none";
+      console.error("Date parsing error:", error);
     }
-    let selectedZipcode = document.getElementById('zipcode').value;
+    
+    let selectedZipcode = document.getElementById('zipcode')?.value || '';
     selectedZipcode = String(selectedZipcode);
+
+    // Check if filters are enabled
+    let useCategory = document.getElementById("toggle-category")?.checked || false;
+    let useCalendar = document.getElementById("toggle-date")?.checked || false;
+    let useZipcode = document.getElementById("toggle-zipcode")?.checked || false;
 
     // Clear existing markers
     markers.forEach(marker => marker.remove());
     markers = [];
 
+    // Process tasks
     for (const key in volunteerTasks) {
       const { storeAddress, location, category, date, task, description } = volunteerTasks[key];
-      let taskDate = new Date(date).toISOString().split('T')[0];
-      const { lat, lng } = location;
-      const foundZipcode = await reverseGeocode(lng, lat);
-
-      let useCategory = document.getElementById("toggle-category").checked;
-      let useCalendar = document.getElementById("toggle-date").checked;
-      let useZipcode = document.getElementById("toggle-zipcode").checked;
-
+      
       // Skip if required fields are missing
-      if (!storeAddress || !location || !category || !date || !task || !description) continue;
+      if (!storeAddress || !location || !category || !date || !task || !description) {
+        console.log("Skipping incomplete task data:", volunteerTasks[key]);
+        continue;
+      }
 
+      let taskDate;
+      try {
+        taskDate = new Date(date).toISOString().split('T')[0];
+      } catch (error) {
+        console.error("Error parsing task date:", error);
+        taskDate = "";
+      }
+      
+      const { lat, lng } = location;
+      
       // Apply filters
-      if (useCategory && category !== selectedCategory) continue;
-      if (useCalendar && taskDate !== selectedDate) continue;
-      if (useZipcode && foundZipcode !== selectedZipcode) continue;
+      let shouldDisplay = true;
+      
+      if (useCategory && category !== selectedCategory) {
+        shouldDisplay = false;
+      }
+      
+      if (useCalendar && taskDate !== selectedDate) {
+        shouldDisplay = false;
+      }
+      
+      if (useZipcode) {
+        const foundZipcode = await reverseGeocode(lng, lat);
+        if (foundZipcode !== selectedZipcode) {
+          shouldDisplay = false;
+        }
+      }
+      
+      if (!shouldDisplay) continue;
 
       // Add marker to the map
       const marker = new mapboxgl.Marker()
@@ -79,17 +135,17 @@ async function fetchAndDisplayMarkers() {
 
       // Add click event to show custom popup
       marker.getElement().addEventListener('click', () => {
-        openCustomPopup(storeAddress, category);
+        openCustomPopup(storeAddress, category, key);
       });
     }
+    
+    console.log(`Displayed ${markers.length} markers on the map`);
   } catch (error) {
     console.error('Error fetching or displaying markers:', error);
   }
 }
 
-
 // Add navigation controls to the map
-// map.on('load', fetchAndDisplayMarkers);
 map.addControl(new mapboxgl.NavigationControl());
 map.addControl(new mapboxgl.FullscreenControl());
 
@@ -98,6 +154,11 @@ let lng = null;
 
 function initAutocomplete() {
   const input = document.getElementById('autocomplete');
+  if (!input) {
+    console.error("Autocomplete input element not found");
+    return;
+  }
+  
   const autocomplete = new google.maps.places.Autocomplete(input);
 
   autocomplete.addListener('place_changed', function () {
@@ -108,8 +169,10 @@ function initAutocomplete() {
       lng = place.geometry.location.lng();
 
       // Display the coordinates
-      document.getElementById('coordinates').innerHTML =
-        `<p>Latitude: ${lat}</p><p>Longitude: ${lng}</p>`;
+      const coordElement = document.getElementById('coordinates');
+      if (coordElement) {
+        coordElement.innerHTML = `<p>Latitude: ${lat}</p><p>Longitude: ${lng}</p>`;
+      }
 
       console.log("Selected Location:", { lat, lng });
     } else {
@@ -118,95 +181,18 @@ function initAutocomplete() {
   });
 }
 
-// Search suggestions functionality
-// const searchBar = document.getElementById('search-bar');
-// const suggestionsDropdown = document.getElementById('search-suggestions');
-
-// function debounce(func, delay) {
-//   let timeout;
-//   return function (...args) {
-//     clearTimeout(timeout);
-//     timeout = setTimeout(() => func.apply(this, args), delay);
-//   };
-// }
-
-// async function fetchSearchSuggestions(query) {
-//   if (!query) {
-//     suggestionsDropdown.innerHTML = '';
-//     suggestionsDropdown.style.display = 'none';
-//     return;
-//   }
-
-//   try {
-//     const response = await fetch(`/search-suggestions?query=` + query);
-//     const suggestions = await response.json();
-//     if (!response.ok) {
-//       const errorText = await response.text(); // Try to get the raw response text
-//       console.error('Error response:', errorText);
-//       // Handle error
-//       return;
-//     }
-
-
-//     if (suggestions.length > 0) {
-//       suggestionsDropdown.innerHTML = suggestions
-//         .map(suggestion => `
-//           <div class="suggestion-item" data-description="${suggestion.description}">
-//             <strong>Description:</strong> ${suggestion.description}
-//           </div>
-//         `)
-//         .join('');
-//       suggestionsDropdown.style.display = 'block';
-//     } else {
-//       suggestionsDropdown.innerHTML = '<div class="suggestion-item">No results found</div>';
-//       suggestionsDropdown.style.display = 'block';
-//     }
-//   } catch (error) {
-//     console.error('Error fetching suggestions:', error);
-//     suggestionsDropdown.innerHTML = '<div class="suggestion-item">Error fetching suggestions</div>';
-//     suggestionsDropdown.style.display = 'block';
-//   }
-// }
-
-// searchBar.addEventListener('input', debounce(() => {
-//   const query = searchBar.value.trim();
-//   fetchSearchSuggestions(query);
-// }, 300));
-
-// suggestionsDropdown.addEventListener('click', (event) => {
-//   const suggestionItem = event.target.closest('.suggestion-item');
-//   if (suggestionItem) {
-//     const description = suggestionItem.dataset.description;
-
-//     // Set the search bar value to the selected suggestion
-//     searchBar.value = description;
-
-//     // Hide the dropdown
-//     suggestionsDropdown.style.display = 'none';
-
-//     // Filter markers based on the selected suggestion
-//     fetchAndDisplayMarkers(description);
-//   }
-// });
-
-// document.addEventListener('click', (event) => {
-//   if (!event.target.closest('.search-container')) {
-//     suggestionsDropdown.style.display = 'none';
-//   }
-// });
-
 // Function to send user inputted volunteer data to the server
 async function sendVolunteerData() {
   const storeAddress = document.getElementById('autocomplete').value;
   const date = document.getElementById('date-input').value;
 
   const startTimeNode = document.querySelectorAll(".start-select");
-  const start_time = "" + startTimeNode[0].innerHTML + ":" + starTimeNode[1].innerHTML + ":" + startTimeNode[2].innerHTML;
+  const start_time = `${startTimeNode[0].innerHTML}:${startTimeNode[1].innerHTML}:${startTimeNode[2].innerHTML}`;
 
   const endTimeNode = document.querySelectorAll(".end-select");
-  const end_time = "" + endTimeNode[0].innerHTML + ":" + endTimeNode[1].innerHTML + ":" + endTimeNode[2].innerHTML;
+  const end_time = `${endTimeNode[0].innerHTML}:${endTimeNode[1].innerHTML}:${endTimeNode[2].innerHTML}`;
 
-  const category = document.querySelector(".inp-cbx:checked");
+  const category = document.querySelector(".inp-cbx:checked").value;
 
   const spots = document.getElementById('volunteer-count').value;
   const task = document.getElementById('task').value;
@@ -216,9 +202,21 @@ async function sendVolunteerData() {
 
   if (lat == null || lng == null) {
     alert("Please select a valid location from the autocomplete suggestion.");
+    return;
   }
 
-  const volunteerData = { storeAddress, category, start_time, end_time, spots, timestamp, task, location: { lat, lng }, date, description};
+  const volunteerData = { 
+    storeAddress, 
+    category, 
+    start_time, 
+    end_time, 
+    spots, 
+    timestamp, 
+    task, 
+    location: { lat, lng }, 
+    date, 
+    description
+  };
 
   try {
     const response = await fetch('/add-volunteer-data', {
@@ -230,6 +228,8 @@ async function sendVolunteerData() {
     if (response.ok) {
       console.log('Volunteer opportunity added successfully');
       alert('Volunteer opportunity added successfully!');
+      // Refresh markers after adding new data
+      fetchAndDisplayMarkers();
     } else {
       console.error('Failed to add volunteer data:', await response.text());
       alert('Failed to add volunteer data. Please try again.');
@@ -288,4 +288,15 @@ function closeCustomPopup() {
   document.getElementById('customPopup').style.display = 'none';
 }
 
-window.addEventListener('load', initAutocomplete);
+// Make sure Google Maps API is loaded before initializing autocomplete
+if (typeof google !== 'undefined' && google.maps && google.maps.places) {
+  initAutocomplete();
+} else {
+  window.addEventListener('load', function() {
+    if (typeof google !== 'undefined' && google.maps && google.maps.places) {
+      initAutocomplete();
+    } else {
+      console.error("Google Maps API not loaded properly");
+    }
+  });
+}
