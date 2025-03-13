@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { firebaseConfig } from '/firebaseConfig.js'
+import { firebaseConfig } from './firebaseConfig.js'
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);

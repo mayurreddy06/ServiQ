@@ -36,7 +36,7 @@
         </div>
         
         <div>        
-            <form class="task-post">
+            <form class="task-post" onsubmit = "sendVolunteerData();return false">
                 <div class="location">
                     <label for="autocomplete">Enter a Location</label>
                     <input type="text" id="autocomplete" name="store-location" required>
@@ -54,7 +54,7 @@
                         <div class="time-selection" id = "start-time">
                             <div class="column">
                                 <div class="arrow" onmousedown="startChangeTime('start-hour', 1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9650;</div>
-                                <div class="time-box start-slect" id="start-hour">00</div>
+                                <div class="time-box start-select" id="start-hour">00</div>
                                 <div class="arrow" onmousedown="startChangeTime('start-hour', -1)" onmouseup="stopChangeTime()" onmouseleave="stopChangeTime()">&#9660;</div>
                             </div>
                             <div class="column">
@@ -228,7 +228,7 @@
 
                 
 
-                <button type="submit" name="submit" onclick = "sendVolunteerData()">Submit Event</button>
+                <button type="submit" name="submit">Submit Event</button>
                
 
 

@@ -11,8 +11,7 @@ const map = new mapboxgl.Map({
   zoom: 12,
 });
 window.onload = function () {
-  alert("hi");
-  document.getElementById("date").valueAsDate = new Date();
+  // document.getElementById("date").valueAsDate = new Date();
   fetchAndDisplayMarkers();
 }
 // sets date by default to today's date
@@ -215,10 +214,10 @@ function initAutocomplete() {
 // Function to send user inputted volunteer data to the server
 async function sendVolunteerData() {
   const storeAddress = document.getElementById('autocomplete').value;
-  const date = document.getElementById('date-input').value;
+  const date = document.getElementById('date').value;
 
   const startTimeNode = document.querySelectorAll(".start-select");
-  const start_time = "" + startTimeNode[0].innerHTML + ":" + starTimeNode[1].innerHTML + ":" + startTimeNode[2].innerHTML;
+  const start_time = "" + startTimeNode[0].innerHTML + ":" + startTimeNode[1].innerHTML + ":" + startTimeNode[2].innerHTML;
 
   const endTimeNode = document.querySelectorAll(".end-select");
   const end_time = "" + endTimeNode[0].innerHTML + ":" + endTimeNode[1].innerHTML + ":" + endTimeNode[2].innerHTML;
@@ -230,16 +229,6 @@ async function sendVolunteerData() {
   
   const description = document.getElementById('description').value;
   const timestamp = Date.now(); // Current time in milliseconds
-
-  console.log('storeAddress: ' + storeAddress);
-  console.log('date: '+ date);
-  console.log('start_time: '+start_time);
-  console.log('end_time: '+end_time);
-  console.log('category: '+category);
-  console.log('spots ' + spots);
-  console.log('task: ' + task);
-  console.log('description' + description );
-
   if (lat == null || lng == null) {
     alert("Please select a valid location from the autocomplete suggestion.");
   }
