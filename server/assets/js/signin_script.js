@@ -5,17 +5,6 @@ import { firebaseConfig } from './firebaseConfig.js'
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Initialize with default non-authenticated navbar
-// const rightHeader = document.querySelector('.right-header');
-// if (rightHeader) {
-//   rightHeader.innerHTML = `
-//     <div><a href="homepage.html">Home</a></div>
-//     <div><a href="map.html">Volunteer</a></div>
-//     <div><a href="signlog.html">Login</a></div>
-//   `;
-//   rightHeader.style.visibility = 'visible'; // Show default nav immediately
-// }
-
 function updateNavbar(user) {
   const rightHeader = document.querySelector('.right-header');
   if (!rightHeader) return;
@@ -27,7 +16,7 @@ function updateNavbar(user) {
     <div><a href="homepage.html">Home</a></div>
     <div><a href="map.html">Volunteer</a></div>
     <div><a href="taskpost.html">Tasks</a></div>
-    <div><a href="#" id="logout-link">Logout</a></div>
+    <div id="logout-link" class="user-email">${user.email}</div>
   ` : `
     <div><a href="homepage.html">Home</a></div>
     <div><a href="map.html">Volunteer</a></div>

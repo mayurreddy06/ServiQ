@@ -50,6 +50,22 @@ header {
     color: #007BFF; /* Change color on hover */
 }
 
+.user-email {
+    padding: 0 15px;
+    color: #333; /* Same color as links */
+    font-weight: bold;
+    font-size: 1.2rem; /* Match the font size of links */
+    display: flex;
+    align-items: center;
+    text-decoration: none; /* Ensure no underline */
+    cursor: pointer;
+    transition: color 0.3s ease; /* Add hover effect */
+}
+
+.user-email:hover {
+    color: #007BFF; /* Match the hover effect of links */
+}
+
 /* Media Queries for Responsive Design */
 @media (max-width: 768px) {
     .right-header div a {
