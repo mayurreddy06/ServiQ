@@ -282,14 +282,49 @@ app.post('/send-email', async (req, res) => {
   try {
     console.log("✅ Received request:", req.body);
 
-    const { email, storeAddress, category } = req.body;
-    if (!email || !storeAddress || !category) {
+    const { email, storeAddress, category, taskId } = req.body;
+    if (!email || !storeAddress || !category || !taskId) {
       console.error("❌ Missing required fields:", req.body);
       return res.status(400).send("Missing required fields.");
     }
 
-    console.log(`📧 Sending email to ${email}...`);
+    const safeEmail = email.replace(/\./g, "_");
+    const registrationPath = `volunteer_opportunities/${taskId}/registrations`;
 
+    console.log(`📌 Checking registration at: ${registrationPath}`);
+
+    // 🔹 Fetch existing registrations for the specific task
+    const regRef = db.ref(registrationPath);
+    const regSnapshot = await regRef.once("value");
+    let regData = regSnapshot.val() || { count: 0, volunteers: {} };
+
+    console.log("📊 Current Registration Data:", regData);
+
+    if (regData.volunteers[safeEmail]) {
+      console.warn(`⚠ ${email} is already registered.`);
+      return res.status(400).send("You have already registered for this task.");
+    }
+
+    // 🔹 Update Firebase Registration Data under the task
+    regData.count += 1;
+    regData.volunteers[safeEmail] = true;
+
+    console.log("📢 Attempting to update Firebase with:", regData);
+    await regRef.set(regData);
+    console.log("✅ Firebase update successful!");
+
+    // 🔍 Confirm Update by Fetching Again
+    const verifySnapshot = await regRef.once("value");
+    console.log("🔄 Firebase Data After Update:", verifySnapshot.val());
+
+    if (!verifySnapshot.val()) {
+      console.error("❌ Firebase update failed! Data not found.");
+      return res.status(500).send("Error: Firebase did not save the update.");
+    }
+
+    console.log("✅ Firebase update confirmed!");
+
+    // 🔹 Send Confirmation Email
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -304,19 +339,23 @@ app.post('/send-email', async (req, res) => {
       subject: "Volunteer Registration Confirmation",
       html: `
         <p>You have successfully registered for a volunteer task at <b>${storeAddress}</b> in the <b>${category}</b> category.</p>
-        <p>Thank you for your support!</p>
+        <p>You are <strong>volunteer #${regData.count}</strong>.</p>
       `,
     };
 
     await transporter.sendMail(mailOptions);
     console.log("📧 Email sent successfully!");
 
-    res.status(200).send({ message: "Email sent successfully." });
+    res.status(200).send({ message: "Email sent successfully.", count: regData.count });
+
   } catch (error) {
     console.error("❌ Error sending email:", error);
     res.status(500).send("Error sending email.");
   }
 });
+
+
+
 
 
 // app.get('/search-suggestions', async (req, res) => {
