@@ -13,7 +13,6 @@ const map = new mapboxgl.Map({
 // Wait for both the window to load and the map to be ready
 window.onload = function() {
   console.log("Window loaded");
-  document.getElementById("date").valueAsDate = new Date();
 }
 
 // Make sure the map is fully loaded before fetching markers
@@ -22,9 +21,9 @@ map.on('load', function() {
   fetchAndDisplayMarkers();
 });
 
-// Add filter event listeners
+// Event listern function to see if filtering boxes have been checked/changed
 document.addEventListener('DOMContentLoaded', function() {
-  // Add event listeners to filter controls if a value for it exists
+  
   const filterControls = [
     'category-type',
     'event-date',
@@ -42,13 +41,80 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+document.getElementById('zipcode').addEventListener('change', () => reZoomMap());
+
+async function reZoomMap()
+{
+  let zipcode = document.getElementById('zipcode').value;
+  let latLng = await forwardGeocode(zipcode);
+  latLng = String(latLng);
+  lat = latLng.substring(0, latLng.indexOf(','));
+  lng = latLng.substring(latLng.indexOf(',') + 1, latLng.length);
+  map.flyTo({
+    center: [lat, lng],
+    speed: 1.2, 
+    curve: 1, 
+  });
+}
+
 let markers = [];
+// declares markers array
 
 async function reverseGeocode(lng, lat) {
   let reverseGeoCoding = 'https://api.mapbox.com/search/geocode/v6/reverse?longitude=' + lng + '&latitude=' + lat + '&access_token=' + ACCESS_TOKEN + '';
   const response = await fetch(reverseGeoCoding);
   const data = await response.json();
-  return String(data.features[0]?.properties?.context?.postcode?.name);
+  console.log(data);
+  const regex = /[0-9]{5}(-[0-9]{4})?/g;
+  const targetKey = 'full_address'
+  let zipcode = loopThroughJSON(data, regex, targetKey);
+  console.log("This is the zipcode returned by reverseGeocode" + zipcode);
+  return String(zipcode);
+}
+
+async function forwardGeocode(zipcode)
+{
+  let forwardGeoCoding = 'https://api.mapbox.com/search/geocode/v6/forward?q=' + zipcode + '&access_token=' + ACCESS_TOKEN + '';
+  const response = await fetch(forwardGeoCoding);
+  const data = await response.json();
+  const targetKey = 'coordinates';
+  regex = null;
+  let latLng = loopThroughJSON(data, regex, targetKey);
+  return latLng;
+}
+
+function loopThroughJSON(obj, regex, targetKey) {
+  let zipcode = null;
+  
+  for (let key in obj) {
+    if (key === targetKey) {
+      if (regex === null)
+      {
+        return obj[key];
+      }
+      return obj[key].match(regex);
+      // regular expression to extract the zipcode from the full address
+    }
+    
+    if (typeof obj[key] === 'object') {
+      if (Array.isArray(obj[key])) {
+        // Loop through array
+        for (let i = 0; i < obj[key].length; i++) {
+          zipcode = loopThroughJSON(obj[key][i], regex, targetKey);
+          if (zipcode) return zipcode; // Return zipcode if found in array element
+        }
+      } else {
+        // Call function recursively for object
+        zipcode = loopThroughJSON(obj[key], regex, targetKey);
+        if (zipcode) return zipcode; // Return zipcode if found in nested object
+      }
+    } else {
+      // Do something with value (keeping your console.log)
+      console.log(key + ': ' + obj[key]);
+    }
+  }
+  
+  return zipcode; // Return null if nothing found
 }
 
 async function fetchAndDisplayMarkers() {
@@ -73,18 +139,17 @@ async function fetchAndDisplayMarkers() {
     let selectedDate = "";
     try {
       const dateElement = document.getElementById('event-date');
-      selectedDate = dateElement ? new Date(dateElement.value).toISOString().split('T')[0] : "";
+      selectedDate = new Date(dateElement.value).toISOString().split('T')[0];
     } catch (error) {
       selectedDate = "none";
-      console.error("Date parsing error:", error);
     }
-    let selectedZipcode = document.getElementById('zipcode');
+    let selectedZipcode = document.getElementById('zipcode').value;
     selectedZipcode = String(selectedZipcode);
 
     // Check if filters are enabled
-    let useCategory = document.getElementById("toggle-category")?.checked || false;
-    let useCalendar = document.getElementById("toggle-date")?.checked || false;
-    let useZipcode = document.getElementById("toggle-zipcode")?.checked || false;
+    let useCategory = document.getElementById("toggle-category").checked;
+    let useCalendar = document.getElementById("toggle-date").checked;
+    let useZipcode = document.getElementById("toggle-zipcode").checked;
 
     // Clear existing markers
     markers.forEach(marker => marker.remove());
@@ -99,7 +164,6 @@ async function fetchAndDisplayMarkers() {
         console.log("Skipping incomplete task data:", volunteerTasks[key]);
         continue;
       }
-
       let taskDate;
       try {
         taskDate = new Date(date).toISOString().split('T')[0];

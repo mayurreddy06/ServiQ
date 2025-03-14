@@ -61,53 +61,6 @@ app.get('/signup.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'assets/html/signup.html'));
 })
 
-// app.get('/websiteDesignTest.html', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../client', 'websiteDesignTest.html'));
-// });
-
-// app.get('/signlog.html', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'assets/html/', 'signlog.html'));
-// });
-
-// app.get('/signup.html', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../client', 'signup.html'));
-// });
-
-// app.get('/map.html', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'assets/html/', 'map.html'));
-// });
-
-// app.get('/taskpost.html', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../client', 'taskpost.html'));
-// });
-
-// app.get('/homepage.html', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../client', 'homepage.html'));
-// });
-
-// Saves additional account data in database
-app.post('/add-account', async (req, res) => {
-  const { uid, email, name, accountType, agencyDescription } = req.body;
-
-  if (!uid || !email || !name) {
-    return res.status(400).send('Missing required fields');
-  }
-
-  try {
-    if (accountType === 'user') {
-      await db.ref(`user_accounts/${uid}`).set({ email, name, accountType });
-    } else if (accountType === 'agency') {
-      await db.ref(`agency_accounts/${uid}`).set({ email, name, accountType, agencyDescription });
-    }
-    
-    return res.status(200).send("User data saved successfully");
-  } catch (error) {
-    console.error('Error saving user data:', error);
-    return res.json({
-      message: "Failed to user login info to Firebase"
-    });
-  }
-});
 
 // Route to add volunteer data
 app.post('/volunteer-data', async (req, res) => {
@@ -170,24 +123,28 @@ app.get('/volunteer-data', async (req, res) => {
   }
 });
 
-// Route to add user inputted data
-// app.post('/add-user-data', async (req, res) => {
-//   const { timestamp, searchBar } = req.body;
+app.post('/add-account', async (req, res) => {
+  const { uid, email, name, accountType, agencyDescription } = req.body;
 
-//   if (!timestamp || !searchBar) {
-//     return res.status(400).send('Missing required fields');
-//   }
+  if (!uid || !email || !name) {
+    return res.status(400).send('Missing required fields');
+  }
 
-//   try {
-//     const ref = db.ref('user_input');
-//     await ref.push({ timestamp, searchBar });
-
-//     res.status(200).send('User data added successfully');
-//   } catch (error) {
-//     console.error('Error adding user data:', error);
-//     res.status(500).send('Error adding user data');
-//   }
-// });
+  try {
+    if (accountType === 'user') {
+      await db.ref(`user_accounts/${uid}`).set({ email, name, accountType });
+    } else if (accountType === 'agency') {
+      await db.ref(`agency_accounts/${uid}`).set({ email, name, accountType, agencyDescription });
+    }
+    
+    return res.status(200).send("User data saved successfully");
+  } catch (error) {
+    console.error('Error saving user data:', error);
+    return res.json({
+      message: "Failed to user login info to Firebase"
+    });
+  }
+});
 
 require('dotenv').config();
 
