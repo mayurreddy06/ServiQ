@@ -24,7 +24,7 @@ map.on('load', function() {
 
 // Add filter event listeners
 document.addEventListener('DOMContentLoaded', function() {
-  // Add event listeners to all filter controls
+  // Add event listeners to filter controls if a value for it exists
   const filterControls = [
     'category-type',
     'event-date',
@@ -53,8 +53,8 @@ async function reverseGeocode(lng, lat) {
 
 async function fetchAndDisplayMarkers() {
   try {
-    console.log("Fetching data from: /get-volunteer-tasks");
-    const response = await fetch('/get-volunteer-tasks');
+    console.log("Fetching data from: /volunteer-data");
+    const response = await fetch('/volunteer-data');
     if (!response.ok) {
       console.error('Failed to fetch volunteer tasks:', await response.text());
       return;
@@ -64,7 +64,12 @@ async function fetchAndDisplayMarkers() {
     console.log("Received Data:", volunteerTasks);
 
     // Get filter values
-    const selectedCategory = document.getElementById('category-type')?.value || '';
+    let selectedCategory = "";
+    const categorySelect = document.getElementById('category-type');
+    if (categorySelect) {
+    selectedCategory = categorySelect.value;
+    }
+
     let selectedDate = "";
     try {
       const dateElement = document.getElementById('event-date');
@@ -73,8 +78,7 @@ async function fetchAndDisplayMarkers() {
       selectedDate = "none";
       console.error("Date parsing error:", error);
     }
-    
-    let selectedZipcode = document.getElementById('zipcode')?.value || '';
+    let selectedZipcode = document.getElementById('zipcode');
     selectedZipcode = String(selectedZipcode);
 
     // Check if filters are enabled
@@ -105,11 +109,10 @@ async function fetchAndDisplayMarkers() {
       }
       
       const { lat, lng } = location;
-      
       // Apply filters
       let shouldDisplay = true;
       
-      if (useCategory && category !== selectedCategory) {
+      if (useCategory && category.toLowerCase() !== selectedCategory.toLowerCase()) {
         shouldDisplay = false;
       }
       
@@ -124,7 +127,8 @@ async function fetchAndDisplayMarkers() {
         }
       }
       
-      if (!shouldDisplay) continue;
+      if (!shouldDisplay) 
+        continue;
 
       // Add marker to the map
       const marker = new mapboxgl.Marker()
@@ -218,7 +222,7 @@ async function sendVolunteerData() {
   };
 
   try {
-    const response = await fetch('/add-volunteer-data', {
+    const response = await fetch('/volunteer-data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(volunteerData),
