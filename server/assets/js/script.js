@@ -46,12 +46,13 @@ document.getElementById('zipcode').addEventListener('change', () => reZoomMap())
 async function reZoomMap()
 {
   let zipcode = document.getElementById('zipcode').value;
-  let latLng = await forwardGeocode(zipcode);
+  let latLng = await forwardGeocode(zipcode, null);
   latLng = String(latLng);
-  lat = latLng.substring(0, latLng.indexOf(','));
-  lng = latLng.substring(latLng.indexOf(',') + 1, latLng.length);
+  let lat = latLng.substring(0, latLng.indexOf(','));
+  let lng = latLng.substring(latLng.indexOf(',') + 1, latLng.length);
   map.flyTo({
     center: [lat, lng],
+    zoom: 12,
     speed: 1.2, 
     curve: 1, 
   });
@@ -60,21 +61,20 @@ async function reZoomMap()
 let markers = [];
 // declares markers array
 
-async function reverseGeocode(lng, lat) {
+async function reverseGeocode(lng, lat, regex) {
   let reverseGeoCoding = 'https://api.mapbox.com/search/geocode/v6/reverse?longitude=' + lng + '&latitude=' + lat + '&access_token=' + ACCESS_TOKEN + '';
   const response = await fetch(reverseGeoCoding);
   const data = await response.json();
   console.log(data);
-  const regex = /[0-9]{5}(-[0-9]{4})?/g;
-  const targetKey = 'full_address'
+  const targetKey = 'full_address';
   let zipcode = loopThroughJSON(data, regex, targetKey);
   console.log("This is the zipcode returned by reverseGeocode" + zipcode);
   return String(zipcode);
 }
 
-async function forwardGeocode(zipcode)
+async function forwardGeocode(location, regex)
 {
-  let forwardGeoCoding = 'https://api.mapbox.com/search/geocode/v6/forward?q=' + zipcode + '&access_token=' + ACCESS_TOKEN + '';
+  let forwardGeoCoding = 'https://api.mapbox.com/search/geocode/v6/forward?q=' + location + '&access_token=' + ACCESS_TOKEN + '';
   const response = await fetch(forwardGeoCoding);
   const data = await response.json();
   const targetKey = 'coordinates';
@@ -84,7 +84,7 @@ async function forwardGeocode(zipcode)
 }
 
 function loopThroughJSON(obj, regex, targetKey) {
-  let zipcode = null;
+  let value = null;
   
   for (let key in obj) {
     if (key === targetKey) {
@@ -100,13 +100,15 @@ function loopThroughJSON(obj, regex, targetKey) {
       if (Array.isArray(obj[key])) {
         // Loop through array
         for (let i = 0; i < obj[key].length; i++) {
-          zipcode = loopThroughJSON(obj[key][i], regex, targetKey);
-          if (zipcode) return zipcode; // Return zipcode if found in array element
+          value = loopThroughJSON(obj[key][i], regex, targetKey);
+          if (value) 
+            return value; 
         }
       } else {
         // Call function recursively for object
-        zipcode = loopThroughJSON(obj[key], regex, targetKey);
-        if (zipcode) return zipcode; // Return zipcode if found in nested object
+        value = loopThroughJSON(obj[key], regex, targetKey);
+        if (value) 
+          return value;
       }
     } else {
       // Do something with value (keeping your console.log)
@@ -114,7 +116,7 @@ function loopThroughJSON(obj, regex, targetKey) {
     }
   }
   
-  return zipcode; // Return null if nothing found
+  return value; // Return null if nothing found
 }
 
 async function fetchAndDisplayMarkers() {
@@ -185,7 +187,8 @@ async function fetchAndDisplayMarkers() {
       }
       
       if (useZipcode) {
-        const foundZipcode = await reverseGeocode(lng, lat);
+        const zipcodeFromAddress = /[0-9]{5}(-[0-9]{4})?/g;
+        const foundZipcode = await reverseGeocode(lng, lat, zipcodeFromAddress);
         if (foundZipcode !== selectedZipcode) {
           shouldDisplay = false;
         }
@@ -233,14 +236,8 @@ function initAutocomplete() {
     const place = autocomplete.getPlace();
 
     if (place.geometry && place.geometry.location) {
-      lat = place.geometry.location.lat();
-      lng = place.geometry.location.lng();
-
-      // Display the coordinates
-      const coordElement = document.getElementById('coordinates');
-      if (coordElement) {
-        coordElement.innerHTML = `<p>Latitude: ${lat}</p><p>Longitude: ${lng}</p>`;
-      }
+      let lat = place.geometry.location.lat();
+      let lng = place.geometry.location.lng();
 
       console.log("Selected Location:", { lat, lng });
     } else {
@@ -267,10 +264,11 @@ async function sendVolunteerData() {
   
   const description = document.getElementById('description').value;
   const timestamp = Date.now(); // Current time in milliseconds
-  if (lat == null || lng == null) {
-    alert("Please select a valid location from the autocomplete suggestion.");
-    return;
-  }
+
+  let latLng = await forwardGeocode(storeAddress, null);
+  latLng = String(latLng);
+  let lat = latLng.substring(0, latLng.indexOf(','));
+  let lng = latLng.substring(latLng.indexOf(',') + 1, latLng.length);
 
   const volunteerData = { 
     storeAddress, 
