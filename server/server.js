@@ -21,7 +21,7 @@ require('dotenv').config();
 
 const serviceAccount = require(process.env.FIREBASE_JSON);
 const app = express();
-const PORT = 3000;
+const PORT = 3002;
 
 // Initialize Firebase Admin
 admin.initializeApp({
@@ -38,7 +38,7 @@ app.use(express.static(path.join(__dirname, 'assets')));
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/homepage.html'));
+  res.sendFile(path.join(__dirname, 'assets/html/homepage2.html'));
 });
 
 app.get('/signlog.html', (req, res) => {
@@ -59,70 +59,15 @@ app.get('/homepage.html', (req, res) => {
 
 app.get('/signup.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'assets/html/signup.html'));
-})
-
-
-// Route to add volunteer data
-app.post('/volunteer-data', async (req, res) => {
-  const { storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description } = req.body;
-
-  if (!storeAddress || !category || !start_time || !end_time || !spots || !timestamp || !task || !location || !date || !description) {
-    return res.json({
-      status: "FAILED",
-      message: "Missing fields"
-    });
-  }
-
-  try {
-    const ref = db.ref('volunteer_opportunities');
-    const newTaskRef = ref.push(); 
-    // Capture the reference to the new data
-    await newTaskRef.set({ storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description });
-
-    // // Index into Typesense (only timestamp, category, and task)
-    // const typesenseDocument = {
-    //   id: newTaskRef.key, // Use Firebase key as the Typesense document ID
-    //   timestamp: parseInt(timestamp, 10), // Ensure timestamp is an integer
-    //   category,
-    //   task,
-    //   description,
-    // };
-
-    // console.log('Indexing document into Typesense:', typesenseDocument);
-
-    // // Use typesenseClient to add the document to the collection
-    // await typesenseClient.collections('volunteerTasks').documents().create(typesenseDocument);
-    // console.log('Document indexed successfully');
-
-    res.json({
-      status: "SUCCESS",
-      message: "Data successfully injected to Firebase"
-    });
-  } catch (error) {
-    console.error('Error adding volunteer opportunity:', error);
-    res.json({
-      status: "FAILED",
-      message: "Firebase reference does not exist"
-    });
-  }
 });
 
-// Route to fetch all volunteer tasks
-app.get('/volunteer-data', async (req, res) => {
-  try {
-    const ref = db.ref('volunteer_opportunities');
-    const data = await ref.once('value');
-    const tasks = data.val();
-    res.json(tasks);
-  } catch (error) {
-    console.error('Error fetching volunteer tasks:', error);
-    res.json({
-      status : "FAILED",
-      message: "Data could not be fetched from firebase"
-    });
-  }
-});
+// Volunteer opportunities route
+const volunteerDataRouter = require('./assets/js/routes/volunteerData.js');
+const volunteerDataExists = require('./assets/js/middleware/volunteerData.js');
+app.use("/", volunteerDataExists, volunteerDataRouter);
 
+
+// CREATE route to create an account
 app.post('/add-account', async (req, res) => {
   const { uid, email, name, accountType, agencyDescription } = req.body;
 
