@@ -5,7 +5,12 @@
   "main": "script.js",
   "scripts": {
     "start": "node server/server.js",
-    "server": "nodemon server/server.js"
+    "server": "nodemon server/server.js",
+    "test": "newman run postman_collection.json",
+    "server:test": "concurrently \"nodemon server/server.js\" \"wait-on http://localhost:3002 && newman run postman_collection.json\""
+
+    
+    
   },
   "keywords": [],
   "author": "",
@@ -14,10 +19,14 @@
     "body-parser": "^1.20.3",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
     "firebase-admin": "^13.2.0",
     "mysql": "^2.18.1",
     "nodemailer": "^6.10.0",
     "nodemon": "^3.1.9",
     "typesense": "^2.0.3"
+  },
+  "devDependencies": {
+    "newman": "^6.2.1"
   }
 }

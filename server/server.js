@@ -42,7 +42,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/signlog.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/signlog.html'));
+  res.sendFile(path.join(__dirname, 'assets/html/newSignlog.html'));
 });
 
 app.get('/map.html', (req, res) => {
@@ -63,8 +63,8 @@ app.get('/signup.html', (req, res) => {
 
 // Volunteer opportunities route
 const volunteerDataRouter = require('./assets/js/routes/volunteerData.js');
-const volunteerDataExists = require('./assets/js/middleware/volunteerData.js');
-app.use("/", volunteerDataExists, volunteerDataRouter);
+const rateLimiter = require('./assets/js/middleware/rateLimiter.js');
+app.use("/", rateLimiter, volunteerDataRouter);
 
 
 // CREATE route to create an account

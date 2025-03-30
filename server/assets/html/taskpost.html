@@ -36,7 +36,7 @@
         </div>
         
         <div>        
-            <form class="task-post" onsubmit = "sendVolunteerData();return false">
+            <form class="task-post">
                 <div class="location">
                     <label for="autocomplete">Enter a Location</label>
                     <input type="text" id="autocomplete" name="store-location" onclick = "initAutocomplete()" required>
@@ -98,7 +98,7 @@
                     <div class="category-label">Select Category</div>
                     <div class="category-boxes">
                         <div>
-                            <input type="radio" id="comm-service" class="inp-cbx" name="category" value="community service">
+                            <input type="radio" id="comm-service" class="inp-cbx" name="category" value="community-service">
                             <label class="cbx" for="comm-service">
                                 <span>
                                     <svg width="12px" height="10px">
@@ -228,7 +228,7 @@
 
                 
 
-                <button type="submit" name="submit">Submit Event</button>
+                <button type="submit" name="submit" onclick = "sendVolunteerData()">Submit Event</button>
                
 
 
