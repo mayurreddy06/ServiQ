@@ -104,12 +104,43 @@ app.post('/add-account', async (req, res) => {
 
 require('dotenv').config();
 
+// Debug logging for email configuration
+console.log("Email Configuration:");
 console.log("EMAIL:", process.env.EMAIL);
-console.log("EMAIL_PASSWORD:", process.env.EMAIL_PASSWORD);
+console.log("EMAIL_PASSWORD:", process.env.EMAIL_PASSWORD ? "***" : "Not set");
+console.log("Using SMTP Host: smtp.zoho.com");
 
 const nodemailer = require('nodemailer');
 
-// Email sending route
+// Create reusable transporter object
+const transporter = nodemailer.createTransport({
+  host: 'smtp.zoho.com',
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+  tls: {
+    rejectUnauthorized: false
+  },
+  debug: true // Enable debug mode
+});
+
+// Verify transporter configuration
+transporter.verify(function(error, success) {
+  if (error) {
+    console.error('❌ Email transporter verification failed:', error);
+    console.error('Error details:', {
+      code: error.code,
+      command: error.command,
+      response: error.response
+    });
+  } else {
+    console.log('✅ Email transporter is ready to send messages');
+  }
+});
+
 // Email sending route & Volunteer Registration Tracking
 app.post('/send-email', async (req, res) => {
   try {
@@ -158,14 +189,6 @@ app.post('/send-email', async (req, res) => {
     console.log("✅ Firebase update confirmed!");
 
     // 🔹 Send Confirmation Email
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
-
     const mailOptions = {
       from: process.env.EMAIL,
       to: email,
@@ -176,14 +199,40 @@ app.post('/send-email', async (req, res) => {
       `,
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log("📧 Email sent successfully!");
-
-    res.status(200).send({ message: "Email sent successfully.", count: regData.count });
+    console.log("📧 Attempting to send email to:", email);
+    console.log("📧 Using sender email:", process.env.EMAIL);
+    
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log("📧 Email sent successfully! Message ID:", info.messageId);
+      res.status(200).send({ message: "Email sent successfully.", count: regData.count });
+    } catch (emailError) {
+      console.error("❌ Email sending failed:", {
+        error: emailError,
+        code: emailError.code,
+        command: emailError.command,
+        response: emailError.response,
+        stack: emailError.stack
+      });
+      throw emailError; // Re-throw to be caught by outer try-catch
+    }
 
   } catch (error) {
-    console.error("❌ Error sending email:", error);
-    res.status(500).send("Error sending email.");
+    console.error("❌ Error in send-email route:", {
+      error: error,
+      code: error.code,
+      command: error.command,
+      response: error.response,
+      stack: error.stack
+    });
+    
+    if (error.code === 'EAUTH') {
+      res.status(500).send("Authentication failed. Please check email credentials.");
+    } else if (error.code === 'ECONNECTION') {
+      res.status(500).send("Connection failed. Please check network connectivity.");
+    } else {
+      res.status(500).send("Error sending email: " + error.message);
+    }
   }
 });
 

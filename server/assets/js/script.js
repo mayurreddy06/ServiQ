@@ -430,7 +430,7 @@ function openCustomPopup(storeAddress, category, taskId) {
     console.log(`📨 Sending request to /send-email for: ${email}`);
 
     try {
-      const response = await fetch("http://localhost:3000/send-email", {
+      const response = await fetch("http://localhost:3002/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, storeAddress, category, taskId }),
