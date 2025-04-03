@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel = "stylesheet" href = "../css/newNavBar.css">
+    <link rel = "stylesheet" href = "../css/newHome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <header>
+        <div class = "container">
+            <nav>
+                <img src = "../images/ServiQ-trans.png">
+                <div class = "external-pages">
+                    <a href="/" class = "link-cta">Home</a>
+                    <a href="map.html" class = "link-cta">Learn more</a>
+                    <a href="signlog.html" class = "login-cta">Login Here</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <section>
+        <div class = "container">
+            <main>
+                <div class = "hero">
+                    <h1 class = "text-emp"> Never Has it Been Easier to Get Involved </h1>
+                    <p> Empower others by finding opportunities in your local community by utilizing
+                        our AI-powered search query and interactive map.
+                    </p>
+                    <div class = "hero-buttons">
+                        <a id = "get-started-cta" href="signlog.html">Get Started</a>
+                        <a id = "learn-more-cta">Learn More</a>
+                    </div>
+                </div>
+                <img id = "volunteer-img" src = "../images/volunteering.jpg">
+                
+            </main>
+            
+        </div>
+    </section>
+    <section>
+        <div class = "container" id = "homePage-form">
+            <form onsubmit = "fetchAndDisplayMarkers()" class = "homePage-form">
+                <input type="text" id="autocomplete" name="store-location" class = "form-element" placeholder = "Enter Address or Zipcode" onclick = "initAutocomplete()" required>
+                <button type = "submit" class = "form-element"><i class="fa-solid fa-magnifying-glass"></i>     Find Volunteering</button>
+            </form>
+        </div>
+    </section>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwHozpYoJS8xgURnkkICo7L0vw8xW2Oak&libraries=places"></script>
+
+    
+</body>
+</html>

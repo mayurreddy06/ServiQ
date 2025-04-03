@@ -1,0 +1,111 @@
+:root
+{
+    --primary-color: #4CAF50;
+    --secondary-color: #e7a10a;
+    --white: white;
+    --text-color: rgb(45, 39, 39);
+}
+
+main
+{
+    height: 75vh;
+    background-color: var(--primary-color);
+    display: flex;
+    justify-content: center;
+    gap: 100px;
+    align-items: center;
+}
+
+.hero
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    width: 525px;
+    height: 600px;
+
+}
+.hero h1, p
+{
+    color: var(--white);
+}
+
+.hero p
+{
+    line-height: 30px;
+    font-size: 16px;
+}
+.text-emp
+{
+    font-size: 50px;
+    line-height: 75px;
+}
+
+.hero-buttons
+{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.hero-buttons a
+{
+    font-size: 20px;
+    padding: 10px 76px;
+    border-radius: 7px;
+    text-decoration: none;
+}
+#get-started-cta
+{
+    color: var(--text-color);
+    background-color: var(--white);
+}
+#learn-more-cta
+{
+    color: var(--white);
+    border: 1px solid var(--white);
+}
+
+#volunteer-img
+{
+    width: 650px;
+    border-radius: 25px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+
+#homePage-form
+{
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+.homePage-form
+{
+    display: flex;
+    justify-content: center;
+    height: 15vh;
+}
+.form-element
+{
+    height: 30px;
+}
+.homePage-form input
+{
+    width: 350px;
+    height: 40px;
+    border: none;
+    border-radius: 15px;
+    padding-left: 25px;
+    /* padding left extends the input box as for width, but also fixes the cursor position so it doesn't start on the very left edge */
+}
+.homePage-form button
+{
+    padding: 1px 15px;
+    background-color: var(--secondary-color);
+    border: none;
+    color: white;
+    border-radius: 15px;
+    font-size: 15px;
+    height: 40px;
+    cursor: pointer;
+}

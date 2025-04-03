@@ -1,0 +1,313 @@
+{
+	"info": {
+		"_postman_id": "6c4fd753-1440-48fc-8e56-2acd8ddb83fa",
+		"name": "New Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40908110"
+	},
+	"item": [
+		{
+			"name": "Volunteer Data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"items\": {\r",
+							"        \"type\": \"object\",\r",
+							"        \"properties\": {\r",
+							"            \"storeAddress\": {\r",
+							"                \"type\": \"string\"\r",
+							"            },\r",
+							"            \"category\": {\r",
+							"                \"type\": \"string\"\r",
+							"            },\r",
+							"            \"start_time\": {\r",
+							"                \"type\": \"string\"\r",
+							"            },\r",
+							"            \"end_time\": {\r",
+							"                \"type\": \"string\"\r",
+							"            },\r",
+							"            \"spots\": {\r",
+							"                \"type\": \"integer\"\r",
+							"            },\r",
+							"            \"timestamp\": {\r",
+							"                \"type\": \"integer\"\r",
+							"            },\r",
+							"            \"task\": {\r",
+							"                \"type\": \"string\"\r",
+							"            },\r",
+							"            \"location\": {\r",
+							"                \"type\": \"object\",\r",
+							"                \"properties\": {\r",
+							"                    \"lat\": {\r",
+							"                        \"type\": \"number\"\r",
+							"                        },\r",
+							"                    \"lng\": {\r",
+							"                        \"type\": \"number\"\r",
+							"                        }\r",
+							"                },\r",
+							"                \"required\": [\"lat\", \"lng\"]\r",
+							"            },\r",
+							"            \"date\": {\r",
+							"                \"type\": \"string\"\r",
+							"            },\r",
+							"            \"description\": {\r",
+							"                \"type\": \"string\"\r",
+							"            }\r",
+							"        },\r",
+							"        \"required\": [\r",
+							"            \"storeAddress\", \"category\", \"start_time\", \"end_time\", \r",
+							"            \"spots\", \"timestamp\", \"task\", \"location\", \r",
+							"            \"date\", \"description\"\r",
+							"        ]\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"pm.test('validate JSON Schema', function() {\r",
+							"    pm.expect(pm.request.body).to.have.jsonSchema(schema);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"storeAddress\": \"2580 E Orange Road\",\r\n    \"category\": \"animal\",\r\n    \"start_time\": \"5:00AM\",\r\n    \"end_time\": \"6:00PM\",\r\n    \"spots\": 24,\r\n    \"timestamp\": 423432423,\r\n    \"task\": \"picking up trash\",\r\n    \"location\": {\r\n        \"lat\": -82.989102,\r\n        \"lng\": 39.982707\r\n    },\r\n    \"date\": \"05-27-2001\",\r\n    \"description\": \"eating pizza\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3002/volunteer-data",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"volunteer-data"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Volunteer Data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"let response = pm.response.json();\r",
+							"pm.globals.set(\"timestamp_value\",response[0].timestamp);\r",
+							"var schema = {\r",
+							"    \"type\": \"array\",\r",
+							"    \"items\": {\r",
+							"        \"type\": \"object\",\r",
+							"        \"properties\": {\r",
+							"            \"storeAddress\": {\r",
+							"                \"type\": \"string\"\r",
+							"            },\r",
+							"            \"category\": {\r",
+							"                \"type\": \"string\"\r",
+							"            },\r",
+							"            \"start_time\": {\r",
+							"                \"type\": \"string\"\r",
+							"            },\r",
+							"            \"end_time\": {\r",
+							"                \"type\": \"string\"\r",
+							"            },\r",
+							"            \"spots\": {\r",
+							"                \"type\": \"integer\"\r",
+							"            },\r",
+							"            \"timestamp\": {\r",
+							"                \"type\": \"integer\"\r",
+							"            },\r",
+							"            \"task\": {\r",
+							"                \"type\": \"string\"\r",
+							"            },\r",
+							"            \"location\": {\r",
+							"                \"type\": \"object\",\r",
+							"                \"properties\": {\r",
+							"                    \"lat\": {\r",
+							"                        \"type\": \"number\"\r",
+							"                        },\r",
+							"                    \"lng\": {\r",
+							"                        \"type\": \"number\"\r",
+							"                        }\r",
+							"                },\r",
+							"                \"required\": [\"lat\", \"lng\"]\r",
+							"            },\r",
+							"            \"date\": {\r",
+							"                \"type\": \"string\"\r",
+							"            },\r",
+							"            \"description\": {\r",
+							"                \"type\": \"string\"\r",
+							"            }\r",
+							"        },\r",
+							"        \"required\": [\r",
+							"            \"storeAddress\", \"category\", \"start_time\", \"end_time\", \r",
+							"            \"spots\", \"timestamp\", \"task\", \"location\", \r",
+							"            \"date\", \"description\"\r",
+							"        ]\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"pm.test('validate JSON Schema', function() {\r",
+							"    pm.expect(response).to.have.jsonSchema(schema);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3002/volunteer-data?category=animal&date=05-27-2001",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"volunteer-data"
+					],
+					"query": [
+						{
+							"key": "category",
+							"value": "animal"
+						},
+						{
+							"key": "date",
+							"value": "05-27-2001"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Volunteer Data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"spots\": 26,\r\n    \"storeAddress\": \"9191 Cambrian Commons Drive\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3002/volunteer-data/{{timestamp_value}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"volunteer-data",
+						"{{timestamp_value}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Volunteer Data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3002/volunteer-data/{{timestamp_value}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"volunteer-data",
+						"{{timestamp_value}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

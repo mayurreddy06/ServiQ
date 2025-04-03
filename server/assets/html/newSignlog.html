@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel = "stylesheet" href = "../css/newlogin.css">
+</head>
+<body>
+    <section>
+        <div class = "container">
+            <main>
+                <div class = "login-panel">
+                    <div class = "left-side">
+                        <div class = "fix-image">
+                            <img src = "../images/ServiQ_logo.png">
+                        </div>
+                        <!-- this is to allow for us to use display: flex to just center the image itself, you can't do this without wrapping
+                         it inside of a div element -->
+                        <h2> Don't waste your time </h2>
+                        <p> Join others to begin posting and finding other volunteers today</p>
+                        <br>
+                        <a id = "learn-more-cta">Learn More</a>
+                    </div>
+                    <div class = "right-side">
+                        <h1> Login </h1>
+                        <p class = "right-p-margin"> Before we get started, your organization must login or register if you don't already have an account.</p>
+                        <p>Username</p>
+                        <input type = "text" id = "username-inp" class = "login-input">
+                        <br>
+                        <p>Password</p>
+                        <input type = "text" id = "password-inp" class = "login-input">
+                        <div class = "createOrLogin">
+                            <a href = "signup.html" id = "create-cta">Create an account?</a>
+                            <button type = "submit" id = "btn-cta">Login</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </section>
+    
+</body>
+</html>

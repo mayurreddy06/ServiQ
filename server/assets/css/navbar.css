@@ -1,3 +1,9 @@
+:root
+{
+    --primary-color: #4CAF50;
+    --white: white;
+}
+
 header {
     height: 90px;
     position: fixed;
@@ -62,62 +68,14 @@ header {
     transition: color 0.3s ease; /* Add hover effect */
 }
 
+
 .user-email:hover {
     color: #007BFF; /* Match the hover effect of links */
 }
 
-/* Media Queries for Responsive Design */
-@media (max-width: 768px) {
-    .right-header div a {
-        font-size: 1rem; /* Smaller font size for tablets */
-    }
-
-    .left-header img {
-        height: 50px; /* Smaller logo for tablets */
-    }
+.login-btn
+{
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 10px;
 }
-
-@media (max-width: 480px) {
-    .right-header {
-        gap: 10px; /* Reduce gap between links for mobile */
-    }
-
-    .right-header div a {
-        font-size: 0.9rem; /* Smaller font size for mobile */
-    }
-
-    .left-header img {
-        height: 40px; /* Smaller logo for mobile */
-    }
-}
-
-/*
-.navbar ul li {
-    list-style: none;
-    display: inline-block;
-    margin: 0 20px;
-    position: relative;
-}
-
-.navbar ul li a {
-    text-decoration: none;
-    color: #000; /* Changed to black for visibility on white background 
-    text-transform: uppercase;
-}
-
-.navbar ul li::after {
-    content: '';
-    height: 3px;
-    width: 0%;
-    background: #009688;
-    position: absolute;
-    left: 0;
-    bottom: -10px;
-    transition: 0.5s;
-}
-
-.navbar ul li:hover::after {
-    width: 100%;
-}
-
-*/
