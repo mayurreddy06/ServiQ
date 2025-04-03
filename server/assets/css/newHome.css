@@ -12,7 +12,7 @@ main
     background-color: var(--primary-color);
     display: flex;
     justify-content: center;
-    gap: 100px;
+    gap: 155px;
     align-items: center;
 }
 
@@ -87,7 +87,7 @@ main
 }
 .form-element
 {
-    height: 30px;
+    height: 20px;
 }
 .homePage-form input
 {
@@ -96,6 +96,7 @@ main
     border: none;
     border-radius: 15px;
     padding-left: 25px;
+    font-size: 15px;
     /* padding left extends the input box as for width, but also fixes the cursor position so it doesn't start on the very left edge */
 }
 .homePage-form button
@@ -108,4 +109,8 @@ main
     font-size: 15px;
     height: 40px;
     cursor: pointer;
+}
+#homePage-map
+{
+    height: 80vh;
 }

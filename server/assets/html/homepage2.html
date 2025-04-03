@@ -17,6 +17,7 @@
                     <a href="/" class = "link-cta">Home</a>
                     <a href="map.html" class = "link-cta">Learn more</a>
                     <a href="signlog.html" class = "login-cta">Login Here</a>
+                    <input type = "image" id = "profile-image" src = "../images/default-profile.png">
                 </div>
             </nav>
         </div>
@@ -43,9 +44,15 @@
     <section>
         <div class = "container" id = "homePage-form">
             <form onsubmit = "fetchAndDisplayMarkers()" class = "homePage-form">
-                <input type="text" id="autocomplete" name="store-location" class = "form-element" placeholder = "Enter Address or Zipcode" onclick = "initAutocomplete()" required>
+                <input type="text" id="autocomplete home-search" name="store-location" class = "form-element" placeholder = "Enter Address or Zipcode" required>
+                <!-- add onclick = "initAutocomplete()" back to above -->
                 <button type = "submit" class = "form-element"><i class="fa-solid fa-magnifying-glass"></i>     Find Volunteering</button>
             </form>
+        </div>
+    </section>
+    <section>
+        <div class = "container" id = "homePage-map">
+
         </div>
     </section>
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>

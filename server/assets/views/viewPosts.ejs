@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel = "stylesheet" href = "../css/newNavBar.css">
+    <link rel = "stylesheet" href = "../css/viewPosts.css">
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <div class = "container">
+            <nav>
+                <img src = "../images/ServiQ-trans.png">
+                <div class = "external-pages">
+                    <a href="/" class = "link-cta">Home</a>
+                    <a href="map.html" class = "link-cta">Learn more</a>
+                    <a href="signlog.html" class = "login-cta">Login Here</a>
+                    <input type = "image" id = "profile-image" src = "../images/default-profile.png">
+                </div>
+            </nav>
+        </div>
+    </header>
+    <header>
+        <div class = "container" id = "page-info">
+            <div id = "page-info">
+                <article class = "page-info">
+                    <h1>Your Posted Volunteering Opportunities</h1>
+                    <p>Click on "edit" or "new" to make changes to your posted tasks</p>
+                </article>
+            </div>
+            <section class = "task-table">
+                <div>
+                    <table class="styled-table">
+                        <thead>
+                            <tr>
+                                <th>Task</th>
+                                <th>Category</th>
+                                <th>Spots</th>
+                                <th>Date</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Dom</td>
+                                <td>6000</td>
+                                <td>64</td>
+                                <td>03-02-2004</td>
+                                <td>1:00PM</td>
+                                <td>5:00PM</td>
+                                <td><button class = "table-btn">Edit</button></td>
+                                <td><button class = "table-btn">Delete</button></td>
+                            </tr>
+                            <tr class="active-row">
+                                <td>Melissa</td>
+                                <td>5150</td>
+                                <td>64</td>
+                                <td>03-02-2004</td>
+                                <td>1:00PM</td>
+                                <td>5:00PM</td>
+                                <td><button class = "table-btn">Edit</button></td>
+                                <td><button class = "table-btn">Delete</button></td>
+                            </tr>
+                            <!-- and so on... -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </header>
+
+</body>
+</html>

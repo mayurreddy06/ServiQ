@@ -203,7 +203,7 @@ async function fetchAndDisplayMarkers2()
   for (var key in volunteerObjects)
   {
     const marker = new mapboxgl.Marker()
-        .setLngLat([key.lng, key.lat])
+        .setLngLat([key.location.lng, key.location.lat])
         .addTo(map);
         markers.push(marker);
 
@@ -369,8 +369,8 @@ async function sendVolunteerData() {
   alert('welp about to go');
   let latLng = await forwardGeocode(storeAddress, null);
   latLng = String(latLng);
-  let lat = latLng.substring(0, latLng.indexOf(','));
-  let lng = latLng.substring(latLng.indexOf(',') + 1, latLng.length);
+  let lng = latLng.substring(0, latLng.indexOf(','));
+  let lat = latLng.substring(latLng.indexOf(',') + 1, latLng.length);
   
   const volunteerData = { 
     storeAddress, 
@@ -469,3 +469,7 @@ if (typeof google !== 'undefined' && google.maps && google.maps.places) {
     }
   });
 }
+
+document.getElementById('home-search').addEventListener('click', ()=> {
+  window.location.href = "#homePage-form";
+})
