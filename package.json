@@ -8,9 +8,6 @@
     "server": "nodemon server/server.js",
     "test": "newman run postman_collection.json",
     "server:test": "concurrently \"nodemon server/server.js\" \"wait-on http://localhost:3002 && newman run postman_collection.json\""
-
-    
-    
   },
   "keywords": [],
   "author": "",
@@ -18,6 +15,7 @@
   "dependencies": {
     "body-parser": "^1.20.3",
     "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
     "express": "^4.21.2",
     "express-rate-limit": "^7.5.0",
     "firebase-admin": "^13.2.0",

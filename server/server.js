@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const admin = require('firebase-admin');
 
+
 const { exec } = require('child_process');
 require('dotenv').config();
 // const Typesense = require('typesense');
@@ -22,6 +23,8 @@ require('dotenv').config();
 const serviceAccount = require(process.env.FIREBASE_JSON);
 const app = express();
 const PORT = 3002;
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'assets/views'));
 
 // Initialize Firebase Admin
 admin.initializeApp({
@@ -61,11 +64,19 @@ app.get('/signup.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'assets/html/signup.html'));
 });
 
+app.get('/viewPosts.ejs', (req, res) => {
+  res.render('viewPosts.ejs');
+});
+
 // Volunteer opportunities route
 const volunteerDataRouter = require('./assets/js/routes/volunteerData.js');
 const rateLimiter = require('./assets/js/middleware/rateLimiter.js');
 app.use("/", rateLimiter, volunteerDataRouter);
 
+
+app.get("/auth/login", (req, res) => {
+  
+})
 
 // CREATE route to create an account
 app.post('/add-account', async (req, res) => {

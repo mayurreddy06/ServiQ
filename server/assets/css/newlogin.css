@@ -3,7 +3,7 @@
     --primary-color: #4CAF50;
     --white: white;
     --secondary-color: rgb(105, 100, 100);
-    --text-color: rgb(45, 39, 39);
+    --text-color: #2d2727;
 }
 *{
     margin: 0;
@@ -24,6 +24,8 @@ main
     width: 100%;
     /* this width 100% allows us to use padding without the contents from getting outside of the boxes limits */
     height: 500px;
+    border-radius: 25px;
+    overflow: hidden;
     box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
 .left-side

@@ -24,7 +24,7 @@ nav
     display: flex;
     justify-content: space-around;
     align-items: center;
-    gap: 1000px;
+    gap: 900px;
     height: 70px;
 }
 nav img {
@@ -37,14 +37,15 @@ nav img {
     color: var(--text-color);
     padding-right: 75px;
 }
-.external-pages a
+.external-pages a, input
 {
     text-decoration: none;
     font-size: 18px;
     position: relative;
     
 }
-a::before {
+a::before,
+input::before {
     content: '';
     position: absolute;
     width: 100%;
@@ -58,7 +59,8 @@ a::before {
     transition: transform .3s ease-in-out;
   }
 
-a:hover::before {
+a:hover::before,input:hover::before
+{
   transform-origin: left;
   transform: scaleX(1);
 }
@@ -69,8 +71,13 @@ a:hover::before {
 }
 .login-cta
 {
-    padding: 8px 12px;
+    padding: 10px 12px;
     background-color: var(--primary-color);
     border-radius: 5px;
     color: var(--white);
+}
+#profile-image
+{
+    width: 40px;
+    height: 100%;
 }
