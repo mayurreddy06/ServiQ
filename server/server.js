@@ -149,44 +149,45 @@ app.post('/send-email', async (req, res) => {
     const { email, storeAddress, category, taskId } = req.body;
     if (!email || !storeAddress || !category || !taskId) {
       console.error("❌ Missing required fields:", req.body);
-      return res.status(400).send("Missing required fields.");
+      return res.status(400).json({ message: "Missing required fields." });
     }
 
+    console.log("🔍 Looking for task with ID:", taskId);
     const safeEmail = email.replace(/\./g, "_");
-    const registrationPath = `volunteer_opportunities/${taskId}/registrations`;
+    // Get the task reference
+    const taskRef = db.ref(`volunteer_opportunities/${taskId}`);
+    const taskSnapshot = await taskRef.once("value");
+    const taskData = taskSnapshot.val();
 
-    console.log(`📌 Checking registration at: ${registrationPath}`);
+    if (!taskData) {
+      console.error("❌ Task not found:", taskId);
+      console.error("Current path:", `volunteer_opportunities/${taskId}`);
+      return res.status(404).json({ message: "Task not found." });
+    }
 
-    // 🔹 Fetch existing registrations for the specific task
-    const regRef = db.ref(registrationPath);
-    const regSnapshot = await regRef.once("value");
-    let regData = regSnapshot.val() || { count: 0, volunteers: {} };
+    console.log("✅ Found task:", taskData);
 
-    console.log("📊 Current Registration Data:", regData);
+    // Initialize registrations if they don't exist
+    if (!taskData.registrations) {
+      taskData.registrations = {
+        count: 0,
+        volunteers: {}
+      };
+    }
 
-    if (regData.volunteers[safeEmail]) {
+    // Check if already registered
+    if (taskData.registrations.volunteers[safeEmail]) {
       console.warn(`⚠ ${email} is already registered.`);
-      return res.status(400).send("You have already registered for this task.");
+      return res.status(400).json({ message: "You have already registered for this task." });
     }
 
-    // 🔹 Update Firebase Registration Data under the task
-    regData.count += 1;
-    regData.volunteers[safeEmail] = true;
+    // Update registration data
+    taskData.registrations.count += 1;
+    taskData.registrations.volunteers[safeEmail] = true;
 
-    console.log("📢 Attempting to update Firebase with:", regData);
-    await regRef.set(regData);
-    console.log("✅ Firebase update successful!");
-
-    // 🔍 Confirm Update by Fetching Again
-    const verifySnapshot = await regRef.once("value");
-    console.log("🔄 Firebase Data After Update:", verifySnapshot.val());
-
-    if (!verifySnapshot.val()) {
-      console.error("❌ Firebase update failed! Data not found.");
-      return res.status(500).send("Error: Firebase did not save the update.");
-    }
-
-    console.log("✅ Firebase update confirmed!");
+    console.log("📢 Attempting to update task with registration:", taskData);
+    await taskRef.update(taskData);
+    console.log("✅ Task update successful!");
 
     // 🔹 Send Confirmation Email
     const mailOptions = {
@@ -195,7 +196,7 @@ app.post('/send-email', async (req, res) => {
       subject: "Volunteer Registration Confirmation",
       html: `
         <p>You have successfully registered for a volunteer task at <b>${storeAddress}</b> in the <b>${category}</b> category.</p>
-        <p>You are <strong>volunteer #${regData.count}</strong>.</p>
+        <p>You are <strong>volunteer #${taskData.registrations.count}</strong>.</p>
       `,
     };
 
@@ -205,7 +206,7 @@ app.post('/send-email', async (req, res) => {
     try {
       const info = await transporter.sendMail(mailOptions);
       console.log("📧 Email sent successfully! Message ID:", info.messageId);
-      res.status(200).send({ message: "Email sent successfully.", count: regData.count });
+      res.status(200).json({ message: "Email sent successfully.", count: taskData.registrations.count });
     } catch (emailError) {
       console.error("❌ Email sending failed:", {
         error: emailError,
@@ -227,11 +228,11 @@ app.post('/send-email', async (req, res) => {
     });
     
     if (error.code === 'EAUTH') {
-      res.status(500).send("Authentication failed. Please check email credentials.");
+      res.status(500).json({ message: "Authentication failed. Please check email credentials." });
     } else if (error.code === 'ECONNECTION') {
-      res.status(500).send("Connection failed. Please check network connectivity.");
+      res.status(500).json({ message: "Connection failed. Please check network connectivity." });
     } else {
-      res.status(500).send("Error sending email: " + error.message);
+      res.status(500).json({ message: "Error sending email: " + error.message });
     }
   }
 });
