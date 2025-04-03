@@ -98,22 +98,17 @@ app.post('/auth/register', async (req, res) => {
     // 3. Optionally create a custom token for immediate client-side login
     const token = await admin.auth().createCustomToken(userRecord.uid);
 
-    return res.status.json({
-      message: 'User registered successfully',
-      uid: userRecord.uid,
-      token // Send this to client if you want immediate login
-    });
+    // console.log(res.json({
+    //   message: 'User registered successfully',
+    //   uid: userRecord.uid,
+    //   token // Send this to client if you want immediate login
+    // }));
 
+    res.redirect("/auth/login");
   } catch (error) {
     console.error('Registration error:', error);
   }
-
 });
-
-
-
-
-
 app.get('/viewPosts.ejs', (req, res) => {
   res.render('viewPosts.ejs');
 });
