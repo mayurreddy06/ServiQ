@@ -1,32 +1,12 @@
 const express = require('express');
 const path = require('path');
 const admin = require('firebase-admin');
-
-
+const nodemailer = require('nodemailer');
 const { exec } = require('child_process');
 require('dotenv').config();
-// const Typesense = require('typesense');
-
-// // Initialize Typesense Client
-// const typesenseClient = new Typesense.Client({
-//   nodes: [
-//     {
-//       host: 'bgrwny8ik1eu94djp-1.a1.typesense.net', // Replace with your Typesense Cloud node
-//       port: '443',                                  // Use 443 for Typesense Cloud
-//       protocol: 'https',                            // Use 'https' for Typesense Cloud
-//     },
-//   ],
-//   apiKey: 'VXyvCuyJft5EEFTSaXfm0SaadQMSTRRn', // Use Admin API Key
-//   connectionTimeoutSeconds: 2,
-// });
-
-const serviceAccount = require(process.env.FIREBASE_JSON);
-const app = express();
-const PORT = 3002;
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'assets/views'));
 
 // Initialize Firebase Admin
+const serviceAccount = require(process.env.FIREBASE_JSON);
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: process.env.FIREBASE_URL
@@ -36,83 +16,72 @@ admin.initializeApp({
 const db = admin.database();
 module.exports = db;
 
-// Middleware to serve static files and parse JSON body
+// Create Express app
+const app = express();
+const PORT = process.env.PORT || 3002;
+
+// Configure view engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'assets/views'));
+
+// Middleware
 app.use(express.static(path.join(__dirname, 'assets')));
 app.use(express.json());
 
+// Routes
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'assets/html/homepage2.html'));
 });
 
-app.get('/signlog.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/newSignlog.html'));
-});
+const staticPages = {
+  '/signlog.html': 'assets/html/newSignlog.html',
+  '/map.html': 'assets/html/map.html',
+  '/taskpost.html': 'assets/html/taskpost.html',
+  '/homepage.html': 'assets/html/homepage.html',
+  '/signup.html': 'assets/html/signup.html'
+};
 
-app.get('/map.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/map.html'));
-});
-
-app.get('/taskpost.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/taskpost.html'));
-});
-
-app.get('/homepage.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/homepage.html'));
-});
-
-app.get('/signup.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/signup.html'));
+Object.entries(staticPages).forEach(([route, file]) => {
+  app.get(route, (req, res) => {
+    res.sendFile(path.join(__dirname, file));
+  });
 });
 
 app.get('/viewPosts.ejs', (req, res) => {
   res.render('viewPosts.ejs');
 });
 
-// Volunteer opportunities route
+// Dynamic routes
 const volunteerDataRouter = require('./assets/js/routes/volunteerData.js');
 const rateLimiter = require('./assets/js/middleware/rateLimiter.js');
 app.use("/", rateLimiter, volunteerDataRouter);
 
-
-app.get("/auth/login", (req, res) => {
-  
-})
-
-// CREATE route to create an account
+// Account creation endpoint
 app.post('/add-account', async (req, res) => {
   const { uid, email, name, accountType, agencyDescription } = req.body;
 
   if (!uid || !email || !name) {
-    return res.status(400).send('Missing required fields');
+    return res.status(400).json({ error: 'Missing required fields' });
   }
 
   try {
-    if (accountType === 'user') {
-      await db.ref(`user_accounts/${uid}`).set({ email, name, accountType });
-    } else if (accountType === 'agency') {
-      await db.ref(`agency_accounts/${uid}`).set({ email, name, accountType, agencyDescription });
-    }
+    const accountPath = accountType === 'user' 
+      ? `user_accounts/${uid}`
+      : `agency_accounts/${uid}`;
     
-    return res.status(200).send("User data saved successfully");
+    const accountData = accountType === 'user'
+      ? { email, name, accountType }
+      : { email, name, accountType, agencyDescription };
+    
+    await db.ref(accountPath).set(accountData);
+    return res.status(200).json({ message: "User data saved successfully" });
   } catch (error) {
     console.error('Error saving user data:', error);
-    return res.json({
-      message: "Failed to user login info to Firebase"
-    });
+    return res.status(500).json({ error: "Failed to save user login info to Firebase" });
   }
 });
 
-require('dotenv').config();
-
-// Debug logging for email configuration
-console.log("Email Configuration:");
-console.log("EMAIL:", process.env.EMAIL);
-console.log("EMAIL_PASSWORD:", process.env.EMAIL_PASSWORD ? "***" : "Not set");
-console.log("Using SMTP Host: smtp.zoho.com");
-
-const nodemailer = require('nodemailer');
-
-// Create reusable transporter object
+// Email configuration
 const transporter = nodemailer.createTransport({
   host: 'smtp.zoho.com',
   port: 465,
@@ -123,150 +92,88 @@ const transporter = nodemailer.createTransport({
   },
   tls: {
     rejectUnauthorized: false
-  },
-  debug: true // Enable debug mode
-});
-
-// Verify transporter configuration
-transporter.verify(function(error, success) {
-  if (error) {
-    console.error('❌ Email transporter verification failed:', error);
-    console.error('Error details:', {
-      code: error.code,
-      command: error.command,
-      response: error.response
-    });
-  } else {
-    console.log('✅ Email transporter is ready to send messages');
   }
 });
 
-// Email sending route & Volunteer Registration Tracking
+// Email verification on startup
+transporter.verify((error) => {
+  if (error) {
+    console.error('❌ Email transporter verification failed:', error);
+  } else {
+    console.log('✅ Email transporter is ready');
+  }
+});
+
+// Volunteer registration and email endpoint
 app.post('/send-email', async (req, res) => {
+  const { email, storeAddress, category, taskId } = req.body;
+  
+  if (!email || !storeAddress || !category || !taskId) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
   try {
-    console.log("✅ Received request:", req.body);
-
-    const { email, storeAddress, category, taskId } = req.body;
-    if (!email || !storeAddress || !category || !taskId) {
-      console.error("❌ Missing required fields:", req.body);
-      return res.status(400).json({ message: "Missing required fields." });
-    }
-
-    console.log("🔍 Looking for task with ID:", taskId);
     const safeEmail = email.replace(/\./g, "_");
-    // Get the task reference
     const taskRef = db.ref(`volunteer_opportunities/${taskId}`);
     const taskSnapshot = await taskRef.once("value");
     const taskData = taskSnapshot.val();
 
     if (!taskData) {
-      console.error("❌ Task not found:", taskId);
-      console.error("Current path:", `volunteer_opportunities/${taskId}`);
-      return res.status(404).json({ message: "Task not found." });
+      return res.status(404).json({ error: "Task not found" });
     }
 
-    console.log("✅ Found task:", taskData);
+    // Initialize registrations if needed
+    const registrations = taskData.registrations || {
+      count: 0,
+      volunteers: {}
+    };
 
-    // Initialize registrations if they don't exist
-    if (!taskData.registrations) {
-      taskData.registrations = {
-        count: 0,
-        volunteers: {}
-      };
-    }
-
-    // Check if already registered
-    if (taskData.registrations.volunteers[safeEmail]) {
-      console.warn(`⚠ ${email} is already registered.`);
-      return res.status(400).json({ message: "You have already registered for this task." });
+    if (registrations.volunteers[safeEmail]) {
+      return res.status(400).json({ error: "Already registered for this task" });
     }
 
     // Update registration data
-    taskData.registrations.count += 1;
-    taskData.registrations.volunteers[safeEmail] = true;
+    registrations.count += 1;
+    registrations.volunteers[safeEmail] = true;
+    
+    await taskRef.update({ registrations });
 
-    console.log("📢 Attempting to update task with registration:", taskData);
-    await taskRef.update(taskData);
-    console.log("✅ Task update successful!");
-
-    // 🔹 Send Confirmation Email
+    // Send confirmation email
     const mailOptions = {
       from: process.env.EMAIL,
       to: email,
       subject: "Volunteer Registration Confirmation",
       html: `
         <p>You have successfully registered for a volunteer task at <b>${storeAddress}</b> in the <b>${category}</b> category.</p>
-        <p>You are <strong>volunteer #${taskData.registrations.count}</strong>.</p>
+        <p>You are <strong>volunteer #${registrations.count}</strong>.</p>
       `,
     };
 
-    console.log("📧 Attempting to send email to:", email);
-    console.log("📧 Using sender email:", process.env.EMAIL);
-    
-    try {
-      const info = await transporter.sendMail(mailOptions);
-      console.log("📧 Email sent successfully! Message ID:", info.messageId);
-      res.status(200).json({ message: "Email sent successfully.", count: taskData.registrations.count });
-    } catch (emailError) {
-      console.error("❌ Email sending failed:", {
-        error: emailError,
-        code: emailError.code,
-        command: emailError.command,
-        response: emailError.response,
-        stack: emailError.stack
-      });
-      throw emailError; // Re-throw to be caught by outer try-catch
-    }
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ 
+      message: "Registration successful and email sent",
+      count: registrations.count 
+    });
 
   } catch (error) {
-    console.error("❌ Error in send-email route:", {
-      error: error,
-      code: error.code,
-      command: error.command,
-      response: error.response,
-      stack: error.stack
-    });
+    console.error("Error in send-email route:", error);
     
+    const errorResponse = {
+      error: "Internal server error",
+      details: error.message
+    };
+
     if (error.code === 'EAUTH') {
-      res.status(500).json({ message: "Authentication failed. Please check email credentials." });
+      errorResponse.error = "Email authentication failed";
     } else if (error.code === 'ECONNECTION') {
-      res.status(500).json({ message: "Connection failed. Please check network connectivity." });
-    } else {
-      res.status(500).json({ message: "Error sending email: " + error.message });
+      errorResponse.error = "Email connection failed";
     }
+
+    res.status(500).json(errorResponse);
   }
 });
 
-
-
-
-
-// app.get('/search-suggestions', async (req, res) => {
-//   const { query } = req.query;
-
-//   if (!query) {
-//     return res.status(400).json({ error: 'Query parameter is required' });
-//   }
-
-//   console.log("This is the query: " + query);
-//   try {
-//     let search_parameters = {
-//       'q': query,
-//       'query_by': 'embedding',
-//       'per_page': 5
-//     }
-    
-//     // Use typesenseClient instead of client
-//     const searchResults = await typesenseClient.collections('volunterTasks').documents().search(search_parameters);
-    
-//     const suggestions = searchResults.hits ? searchResults.hits.map(hit => hit.document) : [];
-//     res.json(suggestions);
-//   } catch (err) {
-//     console.error('Error fetching search suggestions:', err);
-//     res.status(500).json({ error: 'Error fetching search suggestions' });
-//   }
-// });
-// Start the server
+// Start server
 app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

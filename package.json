@@ -22,9 +22,10 @@
     "mysql": "^2.18.1",
     "nodemailer": "^6.10.0",
     "nodemon": "^3.1.9",
+    "rate-limit-express": "^2.2.2",
     "typesense": "^2.0.3"
   },
   "devDependencies": {
-    "newman": "^6.2.1"
+    "newman": "^6.2.0"
   }
 }
