@@ -56,25 +56,35 @@ volunteerDataRouter.get('/volunteer-data', async (req, res) => {
     const ref = db.ref('volunteer_opportunities');
     const data = await ref.once('value');
     const tasks = data.val();
-    // receieves all volunteer opporutunity data from firebase
-
-    let filteredTasks = Object.values(tasks);
-    // way to set JSON values equal to each other
-    console.log(tasks);
-    // optional filtering based on parameters of only category, date, or zipcode
-
-    if (req.query.category) {
-      filteredTasks = filteredTasks.filter(task => task.category === req.query.category);
+    
+    if (!tasks) {
+      return res.json({});
     }
 
-    if (req.query.date) {
-      filteredTasks = filteredTasks.filter(task => task.date === req.query.date);
-    }
+    // Convert tasks to array while preserving IDs
+    let filteredTasks = {};
+    Object.entries(tasks).forEach(([id, task]) => {
+      // Apply filters
+      let includeTask = true;
+      
+      if (req.query.category && task.category !== req.query.category) {
+        includeTask = false;
+      }
+      
+      if (req.query.date && task.date !== req.query.date) {
+        includeTask = false;
+      }
+      
+      if (req.query.zipcode && task.zipcode !== req.query.zipcode) {
+        includeTask = false;
+      }
+      
+      if (includeTask) {
+        filteredTasks[id] = task;
+      }
+    });
 
-    if (req.query.zipcode) {
-      filteredTasks = filteredTasks.filter(task => task.zipcode === req.query.zipcode);
-    }
-
+    console.log("Sending tasks with IDs:", Object.keys(filteredTasks));
     res.json(filteredTasks);
   } catch (error) {
     console.error('Error fetching volunteer tasks:', error);
