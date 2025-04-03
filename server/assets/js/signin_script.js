@@ -20,7 +20,7 @@ function updateNavbar(user) {
   ` : `
     <div><a href="homepage.html">Home</a></div>
     <div><a href="map.html">Volunteer</a></div>
-    <div><a href="signlog.html">Login</a></div>
+    <div><a href="newSignlog.html">Login</a></div>
   `;
 
   if (rightHeader.innerHTML !== newContent) {
@@ -109,7 +109,7 @@ authStatePromise.then(user => {
   if (user) {
     console.log("User is signed in:", user.email);
     
-    if (window.location.pathname.includes('signlog.html')) {
+    if (window.location.pathname.includes('newSignlog.html')) {
       window.location.href = 'homepage.html';
     }
   } else {
@@ -151,7 +151,7 @@ async function login(event) {
         const user = accountCredential.user;
 
         console.log("Logged in successfully: ", user);
-        window.location.href = 'homepage.html';
+        window.location.href = 'assets/html/homepage2.html';
     } catch(error) {
         console.error("Error logging in:", error.message);
 
