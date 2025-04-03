@@ -23,6 +23,7 @@ require('dotenv').config();
 const serviceAccount = require(process.env.FIREBASE_JSON);
 const app = express();
 const PORT = 3002;
+const { getAuth } = require('firebase-admin/auth');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'assets/views'));
 
@@ -40,12 +41,11 @@ module.exports = db;
 app.use(express.static(path.join(__dirname, 'assets')));
 app.use(express.json());
 
+//middleware: automatically passing in form data by the name attribute
+app.use(express.urlencoded({extended: true}))
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'assets/html/homepage2.html'));
-});
-
-app.get('/signlog.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/newSignlog.html'));
 });
 
 app.get('/map.html', (req, res) => {
@@ -60,47 +60,69 @@ app.get('/homepage.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'assets/html/homepage.html'));
 });
 
-app.get('/signup.html', (req, res) => {
+app.get('/auth/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'assets/html/newSignlog.html'));
+});
+
+app.get('/auth/register', (req, res) => {
   res.sendFile(path.join(__dirname, 'assets/html/signup.html'));
 });
+
+app.post('/auth/register', async (req, res) => {
+  const {agencyName, agencyDesc, email, password} = req.body;
+  // values from the name = attribute in the form html
+
+  if (!email || !password || !agencyName) {
+    return res.status(400).json({
+       error: 'Missing required fields' 
+      });
+  }
+
+  try {
+    const userRecord = await admin.auth().createUser({
+      email,
+      password,
+      displayName: agencyName
+    });
+    // create the schema
+
+    const db = admin.database();
+    await db.ref(`agency_accounts/${userRecord.uid}`).set({
+      email,
+      name: agencyName,
+      accountType: 'agency',
+      agencyDescription: agencyDesc,
+      createdAt: new Date().toISOString()
+    });
+
+    // 3. Optionally create a custom token for immediate client-side login
+    const token = await admin.auth().createCustomToken(userRecord.uid);
+
+    return res.status.json({
+      message: 'User registered successfully',
+      uid: userRecord.uid,
+      token // Send this to client if you want immediate login
+    });
+
+  } catch (error) {
+    console.error('Registration error:', error);
+  }
+
+});
+
+
+
+
 
 app.get('/viewPosts.ejs', (req, res) => {
   res.render('viewPosts.ejs');
 });
 
+
 // Volunteer opportunities route
 const volunteerDataRouter = require('./assets/js/routes/volunteerData.js');
 const rateLimiter = require('./assets/js/middleware/rateLimiter.js');
 app.use("/", rateLimiter, volunteerDataRouter);
-
-
-app.get("/auth/login", (req, res) => {
-  
-})
-
-// CREATE route to create an account
-app.post('/add-account', async (req, res) => {
-  const { uid, email, name, accountType, agencyDescription } = req.body;
-
-  if (!uid || !email || !name) {
-    return res.status(400).send('Missing required fields');
-  }
-
-  try {
-    if (accountType === 'user') {
-      await db.ref(`user_accounts/${uid}`).set({ email, name, accountType });
-    } else if (accountType === 'agency') {
-      await db.ref(`agency_accounts/${uid}`).set({ email, name, accountType, agencyDescription });
-    }
-    
-    return res.status(200).send("User data saved successfully");
-  } catch (error) {
-    console.error('Error saving user data:', error);
-    return res.json({
-      message: "Failed to user login info to Firebase"
-    });
-  }
-});
 
 require('dotenv').config();
 
