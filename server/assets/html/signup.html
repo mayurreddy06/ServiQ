@@ -1,22 +1,31 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Sign Up</title>
-    </head>
-    <body>
-        <div class="form-box">
-            <form id="agency-register-form" action = "/auth/register" method = "POST">
-                <h2>Admin Sign Up</h2>
-                <input type="text" name="agencyName" placeholder="Agency Name" id="agency-name" required>
-                <input type="text" name="agencyDesc" placeholder="Agency Description" id="agency-description" required>
-                <input type="email" name="email" placeholder="Email" id="agency-email" required>
-                <input type="password" name="password" placeholder="Password" id="agency-password" required>
-                <input type="password" name="reenter-password" placeholder="Reenter password" id="agency-reenter-password" required>
-                <button type="submit">Sign Up</button>
-                <p>Already have an account? <a href="signlog.html">Login</a></p>            
-            </form>
-        </div>
+<head>
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="../css/signup.css">
+</head>
+<body>
 
-        <script type="module" src="js/createaccount_script.js"></script>
-    </body>
+    <div class="form-box">
+        <h2 class="admin-text">Create Agency Account</h2>
+        <p class="subtitle">to continue</p>
+
+        <form id="agency-register-form">
+            <div class="signup-info">
+                <input type="text" placeholder="Agency name" id="agency-name" required>
+                <input type="password" placeholder="Password" id="agency-password" required>
+                <input type="password" placeholder="Confirm" id="agency-reenter-password" required>
+                <p class="help-text">Use 8 or more characters with a number and symbol</p>
+            </div>
+
+            
+
+            <div class="actions">
+                <p><a href="newSignlog.html">Sign in</a></p>
+                <button type="submit">Next</button>
+            </div>
+        </form>
+    </div>
+
+</body>
 </html>

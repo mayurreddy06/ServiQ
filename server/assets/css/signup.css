@@ -1,0 +1,92 @@
+/* General page styling */
+body {
+  background-color: white;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* Form container */
+.form-box {
+  background-color: #f8f8f8;
+  padding: 30px;
+  border-radius: 10px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Form title */
+.admin-text {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.subtitle{
+  margin-top: -8px;
+  margin-bottom: 27px; 
+}
+
+/* Input fields */
+.signup-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-right:6%;
+}
+
+.signup-info label {
+  text-align: left;
+  font-size: 14px;
+  color: #333;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: white;
+  color: black;
+  font-size: 16px;
+}
+
+input::placeholder {
+  color: #888;
+}
+
+/* Sign-up button */
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+button:hover {
+  background-color: #017b07;
+}
+
+/* Terms and login link */
+p {
+  font-size: 16px;
+  color: #555;
+  margin-top: 15px;
+}
+
+p a {
+  color: #0c4f0f;
+  text-decoration: none;
+}
+
+p a:hover {
+  text-decoration: underline;
+}

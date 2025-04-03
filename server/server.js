@@ -1,8 +1,7 @@
 const express = require('express');
 const path = require('path');
 const admin = require('firebase-admin');
-
-
+const nodemailer = require('nodemailer');
 const { exec } = require('child_process');
 require('dotenv').config();
 // const Typesense = require('typesense');
@@ -28,6 +27,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'assets/views'));
 
 // Initialize Firebase Admin
+const serviceAccount = require(process.env.FIREBASE_JSON);
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: process.env.FIREBASE_URL
@@ -37,7 +37,15 @@ admin.initializeApp({
 const db = admin.database();
 module.exports = db;
 
-// Middleware to serve static files and parse JSON body
+// Create Express app
+const app = express();
+const PORT = process.env.PORT || 3002;
+
+// Configure view engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'assets/views'));
+
+// Middleware
 app.use(express.static(path.join(__dirname, 'assets')));
 app.use(express.json());
 
@@ -121,15 +129,7 @@ app.use("/", rateLimiter, volunteerDataRouter);
 
 require('dotenv').config();
 
-// Debug logging for email configuration
-console.log("Email Configuration:");
-console.log("EMAIL:", process.env.EMAIL);
-console.log("EMAIL_PASSWORD:", process.env.EMAIL_PASSWORD ? "***" : "Not set");
-console.log("Using SMTP Host: smtp.zoho.com");
-
-const nodemailer = require('nodemailer');
-
-// Create reusable transporter object
+// Email configuration
 const transporter = nodemailer.createTransport({
   host: 'smtp.zoho.com',
   port: 465,
@@ -140,150 +140,88 @@ const transporter = nodemailer.createTransport({
   },
   tls: {
     rejectUnauthorized: false
-  },
-  debug: true // Enable debug mode
-});
-
-// Verify transporter configuration
-transporter.verify(function(error, success) {
-  if (error) {
-    console.error('❌ Email transporter verification failed:', error);
-    console.error('Error details:', {
-      code: error.code,
-      command: error.command,
-      response: error.response
-    });
-  } else {
-    console.log('✅ Email transporter is ready to send messages');
   }
 });
 
-// Email sending route & Volunteer Registration Tracking
+// Email verification on startup
+transporter.verify((error) => {
+  if (error) {
+    console.error('❌ Email transporter verification failed:', error);
+  } else {
+    console.log('✅ Email transporter is ready');
+  }
+});
+
+// Volunteer registration and email endpoint
 app.post('/send-email', async (req, res) => {
+  const { email, storeAddress, category, taskId } = req.body;
+  
+  if (!email || !storeAddress || !category || !taskId) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
   try {
-    console.log("✅ Received request:", req.body);
-
-    const { email, storeAddress, category, taskId } = req.body;
-    if (!email || !storeAddress || !category || !taskId) {
-      console.error("❌ Missing required fields:", req.body);
-      return res.status(400).json({ message: "Missing required fields." });
-    }
-
-    console.log("🔍 Looking for task with ID:", taskId);
     const safeEmail = email.replace(/\./g, "_");
-    // Get the task reference
     const taskRef = db.ref(`volunteer_opportunities/${taskId}`);
     const taskSnapshot = await taskRef.once("value");
     const taskData = taskSnapshot.val();
 
     if (!taskData) {
-      console.error("❌ Task not found:", taskId);
-      console.error("Current path:", `volunteer_opportunities/${taskId}`);
-      return res.status(404).json({ message: "Task not found." });
+      return res.status(404).json({ error: "Task not found" });
     }
 
-    console.log("✅ Found task:", taskData);
+    // Initialize registrations if needed
+    const registrations = taskData.registrations || {
+      count: 0,
+      volunteers: {}
+    };
 
-    // Initialize registrations if they don't exist
-    if (!taskData.registrations) {
-      taskData.registrations = {
-        count: 0,
-        volunteers: {}
-      };
-    }
-
-    // Check if already registered
-    if (taskData.registrations.volunteers[safeEmail]) {
-      console.warn(`⚠ ${email} is already registered.`);
-      return res.status(400).json({ message: "You have already registered for this task." });
+    if (registrations.volunteers[safeEmail]) {
+      return res.status(400).json({ error: "Already registered for this task" });
     }
 
     // Update registration data
-    taskData.registrations.count += 1;
-    taskData.registrations.volunteers[safeEmail] = true;
+    registrations.count += 1;
+    registrations.volunteers[safeEmail] = true;
+    
+    await taskRef.update({ registrations });
 
-    console.log("📢 Attempting to update task with registration:", taskData);
-    await taskRef.update(taskData);
-    console.log("✅ Task update successful!");
-
-    // 🔹 Send Confirmation Email
+    // Send confirmation email
     const mailOptions = {
       from: process.env.EMAIL,
       to: email,
       subject: "Volunteer Registration Confirmation",
       html: `
         <p>You have successfully registered for a volunteer task at <b>${storeAddress}</b> in the <b>${category}</b> category.</p>
-        <p>You are <strong>volunteer #${taskData.registrations.count}</strong>.</p>
+        <p>You are <strong>volunteer #${registrations.count}</strong>.</p>
       `,
     };
 
-    console.log("📧 Attempting to send email to:", email);
-    console.log("📧 Using sender email:", process.env.EMAIL);
-    
-    try {
-      const info = await transporter.sendMail(mailOptions);
-      console.log("📧 Email sent successfully! Message ID:", info.messageId);
-      res.status(200).json({ message: "Email sent successfully.", count: taskData.registrations.count });
-    } catch (emailError) {
-      console.error("❌ Email sending failed:", {
-        error: emailError,
-        code: emailError.code,
-        command: emailError.command,
-        response: emailError.response,
-        stack: emailError.stack
-      });
-      throw emailError; // Re-throw to be caught by outer try-catch
-    }
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ 
+      message: "Registration successful and email sent",
+      count: registrations.count 
+    });
 
   } catch (error) {
-    console.error("❌ Error in send-email route:", {
-      error: error,
-      code: error.code,
-      command: error.command,
-      response: error.response,
-      stack: error.stack
-    });
+    console.error("Error in send-email route:", error);
     
+    const errorResponse = {
+      error: "Internal server error",
+      details: error.message
+    };
+
     if (error.code === 'EAUTH') {
-      res.status(500).json({ message: "Authentication failed. Please check email credentials." });
+      errorResponse.error = "Email authentication failed";
     } else if (error.code === 'ECONNECTION') {
-      res.status(500).json({ message: "Connection failed. Please check network connectivity." });
-    } else {
-      res.status(500).json({ message: "Error sending email: " + error.message });
+      errorResponse.error = "Email connection failed";
     }
+
+    res.status(500).json(errorResponse);
   }
 });
 
-
-
-
-
-// app.get('/search-suggestions', async (req, res) => {
-//   const { query } = req.query;
-
-//   if (!query) {
-//     return res.status(400).json({ error: 'Query parameter is required' });
-//   }
-
-//   console.log("This is the query: " + query);
-//   try {
-//     let search_parameters = {
-//       'q': query,
-//       'query_by': 'embedding',
-//       'per_page': 5
-//     }
-    
-//     // Use typesenseClient instead of client
-//     const searchResults = await typesenseClient.collections('volunterTasks').documents().search(search_parameters);
-    
-//     const suggestions = searchResults.hits ? searchResults.hits.map(hit => hit.document) : [];
-//     res.json(suggestions);
-//   } catch (err) {
-//     console.error('Error fetching search suggestions:', err);
-//     res.status(500).json({ error: 'Error fetching search suggestions' });
-//   }
-// });
-// Start the server
+// Start server
 app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
