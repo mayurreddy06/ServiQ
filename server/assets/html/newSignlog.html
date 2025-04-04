@@ -22,21 +22,21 @@
                         <br>
                         <a id = "learn-more-cta">Learn More</a>
                     </div>
-                    <form class = "right-side" action = "/login" method = "POST">
+                    <form class = "right-side">
                         <h1> Login </h1>
                         <p class = "right-p-margin"> Before we get started, your organization must login or register if you don't already have an account.</p>
-                        <form id="signin-form">
+                        <div id="signin-form">
                             <p>Username</p>
-                            <input type = "email" id = "email-entry" class = "login-input">
+                            <input type = "email" id = "email-entry" class = "login-input" name = "username">
                             <br>
                             <p>Password</p>
-                            <input type = "password" id = "password-entry" class = "login-input">
+                            <input type = "password" id = "password-entry" class = "login-input" name = "password">
                             <div class = "createOrLogin">
-                                <a href = "signup.html" id = "create-cta">Create an account?</a>
-                                <button type = "submit" id = "btn-cta">Login</button>
+                                <a href = "/auth/register" id = "create-cta">Create an account?</a>
+                                <button type = "submit" value = "Login" id = "btn-cta">Login</button>
                             </div>
                             <div id="login-error" style="display: none; color: red; margin-top: 10px;"></div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </main>

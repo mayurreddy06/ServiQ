@@ -1,15 +1,21 @@
-h1 {
+.container  {
+    
+    height: 100%;
+    width: 100%;
     display: flex;
+    position: fixed;
+    align-items: center;
     justify-content: center;
-    background-color: lightblue;
-    margin-left: 15%;
-    width: 70%;
+    
+}
+body{
+    margin-top: 100px;
 }
 
 .taskpage-body {
     font-size: 16px;
     background-color: white;
-    color: #223254;
+    color: #2d4579;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -23,16 +29,6 @@ h1 {
     width: 100%;
 }
 
-.location{
-    /*border: 1px solid blue;*/
-    margin-bottom: 10px;
-    margin-left:15%;
-}
-
-.calendar{
-    margin-bottom: 20px;
-    margin-left: 32%;
-}
 
 .category-boxes {
     /*border: 1px solid red;*/
@@ -287,4 +283,185 @@ h1 {
 
 .flatpickr-clear:hover, .flatpickr-close:hover {
     text-decoration: underline;
+}
+
+/* Volunteer Count */
+#volunteer-count {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 0px 0 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s;
+}
+
+#volunteer-count:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* Task Input */
+#task {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 10px 0 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s;
+}
+
+#task:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* Event Description */
+#description {
+    width: 100%;
+    min-height: 150px;
+    padding: 15px;
+    margin: 10px 0 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    line-height: 1.5;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s;
+    resize: vertical;
+}
+
+#description:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* Labels (for all three sections) */
+.task-post label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 16px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    #volunteer-count,
+    #task,
+    #description {
+        padding: 10px 12px;
+        font-size: 15px;
+    }
+    #description {
+        min-height: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .task-post label {
+        font-size: 15px;
+    }
+    #volunteer-count,
+    #task {
+        padding: 8px 10px;
+    }
+    #description {
+        min-height: 100px;
+        padding: 10px;
+    }
+}
+
+/* Location Input */
+#autocomplete {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 10px 0 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s;
+}
+
+#autocomplete:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* Date Input */
+#date {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 10px 0 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s;
+}
+
+#date:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* Location and Date Containers */
+.location, 
+.calendar {
+    width: 100%;
+    max-width: 600px; /* Match this to your other form fields */
+    margin: 0 auto 20px; /* Center the containers */
+    padding: 0 15px;
+    box-sizing: border-box;
+}
+
+/* Input Fields */
+#autocomplete,
+#date {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s;
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+#autocomplete:focus,
+#date:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .location,
+    .calendar {
+        max-width: 100%;
+        padding: 0 10px;
+    }
+    
+    #autocomplete,
+    #date {
+        padding: 10px 12px;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    #autocomplete,
+    #date {
+        padding: 8px 10px;
+    }
 }
