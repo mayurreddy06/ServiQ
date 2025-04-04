@@ -74,16 +74,65 @@ async function reverseGeocode(lng, lat, regex) {
 
 async function forwardGeocode(location, regex)
 {
-  alert("welp about to do this");
-  let forwardGeoCoding = 'https://api.mapbox.com/search/geocode/v6/forward?q=' + location + '&access_token=' + ACCESS_TOKEN + '';
-  console.log('about to perform API task');
-  const response = await fetch(forwardGeoCoding);
-  console.log('api resposne fetched');
-  const data = await response.json();
-  const targetKey = 'coordinates';
-  regex = null;
-  let latLng = loopThroughJSON(data, regex, targetKey);
-  return latLng;
+  try {
+    // First try to get coordinates from the autocomplete input
+    const autocompleteInput = document.getElementById('autocomplete');
+    if (autocompleteInput && autocompleteInput.dataset.place) {
+      const place = JSON.parse(autocompleteInput.dataset.place);
+      if (place.geometry && place.geometry.location) {
+        console.log('Using stored Google Places coordinates:', place.geometry.location);
+        // Return coordinates directly from the stored data
+        return `${place.geometry.location.lng},${place.geometry.location.lat}`;
+      }
+    }
+
+    // If no stored place data, try to get it from the autocomplete
+    const autocomplete = new google.maps.places.Autocomplete(autocompleteInput);
+    const place = autocomplete.getPlace();
+    
+    if (place && place.geometry && place.geometry.location) {
+      console.log('Using Google Places coordinates:', place.geometry.location);
+      // Store the place data for future use, but only the coordinates
+      const placeData = {
+        geometry: {
+          location: {
+            lat: place.geometry.location.lat(),
+            lng: place.geometry.location.lng()
+          }
+        }
+      };
+      autocompleteInput.dataset.place = JSON.stringify(placeData);
+      return `${place.geometry.location.lng()},${place.geometry.location.lat()}`;
+    }
+    
+    // Fallback to Mapbox if Google Places data not available
+    let forwardGeoCoding = 'https://api.mapbox.com/search/geocode/v6/forward?q=' + 
+      encodeURIComponent(location) + 
+      '&access_token=' + ACCESS_TOKEN + 
+      '&limit=5&types=address,poi';
+    
+    console.log('Fetching coordinates from Mapbox for:', location);
+    const response = await fetch(forwardGeoCoding);
+    const data = await response.json();
+    console.log('Mapbox API response:', data);
+    
+    if (data.features && data.features.length > 0) {
+      // Try to find the most precise result
+      const bestResult = data.features.find(feature => 
+        feature.properties.accuracy === 'point' || 
+        feature.properties.accuracy === 'address'
+      ) || data.features[0];
+      
+      console.log('Selected coordinates from:', bestResult.properties);
+      const coordinates = bestResult.geometry.coordinates;
+      return coordinates.join(','); // Returns "longitude,latitude"
+    }
+    
+    throw new Error('No coordinates found for the given location');
+  } catch (error) {
+    console.error('Error in forwardGeocode:', error);
+    throw error;
+  }
 }
 
 function loopThroughJSON(obj, regex, targetKey) {
@@ -335,80 +384,129 @@ function initAutocomplete() {
 
   autocomplete.addListener('place_changed', function () {
     const place = autocomplete.getPlace();
+    console.log('Place selected:', place);
 
     if (place.geometry && place.geometry.location) {
-      let lat = place.geometry.location.lat();
-      let lng = place.geometry.location.lng();
-
-      console.log("Selected Location:", { lat, lng });
+      // Store only the coordinates
+      const placeData = {
+        geometry: {
+          location: {
+            lat: place.geometry.location.lat(),
+            lng: place.geometry.location.lng()
+          }
+        }
+      };
+      input.dataset.place = JSON.stringify(placeData);
+      console.log('Stored place data:', placeData);
     } else {
       console.log("No valid coordinates found.");
     }
   });
 }
 
-// document.querySelector(".task-post").onsubmit = sendVolunteerData();
+// Add form submission handler
+document.querySelector(".task-post").addEventListener('submit', function(e) {
+  e.preventDefault(); // Prevent default form submission
+  sendVolunteerData();
+});
 
 // Function to send user inputted volunteer data to the server
 async function sendVolunteerData() {
-  const storeAddress = document.getElementById('autocomplete').value;
-  const date = document.getElementById('date').value;
-
-  const startTimeNode = document.querySelectorAll(".start-select");
-  const start_time = `${startTimeNode[0].innerHTML}:${startTimeNode[1].innerHTML}:${startTimeNode[2].innerHTML}`;
-  
-
-  const endTimeNode = document.querySelectorAll(".end-select");
-  const end_time = `${endTimeNode[0].innerHTML}:${endTimeNode[1].innerHTML}:${endTimeNode[2].innerHTML}`;
-
-  const category = document.querySelector(".inp-cbx:checked").value;
-
-  const spots = document.getElementById('volunteer-count').value;
-  const task = document.getElementById('task').value;
-  
-  const description = document.getElementById('description').value;
-  const timestamp = Date.now(); // Current time in milliseconds
-  
-  alert('welp about to go');
-  let latLng = await forwardGeocode(storeAddress, null);
-  latLng = String(latLng);
-  let lng = latLng.substring(0, latLng.indexOf(','));
-  let lat = latLng.substring(latLng.indexOf(',') + 1, latLng.length);
-  
-  const volunteerData = { 
-    storeAddress, 
-    category, 
-    start_time, 
-    end_time, 
-    spots, 
-    timestamp, 
-    task, 
-    location: { lat, lng }, 
-    date, 
-    description
-  };
-  alert("hi again");
-
   try {
+    // Validate required fields
+    const storeAddress = document.getElementById('autocomplete').value;
+    if (!storeAddress) {
+      alert('Please enter a valid location');
+      return;
+    }
+
+    const date = document.getElementById('date').value;
+    if (!date) {
+      alert('Please select a date');
+      return;
+    }
+
+    const startTimeNode = document.querySelectorAll(".start-select");
+    if (!startTimeNode || startTimeNode.length !== 3) {
+      alert('Invalid start time');
+      return;
+    }
+    const start_time = `${startTimeNode[0].innerHTML}:${startTimeNode[1].innerHTML}:${startTimeNode[2].innerHTML}`;
+
+    const endTimeNode = document.querySelectorAll(".end-select");
+    if (!endTimeNode || endTimeNode.length !== 3) {
+      alert('Invalid end time');
+      return;
+    }
+    const end_time = `${endTimeNode[0].innerHTML}:${endTimeNode[1].innerHTML}:${endTimeNode[2].innerHTML}`;
+
+    const category = document.querySelector(".inp-cbx:checked")?.value;
+    if (!category) {
+      alert('Please select a category');
+      return;
+    }
+
+    const spots = document.getElementById('volunteer-count').value;
+    if (!spots || isNaN(spots) || spots < 1) {
+      alert('Please enter a valid number of spots');
+      return;
+    }
+
+    const task = document.getElementById('task').value;
+    if (!task) {
+      alert('Please enter a task description');
+      return;
+    }
+
+    const description = document.getElementById('description').value;
+    const timestamp = Date.now();
+
+    console.log('Getting coordinates for:', storeAddress);
+    let latLng = await forwardGeocode(storeAddress, null);
+    console.log('Received coordinates:', latLng);
+    
+    const [lng, lat] = latLng.split(',').map(coord => parseFloat(coord.trim()));
+    if (isNaN(lat) || isNaN(lng)) {
+      throw new Error('Invalid coordinates received');
+    }
+    
+    const volunteerData = { 
+      storeAddress, 
+      category, 
+      start_time, 
+      end_time, 
+      spots, 
+      timestamp, 
+      task, 
+      location: { lat, lng }, 
+      date, 
+      description
+    };
+
+    console.log('Sending data to server:', volunteerData);
     const response = await fetch('/volunteer-data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(volunteerData),
     });
-    alert(response);
+
+    const responseText = await response.text();
+    console.log('Server response:', responseText);
 
     if (response.ok) {
       console.log('Volunteer opportunity added successfully');
       alert('Volunteer opportunity added successfully!');
-      // Refresh markers after adding new data
-      // fetchAndDisplayMarkers();
+      // Clear the form
+      document.querySelector(".task-post").reset();
+      // Refresh markers
+      fetchAndDisplayMarkers();
     } else {
-      console.error('Failed to add volunteer data:', await response.text());
-      alert('Failed to add volunteer data. Please try again.');
+      console.error('Failed to add volunteer data:', responseText);
+      alert('Failed to add volunteer data: ' + responseText);
     }
   } catch (error) {
-    console.error('Error:', error);
-    alert('POST ERROR: Data could not be added into the server');
+    console.error('Error in sendVolunteerData:', error);
+    alert('Error: ' + error.message);
   }
 }
 
