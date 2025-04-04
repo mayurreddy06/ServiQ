@@ -61,11 +61,15 @@ function updateNavbar(user) {
   if (user) {
     // User is logged in
     rightHeader.innerHTML = `
-      <a href="/homepage2.html" class="link-cta">Home</a>
-      <a href="/map.html" class="link-cta">Volunteer</a>
-      <a href="/taskpost.html" class="link-cta">Tasks</a>
-      <span class="user-email">${user.email}</span>
-      <button id="logout-link" class="login-cta">Sign Out</button>
+      <div class="nav-links">
+        <a href="/homepage2.html" class="link-cta">Home</a>
+        <a href="/map.html" class="link-cta">Volunteer</a>
+        <a href="/taskpost.html" class="link-cta">Tasks</a>
+      </div>
+      <div class="user-section">
+        <span class="user-email">${user.email}</span>
+        <button id="logout-link" class="login-cta">Sign Out</button>
+      </div>
     `;
     
     // Add event listener to logout button
@@ -87,9 +91,11 @@ function updateNavbar(user) {
   } else {
     // User is not logged in
     rightHeader.innerHTML = `
-      <a href="/homepage2.html" class="link-cta">Home</a>
-      <a href="/map.html" class="link-cta">Learn more</a>
-      <a href="/newSignlog.html" class="login-cta">Login Here</a>
+      <div class="nav-links">
+        <a href="/homepage2.html" class="link-cta">Home</a>
+        <a href="/map.html" class="link-cta">Learn more</a>
+        <a href="/newSignlog.html" class="login-cta">Login Here</a>
+      </div>
     `;
   }
   
