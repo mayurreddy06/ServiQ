@@ -59,8 +59,12 @@ app.get('/taskpost.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'assets/html/taskpost.html'));
 });
 
-app.get('/homepage.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/homepage.html'));
+app.get('/homepage2.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'assets/html/homepage2.html'));
+});
+
+app.get('/newSignlog.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'assets/html/newSignlog.html'));
 });
 
 app.get('/auth/login', (req, res) => {

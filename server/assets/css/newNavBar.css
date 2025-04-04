@@ -42,6 +42,7 @@ nav img {
     text-decoration: none;
     font-size: 18px;
     position: relative;
+    color: var(--text-color)
     
 }
 a::before,
