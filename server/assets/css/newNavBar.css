@@ -83,6 +83,10 @@ a:hover::before,input:hover::before
     color: var(--white) !important;
     font-weight: bold;
     border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    min-width: 80px;
+    text-align: center;
 }
 .user-section {
     display: flex;
