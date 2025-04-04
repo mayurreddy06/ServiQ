@@ -74,7 +74,6 @@ async function reverseGeocode(lng, lat, regex) {
 
 async function forwardGeocode(location, regex)
 {
-  alert("welp about to do this");
   let forwardGeoCoding = 'https://api.mapbox.com/search/geocode/v6/forward?q=' + location + '&access_token=' + ACCESS_TOKEN + '';
   console.log('about to perform API task');
   const response = await fetch(forwardGeoCoding);
@@ -368,8 +367,7 @@ async function sendVolunteerData() {
   
   const description = document.getElementById('description').value;
   const timestamp = Date.now(); // Current time in milliseconds
-  
-  alert('welp about to go');
+
   let latLng = await forwardGeocode(storeAddress, null);
   latLng = String(latLng);
   let lng = latLng.substring(0, latLng.indexOf(','));
@@ -387,7 +385,6 @@ async function sendVolunteerData() {
     date, 
     description
   };
-  alert("hi again");
 
   try {
     const response = await fetch('/volunteer-data', {

@@ -6,6 +6,7 @@
     <title>Document</title>
     <link rel = "stylesheet" href = "../css/newNavBar.css">
     <link rel = "stylesheet" href = "../css/newHome.css">
+    <link rel = "stylesheet" href = "../css/mapstyles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
@@ -52,7 +53,78 @@
     </section>
     <section>
         <div class = "container" id = "homePage-map">
-
+            <div id="map">
+                <!-- Filter Panel -->
+                <div class="filter-panel">
+                  <h3>Filters</h3>
+                  
+                  <div class="filter-group">
+                    <label><input type="checkbox" id="toggle-zipcode"> Zipcode</label>
+                    <input type="number" id="zipcode" min="00501" max="99950" value="43035" class = "filter-input-box">
+                  </div>
+            
+                  <div class="filter-group">
+                    <label><input type="checkbox" id="toggle-category"> Category</label>
+                    <select id="category-type" class = "filter-input-box">
+                      <option value="education">Education</option>
+                      <option value="community">Community Service</option>
+                      <option value="environment">Environment & Conservation</option>
+                      <option value="climate">Climate</option>
+                      <option value="wildlife">Wildlife</option>
+                      <option value="health">Health</option>
+                      <option value="sports">Sports</option>
+                      <option value="animal">Animal</option>
+                      <option value="teaching">Teaching</option>
+            
+                    </select>
+                  </div>
+            
+                  <div class="filter-group">
+                    <label><input type="checkbox" id="toggle-date"> Date</label>
+                    <input type="date" id="event-date" max = "01-01-2030" class = "filter-input-box">
+                  </div>
+                </div>
+              </div>
+            
+              <script type="module" src="../js/signin_script.js"></script>
+              <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+              <script src = "../js/script.js"></script>
+            
+              <script>
+                console.log("map.html loaded");
+            
+                ACCESS_TOKEN = 'pk.eyJ1IjoidmlzaGFscHV0dGFndW50YSIsImEiOiJjbTUxaDUxMGQxeGpnMmtwcHVycGhqaHhsIn0.IWxQPRNmfEJWT-k8sTCGlA';
+                mapboxgl.accessToken = ACCESS_TOKEN;
+            
+                let map = new mapboxgl.Map({
+                  container: 'map',
+                  style: 'mapbox://styles/mapbox/streets-v11',
+                  center: [-82.9988, 39.9612],
+                  zoom: 12
+                });
+            
+                map.addControl(new mapboxgl.NavigationControl());
+                map.addControl(new mapboxgl.FullscreenControl());
+            
+                map.on('load', () => {
+                  console.log("Map loaded, fetching markers...");
+                  fetchAndDisplayMarkers();
+                });
+              </script>
+            
+              <!-- Custom Floating Modal -->
+            <div id="customPopup" class="custom-popup">
+              <div class="custom-popup-content">
+                <span class="close-popup" onclick="closeCustomPopup()">&times;</span>
+                <h2>Volunteer Registration</h2>
+                <p><strong>Location:</strong> <span id="popupLocation"></span></p>
+                <p><strong>Category:</strong> <span id="popupCategory"></span></p>
+                <input type="email" id="popupEmail" placeholder="Enter your email">
+                <button id="registerBtn">Register</button>
+              </div>
+            </div>
+            
+            <!-- Add Custom Popup Styles -->
         </div>
     </section>
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
