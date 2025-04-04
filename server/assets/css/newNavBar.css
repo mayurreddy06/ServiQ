@@ -45,8 +45,8 @@ nav img {
     color: var(--text-color)
     
 }
-a::before,
-input::before {
+.external-pages a::before,
+.external-pages input::before {
     content: '';
     position: absolute;
     width: 100%;
