@@ -1,117 +1,222 @@
-:root
-{
+:root {
     --primary-color: #4CAF50;
     --secondary-color: #e7a10a;
     --white: white;
     --text-color: rgb(45, 39, 39);
 }
 
-main
-{
-    height: 75vh;
-    background-color: var(--primary-color);
+/* Base Reset */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+/* Header & Navigation */
+header {
+    width: 100%;
+}
+
+.container {
+    width: 100%;
+    max-width: 100vw;
+    overflow: hidden;
+    padding: 0 15px;
+}
+
+nav {
     display: flex;
-    justify-content: center;
-    gap: 155px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    width: 100%;
+}
+
+nav img {
+    max-width: 180px;
+    height: auto;
+}
+
+.external-pages {
+    display: flex;
+    gap: 15px;
     align-items: center;
 }
 
-.hero
-{
+.external-pages a {
+    white-space: nowrap;
+}
+
+/* Main Content */
+main {
+    width: 100%;
+    min-height: 75vh;
+    background-color: var(--primary-color);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 30px;
-    width: 525px;
-    height: 600px;
-
+    gap: 40px;
+    padding: 40px 20px;
 }
-.hero h1, p
-{
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    width: 100%;
+    max-width: 525px;
+    text-align: center;
+}
+
+.hero h1, .hero p {
     color: var(--white);
+    margin: 0;
+    padding: 0 10px;
 }
 
-.hero p
-{
-    line-height: 30px;
+.hero p {
+    line-height: 1.5;
     font-size: 16px;
 }
-.text-emp
-{
-    font-size: 50px;
-    line-height: 75px;
+
+.text-emp {
+    font-size: clamp(1.8rem, 8vw, 3rem);
+    line-height: 1.2;
+    word-break: break-word;
 }
 
-.hero-buttons
-{
+.hero-buttons {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 400px;
 }
-.hero-buttons a
-{
-    font-size: 20px;
-    padding: 10px 76px;
+
+.hero-buttons a {
+    font-size: 18px;
+    padding: 12px 0;
     border-radius: 7px;
     text-decoration: none;
+    text-align: center;
+    width: 100%;
 }
-#get-started-cta
-{
+
+#get-started-cta {
     color: var(--text-color);
     background-color: var(--white);
 }
-#learn-more-cta
-{
+
+#learn-more-cta {
     color: var(--white);
     border: 1px solid var(--white);
+    background-color: transparent;
 }
 
-#volunteer-img
-{
-    width: 650px;
-    border-radius: 25px;
-    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+#volunteer-img {
+    width: 100%;
+    max-width: 650px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-#homePage-form
-{
+/* Form Section */
+#homePage-form {
     background-color: var(--primary-color);
-    color: var(--white);
+    padding: 20px;
+    width: 100%;
 }
-.homePage-form
-{
+
+.homePage-form {
     display: flex;
-    justify-content: center;
-    height: 15vh;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
 }
-.form-element
-{
-    height: 20px;
-}
-.homePage-form input
-{
-    width: 350px;
-    height: 40px;
+
+.homePage-form input {
+    width: 100%;
+    height: 45px;
     border: none;
     border-radius: 15px;
-    padding-left: 25px;
+    padding: 0 15px;
     font-size: 15px;
-    /* padding left extends the input box as for width, but also fixes the cursor position so it doesn't start on the very left edge */
 }
-.homePage-form button
-{
-    margin-left: 20px;
-    padding: 1px 15px;
+
+.homePage-form button {
     background-color: var(--secondary-color);
     border: none;
     color: white;
     border-radius: 15px;
     font-size: 15px;
-    height: 40px;
+    height: 45px;
     cursor: pointer;
+    width: 100%;
 }
-#homePage-map
-{
-    height: 80vh;
+
+/* Map Section */
+#homePage-map {
+    height: 50vh;
+    width: 100%;
+}
+
+/* Media Queries */
+@media (min-width: 480px) {
+    .hero-buttons {
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .hero-buttons a {
+        width: auto;
+        padding: 10px 25px;
+    }
+}
+
+@media (min-width: 768px) {
+    main {
+        flex-direction: row;
+        gap: 40px;
+        padding: 40px;
+    }
+
+    .hero {
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .homePage-form {
+        flex-direction: row;
+    }
+
+    .homePage-form button {
+        width: auto;
+        padding: 0 25px;
+    }
+}
+
+@media (min-width: 1024px) {
+    main {
+        gap: 80px;
+    }
+    
+    .text-emp {
+        font-size: 3rem;
+        line-height: 1.3;
+    }
+    
+    .hero-buttons a {
+        padding: 10px 40px;
+    }
 }
