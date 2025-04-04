@@ -43,19 +43,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
 document.getElementById('zipcode').addEventListener('change', () => reZoomMap());
 
-async function reZoomMap()
-{
-  let zipcode = document.getElementById('zipcode').value;
-  let latLng = await forwardGeocode(zipcode, null);
-  latLng = String(latLng);
-  let lat = latLng.substring(0, latLng.indexOf(','));
-  let lng = latLng.substring(latLng.indexOf(',') + 1, latLng.length);
-  map.flyTo({
-    center: [lat, lng],
-    zoom: 12,
-    speed: 1.2, 
-    curve: 1, 
-  });
+async function reZoomMap() {
+  try {
+    const zipcode = document.getElementById('zipcode').value;
+    if (!zipcode) return;
+
+    console.log('Zooming to zipcode:', zipcode);
+    
+    // Use Mapbox geocoding API directly for zipcodes
+    const geocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(zipcode)}.json?access_token=${ACCESS_TOKEN}&types=postcode`;
+    
+    const response = await fetch(geocodingUrl);
+    const data = await response.json();
+    
+    if (data.features && data.features.length > 0) {
+      const [lng, lat] = data.features[0].center;
+      console.log('Found coordinates for zipcode:', { lng, lat });
+      
+      map.flyTo({
+        center: [lng, lat],
+        zoom: 12,
+        speed: 1.2,
+        curve: 1,
+      });
+    } else {
+      console.error('No coordinates found for zipcode:', zipcode);
+    }
+  } catch (error) {
+    console.error('Error in reZoomMap:', error);
+  }
 }
 
 let markers = [];
@@ -75,18 +91,30 @@ async function reverseGeocode(lng, lat, regex) {
 async function forwardGeocode(location, regex)
 {
   try {
-    // First try to get coordinates from the autocomplete input
+    // If it's a zipcode (5 digits), use a different endpoint
+    if (/^\d{5}$/.test(location)) {
+      const geocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(location)}.json?access_token=${ACCESS_TOKEN}&types=postcode`;
+      const response = await fetch(geocodingUrl);
+      const data = await response.json();
+      
+      if (data.features && data.features.length > 0) {
+        const [lng, lat] = data.features[0].center;
+        return `${lng},${lat}`;
+      }
+      throw new Error('No coordinates found for zipcode');
+    }
+
+    // For non-zipcode locations, use existing Google Places logic
     const autocompleteInput = document.getElementById('autocomplete');
     if (autocompleteInput && autocompleteInput.dataset.place) {
       const place = JSON.parse(autocompleteInput.dataset.place);
       if (place.geometry && place.geometry.location) {
         console.log('Using stored Google Places coordinates:', place.geometry.location);
-        // Return coordinates directly from the stored data
         return `${place.geometry.location.lng},${place.geometry.location.lat}`;
       }
     }
 
-    // If no stored place data, try to get it from the autocomplete
+    // First try to get coordinates from the autocomplete input
     const autocomplete = new google.maps.places.Autocomplete(autocompleteInput);
     const place = autocomplete.getPlace();
     
