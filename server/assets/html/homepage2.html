@@ -44,7 +44,8 @@
     <section>
         <div class = "container" id = "homePage-form">
             <form onsubmit = "fetchAndDisplayMarkers()" class = "homePage-form">
-                <input type="text" id="autocomplete home-search" name="store-location" class = "form-element" placeholder = "Enter Address or Zipcode" required>
+              <label for="autocomplete"></label>
+                <input type="text" id="autocomplete home-search" name="store-location" onclick = "initAutocomplete()" class = "form-element" placeholder = "Enter Address or Zipcode" required>
                 <!-- add onclick = "initAutocomplete()" back to above -->
                 <button type = "submit" class = "form-element"><i class="fa-solid fa-magnifying-glass"></i>     Find Volunteering</button>
             </form>
