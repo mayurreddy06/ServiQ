@@ -41,24 +41,69 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-document.getElementById('zipcode').addEventListener('change', () => reZoomMap());
+document.getElementById('zipcode').addEventListener('change', () => reZoomMap(document.getElementById('zipcode').value));
 
-async function reZoomMap() {
+// Handle form submission for address search
+document.querySelector('.homePage-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  // this prevents the page from refreshing when the form is submitted
+  const address = document.getElementById('autocomplete').value;
+  if (address) {
+    await reZoomMap(address);
+    fetchAndDisplayMarkers(); // Refresh markers after re-zooming
+  }
+});
+
+async function reZoomMap(value) {
   try {
-    const zipcode = document.getElementById('zipcode').value;
-    if (!zipcode) return;
+    if (!value) return;
 
-    console.log('Zooming to zipcode:', zipcode);
+    console.log('Zooming to location:', value);
     
-    // Use Mapbox geocoding API directly for zipcodes
-    const geocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(zipcode)}.json?access_token=${ACCESS_TOKEN}&types=postcode`;
-    
+    // Check if it's a zipcode (5 digits)
+    if (/^\d{5}$/.test(value)) {
+      const geocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(value)}.json?access_token=${ACCESS_TOKEN}&types=postcode`;
+      const response = await fetch(geocodingUrl);
+      const data = await response.json();
+      
+      if (data.features && data.features.length > 0) {
+        const [lng, lat] = data.features[0].center;
+        console.log('Found coordinates for zipcode:', { lng, lat });
+        
+        map.flyTo({
+          center: [lng, lat],
+          zoom: 12,
+          speed: 1.2,
+          curve: 1,
+        });
+        return;
+      }
+    }
+
+    // For addresses, use Google Places data if available
+    const autocompleteInput = document.getElementById('autocomplete');
+    if (autocompleteInput && autocompleteInput.dataset.place) {
+      const place = JSON.parse(autocompleteInput.dataset.place);
+      if (place.geometry && place.geometry.location) {
+        console.log('Using stored Google Places coordinates:', place.geometry.location);
+        map.flyTo({
+          center: [place.geometry.location.lng, place.geometry.location.lat],
+          zoom: 12,
+          speed: 1.2,
+          curve: 1,
+        });
+        return;
+      }
+    }
+
+    // Fallback to Mapbox geocoding for addresses
+    const geocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(value)}.json?access_token=${ACCESS_TOKEN}`;
     const response = await fetch(geocodingUrl);
     const data = await response.json();
     
     if (data.features && data.features.length > 0) {
       const [lng, lat] = data.features[0].center;
-      console.log('Found coordinates for zipcode:', { lng, lat });
+      console.log('Found coordinates for address:', { lng, lat });
       
       map.flyTo({
         center: [lng, lat],
@@ -67,7 +112,7 @@ async function reZoomMap() {
         curve: 1,
       });
     } else {
-      console.error('No coordinates found for zipcode:', zipcode);
+      console.error('No coordinates found for location:', value);
     }
   } catch (error) {
     console.error('Error in reZoomMap:', error);
@@ -598,7 +643,3 @@ if (typeof google !== 'undefined' && google.maps && google.maps.places) {
     }
   });
 }
-
-document.getElementById('home-search').addEventListener('click', ()=> {
-  window.location.href = "#homePage-form";
-})

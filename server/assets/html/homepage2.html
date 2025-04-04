@@ -42,12 +42,10 @@
         </div>
     </section>
     <section>
-        <div class = "container" id = "homePage-form">
-            <form onsubmit = "fetchAndDisplayMarkers()" class = "homePage-form">
-              <label for="autocomplete"></label>
-                <input type="text" id="autocomplete home-search" name="store-location" onclick = "initAutocomplete()" class = "form-element" placeholder = "Enter Address or Zipcode" required>
-                <!-- add onclick = "initAutocomplete()" back to above -->
-                <button type = "submit" class = "form-element"><i class="fa-solid fa-magnifying-glass"></i>     Find Volunteering</button>
+        <div class = "container scroll-section" id = "homePage-form">
+            <form class = "homePage-form" onsubmit="fetchAndDisplayMarkers(); return false;">
+                <input type="text" id="autocomplete" name="store-location" onclick="initAutocomplete()" class="form-element reZoom" placeholder="Enter Address or Zipcode" required>
+                <button type = "submit" id = "homePage-search-button" class = "form-element"><i class="fa-solid fa-magnifying-glass"></i>     Find Volunteering</button>
             </form>
         </div>
     </section>
@@ -60,7 +58,7 @@
                   
                   <div class="filter-group">
                     <label><input type="checkbox" id="toggle-zipcode"> Zipcode</label>
-                    <input type="number" id="zipcode" min="00501" max="99950" value="43035" class = "filter-input-box">
+                    <input type="number" id="zipcode" min="00501" max="99950" value="43035" class = "filter-input-box reZoom">
                   </div>
             
                   <div class="filter-group">
@@ -89,6 +87,7 @@
               <script type="module" src="../js/signin_script.js"></script>
               <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
               <script src = "../js/script.js"></script>
+              <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRuZeVsj0JhzbxkUeV5FYb8PQVB-8zHEU&libraries=places"></script>
             
               <script>
                 console.log("map.html loaded");
@@ -127,9 +126,5 @@
             <!-- Add Custom Popup Styles -->
         </div>
     </section>
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwHozpYoJS8xgURnkkICo7L0vw8xW2Oak&libraries=places"></script>
-    <script type="module" src="../js/signin_script.js"></script>
-    
 </body>
 </html>
