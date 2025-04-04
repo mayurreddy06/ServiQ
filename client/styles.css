@@ -1,4 +1,4 @@
-/* General Reset */
+Cannot GET /newSignlog.html/* General Reset */
 body, html {
     margin: 0;
     padding: 0;
@@ -145,8 +145,39 @@ body, html {
     cursor: pointer;
   }
   
+  .user-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 20px;
+  }
 
+  .user-email {
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+  }
 
+  .logout-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+  }
+
+  .logout-btn:hover {
+    background-color: #c82333;
+  }
+
+  .right-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
   
   
   

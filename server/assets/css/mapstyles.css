@@ -1,31 +1,214 @@
-body, html { 
-    margin: 0; padding: 0; height: 100%; display: flex; flex-direction: column; 
+/* Map Container Structure */
+#homePage-map {
+    position: relative;
+    width: 100%;
+    height: 75vh;
+    margin-bottom: 20px;
+    isolation: isolate; /* Creates new stacking context */
 }
 
 #map {
-width: 100%;  /* Adjust width (default is 100%) */
-height: 100vh; /* Adjust height, e.g., 80% of viewport height */
-margin: auto; /* Centers the map */
-border: 2px solid #333; /* Optional: Add border for debugging */
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden; /* Contain all child elements */
 }
 
-/* Fix Filter Panel on Top */
+/* Filter Panel - Fixed Positioning */
 .filter-panel {
     position: absolute;
-    top: 30%;
-    transform: translateY(-50%);
+    top: 20px;
     left: 20px;
-    background: white;
-    padding: 15px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    width: 250px;
-    z-index: 10; /* Ensures it stays above the map */
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    width: 280px;
+    z-index: 1000;
+    border: 2px solid #4CAF50;
 }
-.filter-panel h3 { margin: 0 0 10px; font-size: 18px; }
-.filter-group { margin-bottom: 10px; }
-.filter-group label { display: block; font-weight: bold; margin-bottom: 5px; }
-.filter-panel select, .filter-panel input { width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 3px; }
-.filter-panel input[type="checkbox"] { width: auto; margin-right: 5px; }
-.filter-panel button { width: 100%; padding: 8px; background: #4CAF50; color: white; border: none; border-radius: 3px; cursor: pointer; }
-.filter-panel button:hover { background: #45a049; }
+
+.filter-panel h3 {
+    margin: 0 0 15px;
+    font-size: 18px;
+    color: #4CAF50;
+    text-align: center;
+    font-weight: 600;
+    border-bottom: 2px solid #e7e7e7;
+    padding-bottom: 10px;
+}
+
+.filter-group {
+    margin-bottom: 20px;
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.filter-group:hover {
+    background: #f0f2f5;
+    transform: translateY(-2px);
+}
+
+.filter-group label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: #2d2727;
+    font-weight: 500;
+}
+
+.filter-panel input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    accent-color: #4CAF50;
+    cursor: pointer;
+}
+
+.filter-input-box {
+    width: 90%;
+    font-size: 14px;
+    height: 32px;
+    padding: 5px 10px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.filter-input-box:focus {
+    border-color: #4CAF50;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+#category-type {
+    cursor: pointer;
+}
+
+/* Mapbox Elements Containment */
+.mapboxgl-canvas-container, 
+.mapboxgl-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.mapboxgl-marker {
+    position: absolute;
+    z-index: 10;
+}
+
+.mapboxgl-popup {
+    max-width: 200px;
+    z-index: 100;
+}
+
+.mapboxgl-popup-content {
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.15);
+}
+
+.mapboxgl-popup-content h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    color: #222;
+}
+
+.mapboxgl-popup-content p {
+    margin: 6px 0;
+    font-size: 14px;
+    color: #444;
+}
+
+/* Custom Popup - Centered Modal */
+.custom-popup {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.custom-popup-content {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 350px;
+    position: relative;
+}
+
+.custom-popup h2 {
+    margin: 0 0 15px;
+    font-size: 1.3rem;
+    color: #333;
+}
+
+.custom-popup p {
+    margin: 10px 0;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.close-popup {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #777;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+#popupEmail {
+    padding: 10px 12px;
+    margin: 15px 0;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+#registerBtn {
+    width: 100%;
+    padding: 12px;
+    background-color: #4285F4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 15px;
+    transition: background-color 0.2s;
+}
+
+#registerBtn:hover {
+    background-color: #3367D6;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .filter-panel {
+        width: 220px;
+        padding: 12px;
+    }
+    
+    .custom-popup-content {
+        padding: 20px;
+    }
+}

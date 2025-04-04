@@ -36,16 +36,26 @@ nav img {
     gap: 35px;
     color: var(--text-color);
     padding-right: 75px;
+    align-items: center;
+    flex-wrap: nowrap;
+    min-width: 0;
+}
+.nav-links {
+    display: flex;
+    gap: 35px;
+    align-items: center;
+    flex-shrink: 1;
 }
 .external-pages a, input
 {
     text-decoration: none;
     font-size: 18px;
     position: relative;
+    color: var(--text-color)
     
 }
-a::before,
-input::before {
+.external-pages a::before,
+.external-pages input::before {
     content: '';
     position: absolute;
     width: 100%;
@@ -67,17 +77,64 @@ a:hover::before,input:hover::before
 .link-cta
 {
     color: var(--text-color);
-    margin-top: 8px;
 }
 .login-cta
 {
     padding: 10px 12px;
     background-color: var(--primary-color);
     border-radius: 5px;
-    color: var(--white);
+    color: var(--white) !important;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    min-width: 80px;
+    text-align: center;
 }
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-left: 10px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.user-email {
+    color: var(--text-color);
+    font-size: 18px;
+    font-weight: normal;
+    text-decoration: none;
+    position: relative;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.user-email:hover {
+    color: var(--primary-color);
+}
+
 #profile-image
 {
     width: 40px;
     height: 100%;
+}
+
+#logout-container {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    background-color: white;
+    padding: 12px 15px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    display: none;
+}
+
+#logout-link {
+    position: static;
+    display: block;
 }

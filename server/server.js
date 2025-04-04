@@ -27,7 +27,6 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'assets/views'));
 
 // Initialize Firebase Admin
-const serviceAccount = require(process.env.FIREBASE_JSON);
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: process.env.FIREBASE_URL
@@ -36,10 +35,6 @@ admin.initializeApp({
 // Database reference
 const db = admin.database();
 module.exports = db;
-
-// Create Express app
-const app = express();
-const PORT = process.env.PORT || 3002;
 
 // Configure view engine
 app.set('view engine', 'ejs');
@@ -64,8 +59,12 @@ app.get('/taskpost.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'assets/html/taskpost.html'));
 });
 
-app.get('/homepage.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/homepage.html'));
+app.get('/homepage2.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'assets/html/homepage2.html'));
+});
+
+app.get('/newSignlog.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'assets/html/newSignlog.html'));
 });
 
 app.get('/auth/login', (req, res) => {
@@ -80,7 +79,7 @@ app.post('/auth/register', async (req, res) => {
   const {agencyName, agencyDesc, email, password} = req.body;
   // values from the name = attribute in the form html
 
-  if (!email || !password || !agencyName) {
+  if (!email || !password || !agencyName || !agencyDesc) {
     return res.status(400).json({
        error: 'Missing required fields' 
       });
@@ -125,7 +124,7 @@ app.get('/viewPosts.ejs', (req, res) => {
 // Volunteer opportunities route
 const volunteerDataRouter = require('./assets/js/routes/volunteerData.js');
 const rateLimiter = require('./assets/js/middleware/rateLimiter.js');
-app.use("/", rateLimiter, volunteerDataRouter);
+app.use("/", volunteerDataRouter);
 
 require('dotenv').config();
 

@@ -4,9 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel = "stylesheet" href = "../css/newNavBar.css">
     <link rel = "stylesheet" href = "../css/newlogin.css">
 </head>
 <body>
+    <header>
+        <div class = "container">
+            <nav>
+                <img src = "../images/ServiQ-trans.png">
+                <div class = "external-pages right-header">
+                    <a href="/homepage2.html" class = "link-cta">Home</a>
+                    <a href="/map.html" class = "link-cta">Learn more</a>
+                    <a href="/newSignlog.html" class = "login-cta">Login Here</a>
+                </div>
+            </nav>
+        </div>
+    </header>
     <section>
         <div class = "container">
             <main>
@@ -22,10 +35,10 @@
                         <br>
                         <a id = "learn-more-cta">Learn More</a>
                     </div>
-                    <form class = "right-side">
+                    <div class = "right-side">
                         <h1> Login </h1>
                         <p class = "right-p-margin"> Before we get started, your organization must login or register if you don't already have an account.</p>
-                        <div id="signin-form">
+                        <form id="signin-form">
                             <p>Username</p>
                             <input type = "email" id = "email-entry" class = "login-input" name = "username">
                             <br>
@@ -36,7 +49,7 @@
                                 <button type = "submit" value = "Login" id = "btn-cta">Login</button>
                             </div>
                             <div id="login-error" style="display: none; color: red; margin-top: 10px;"></div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </main>
