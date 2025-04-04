@@ -101,6 +101,7 @@ main
 }
 .homePage-form button
 {
+    margin-left: 20px;
     padding: 1px 15px;
     background-color: var(--secondary-color);
     border: none;

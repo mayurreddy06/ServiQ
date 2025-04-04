@@ -233,7 +233,7 @@ async function fetchAndDisplayMarkers() {
     let selectedCategory = "";
     const categorySelect = document.getElementById('category-type');
     if (categorySelect) {
-    selectedCategory = categorySelect.value;
+      selectedCategory = categorySelect.value;
     }
 
     let selectedDate = "";
@@ -256,14 +256,16 @@ async function fetchAndDisplayMarkers() {
     markers = [];
 
     // Process tasks
-    for (const key in volunteerTasks) {
-      const { storeAddress, location, category, date, task, description } = volunteerTasks[key];
+    for (const taskId in volunteerTasks) {
+      const task = volunteerTasks[taskId];
+      const { storeAddress, location, category, date } = task;
       
       // Skip if required fields are missing
-      if (!storeAddress || !location || !category || !date || !task || !description) {
-        console.log("Skipping incomplete task data:", volunteerTasks[key]);
+      if (!storeAddress || !location || !category || !date) {
+        console.log("Skipping incomplete task data:", task);
         continue;
       }
+
       let taskDate;
       try {
         taskDate = new Date(date).toISOString().split('T')[0];
@@ -302,9 +304,10 @@ async function fetchAndDisplayMarkers() {
 
       markers.push(marker);
 
-      // Add click event to show custom popup
+      // Add click event to show custom popup with the correct taskId
       marker.getElement().addEventListener('click', () => {
-        openCustomPopup(storeAddress, category, key);
+        console.log("Opening popup for task:", { taskId, storeAddress, category });
+        openCustomPopup(storeAddress, category, taskId);
       });
     }
     
@@ -411,7 +414,7 @@ async function sendVolunteerData() {
 
 // Function to open the custom popup
 function openCustomPopup(storeAddress, category, taskId) {
-  console.log("📌 Opening custom popup for:", storeAddress);
+  console.log("📌 Opening custom popup for:", { storeAddress, category, taskId });
 
   document.getElementById('popupLocation').innerText = storeAddress;
   document.getElementById('popupCategory').innerText = category;
@@ -430,7 +433,7 @@ function openCustomPopup(storeAddress, category, taskId) {
     console.log(`📨 Sending request to /send-email for: ${email}`);
 
     try {
-      const response = await fetch("http://localhost:3000/send-email", {
+      const response = await fetch("http://localhost:3002/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, storeAddress, category, taskId }),
