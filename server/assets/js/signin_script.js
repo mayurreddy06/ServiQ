@@ -67,16 +67,44 @@ function updateNavbar(user) {
         <a href="/taskpost.html" class="link-cta">Tasks</a>
       </div>
       <div class="user-section">
-        <span class="user-email">${user.email}</span>
-        <button id="logout-link" class="login-cta">Sign Out</button>
+        <span class="user-email" id="user-email-display">${user.email}</span>
+        <div id="logout-container">
+          <button id="logout-link" class="login-cta">Sign Out</button>
+        </div>
       </div>
     `;
     
-    // Add event listener to logout button
+    // Add event listener to email display to toggle logout button
+    const emailDisplay = document.getElementById('user-email-display');
+    const logoutContainer = document.getElementById('logout-container');
     const logoutBtn = document.getElementById('logout-link');
+    
+    if (emailDisplay && logoutContainer) {
+      emailDisplay.style.cursor = 'pointer';
+      
+      emailDisplay.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent event from bubbling up
+        // Toggle logout container visibility
+        if (logoutContainer.style.display === 'none' || !logoutContainer.style.display) {
+          logoutContainer.style.display = 'block';
+        } else {
+          logoutContainer.style.display = 'none';
+        }
+      });
+      
+      // Hide logout container when clicking elsewhere on the page
+      document.addEventListener('click', (e) => {
+        if (e.target !== emailDisplay && !logoutContainer.contains(e.target)) {
+          logoutContainer.style.display = 'none';
+        }
+      });
+    }
+    
+    // Add event listener to logout button
     if (logoutBtn) {
       logoutBtn.addEventListener('click', (e) => {
         e.preventDefault();
+        e.stopPropagation(); // Prevent event from bubbling up
         console.log("Logout button clicked");
         rightHeader.style.visibility = 'hidden';
         signOut(auth).then(() => {
