@@ -16,16 +16,17 @@ body
 }
 .container
 {
-    
-    width: 1533px;
+    width: 100%;
+    max-width: 100%;
 }
 nav
 {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
-    gap: 900px;
     height: 70px;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 nav img {
     width: 75px;
