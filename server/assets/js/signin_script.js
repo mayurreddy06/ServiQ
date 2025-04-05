@@ -63,7 +63,7 @@ function updateNavbar(user) {
     rightHeader.innerHTML = `
       <div class="nav-links">
         <a href="/homepage2.html" class="link-cta">Home</a>
-        <a href="/map.html" class="link-cta">Volunteer</a>
+        <a href="/map.html" class="link-cta">Learn More</a>
         <a href="/taskpost.html" class="link-cta">Tasks</a>
       </div>
       <div class="user-section">
@@ -121,7 +121,7 @@ function updateNavbar(user) {
     rightHeader.innerHTML = `
       <div class="nav-links">
         <a href="/homepage2.html" class="link-cta">Home</a>
-        <a href="/map.html" class="link-cta">Learn more</a>
+        <a href="/map.html" class="link-cta">Learn More</a>
         <a href="/newSignlog.html" class="login-cta">Login Here</a>
       </div>
     `;
