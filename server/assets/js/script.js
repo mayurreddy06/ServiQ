@@ -379,12 +379,12 @@ async function fetchAndDisplayMarkers() {
 
     // Process tasks
     for (const taskId in volunteerTasks) {
-      const task = volunteerTasks[taskId];
-      const { storeAddress, location, category, date } = task;
+      const specificTask = volunteerTasks[taskId];
+      const { storeAddress, location, category, date, task } = specificTask;
       
       // Skip if required fields are missing
       if (!storeAddress || !location || !category || !date) {
-        console.log("Skipping incomplete task data:", task);
+        console.log("Skipping incomplete task data:", specificTask);
         continue;
       }
 
@@ -428,8 +428,8 @@ async function fetchAndDisplayMarkers() {
 
       // Add click event to show custom popup with the correct taskId
       marker.getElement().addEventListener('click', () => {
-        console.log("Opening popup for task:", { taskId, storeAddress, category });
-        openCustomPopup(storeAddress, category, taskId);
+        console.log("Opening popup for task:", { taskId, storeAddress, category, task });
+        openCustomPopup(storeAddress, category, taskId, task);
       });
     }
     
@@ -584,10 +584,11 @@ async function sendVolunteerData() {
 }
 
 // Function to open the custom popup
-function openCustomPopup(storeAddress, category, taskId) {
-  console.log("📌 Opening custom popup for:", { storeAddress, category, taskId });
+function openCustomPopup(storeAddress, category, taskId, task) {
+  console.log("📌 Opening custom popup for:", { storeAddress, category, taskId, task });
 
   document.getElementById('popupLocation').innerText = storeAddress;
+  document.getElementById('popupTask').innerText = task;
   document.getElementById('popupCategory').innerText = category;
 
   document.getElementById('customPopup').style.display = 'block';

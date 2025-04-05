@@ -6,9 +6,8 @@
   <title>ServiQ Map</title>
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-  <link rel="stylesheet" href="../css/general.css">
   <link rel="stylesheet" href="../css/newNavBar.css">
-  <link rel="stylesheet" href="../css/mapstyles.css">
+  <link rel="stylesheet" href="../css/aboutUs.css">
   <link rel="icon" type="image/png" href="../images/ServiQ_logo.png" />
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwHozpYoJS8xgURnkkICo7L0vw8xW2Oak&libraries=places"></script>
   
@@ -26,116 +25,24 @@
       </nav>
     </div>
   </header>
-
-  <div id="map">
-    <!-- Filter Panel -->
-    <div class="filter-panel">
-      <h3>Filters</h3>
+  <section>
+    <div class = "container">
+      <article>
+        <div class = "introduction">
+          <h2>Our Mission</h2>
+          <p>We are a group of highly talented and motivated college students aiming to create a reliable repository and system helping out local nonprofits and organizations.</p>
+        </div>
+      </article>
+      <div class = "grid">
+        <div class = "grid-item">
+          
+        </div>
+      </div>
       
-      <div class="filter-group">
-        <label><input type="checkbox" id="toggle-zipcode"> Zipcode</label>
-        <input type="number" id="zipcode" min="00501" max="99950" value="43035" >
-      </div>
 
-      <div class="filter-group">
-        <label><input type="checkbox" id="toggle-category"> Category</label>
-        <select id="category-type">
-          <option value="education">Education</option>
-          <option value="community">Community Service</option>
-          <option value="environment">Environment & Conservation</option>
-          <option value="climate">Climate</option>
-          <option value="wildlife">Wildlife</option>
-          <option value="health">Health</option>
-          <option value="sports">Sports</option>
-          <option value="animal">Animal</option>
-          <option value="teaching">Teaching</option>
-
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <label><input type="checkbox" id="toggle-date"> Date</label>
-        <input type="date" id="event-date" max = "01-01-2001">
-      </div>
     </div>
-  </div>
-
-  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-  <script type="module" src="../js/signin_script.js"></script>
-  <script src="../js/script.js"></script>
-
-  <script>
-    console.log("map.html loaded");
-
-    ACCESS_TOKEN = 'pk.eyJ1IjoidmlzaGFscHV0dGFndW50YSIsImEiOiJjbTUxaDUxMGQxeGpnMmtwcHVycGhqaHhsIn0.IWxQPRNmfEJWT-k8sTCGlA';
-    mapboxgl.accessToken = ACCESS_TOKEN;
-
-    let map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: [-82.9988, 39.9612],
-      zoom: 12
-    });
-
-    map.addControl(new mapboxgl.NavigationControl());
-    map.addControl(new mapboxgl.FullscreenControl());
-
-    map.on('load', () => {
-      console.log("Map loaded, fetching markers...");
-      fetchAndDisplayMarkers();
-    });
-  </script>
-
-  <!-- Custom Floating Modal -->
-<div id="customPopup" class="custom-popup">
-  <div class="custom-popup-content">
-    <span class="close-popup" onclick="closeCustomPopup()">&times;</span>
-    <h2>Volunteer Registration</h2>
-    <p><strong>Location:</strong> <span id="popupLocation"></span></p>
-    <p><strong>Category:</strong> <span id="popupCategory"></span></p>
-    <input type="email" id="popupEmail" placeholder="Enter your email">
-    <button id="registerBtn">Register</button>
-  </div>
-</div>
-
-<!-- Add Custom Popup Styles -->
-<style>
-  .custom-popup {
-    display: none; /* Initially hidden */
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 20px;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
-    border-radius: 10px;
-    z-index: 1000;
-  }
-  .custom-popup-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .close-popup {
-    cursor: pointer;
-    font-size: 24px;
-    float: right;
-  }
-  #popupEmail {
-    padding: 10px;
-    margin-top: 10px;
-    width: 100%;
-  }
-  #registerBtn {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: blue;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-</style>
+  </section>
+  
 
 </body>
 </html>

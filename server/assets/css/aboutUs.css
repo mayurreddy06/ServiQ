@@ -1,0 +1,36 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+:root
+{
+    --primary-color: #4CAF50;
+    --secondary-color: #e7a10a;
+    --white: white;
+    --text-color: rgb(45, 39, 39);
+}
+article
+{
+    display: flex;
+    padding-left: 35px;
+    justify-content: center;
+    height: 70vh;
+    background-color: var(--primary-color);
+    color: var(--white);
+
+}
+.introduction
+{
+    margin-top: 25px;
+    max-width: 700px;
+    text-align: center;
+}
+.introduction h2
+{
+    font-size: bolder;
+    font-size: 75px;
+}
+.introduction p
+{
+    font-size: 22px;
+}
