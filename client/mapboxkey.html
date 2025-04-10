@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map and Form App</title>
+  <!-- Mapbox CSS -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+  <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css" rel="stylesheet">
+  <!-- CSS file -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- Google Places API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwHozpYoJS8xgURnkkICo7L0vw8xW2Oak&libraries=places"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="form-container">
+      <input type="search" placeholder="Enter information" id="user-description-bar">
+      <h2>Store Discount Form</h2>
+      <form id="discount-form">
+        <label for="autocomplete">Store Location:</label>
+        <input type="text" id="autocomplete" name="store-location" placeholder="Enter a location" required>
+        
+        <label for="select"> Discount Type: </label>
+        <select name="question" id="select-discount">
+            <option value="q1"> Specific Percentage </option>
+            <option value="q2"> Buy One Get One Free </option>
+            <option value="q3"> Get One $5 Off </option>
+        </select>
+
+        <label for="discount">Discount (%):</label>
+        <input type="text" id="discount" name="discount" placeholder="Enter discount percentage" required>
+
+        <button type="submit">Submit</button>
+      </form>
+
+      <!-- Display coordinates -->
+      <div id="coordinates" style="margin-top: 20px;"></div>
+
+      <!-- Two boxes underneath the form -->
+      <div class="section-container">
+        <div class="section" id="section2">
+          <h3>Discount Form</h3>
+          <p>This is the second section. Add your content here.</p>
+        </div>
+        <div class="section" id="section3">
+          <h3>Discount Scanner</h3>
+          <p>This is the third section. Add your content here.</p>
+        </div>
+      </div>
+    </div>
+    <div id="map"></div>
+  </div>
+
+  <!-- Include Mapbox JS -->
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+  <!-- Include Mapbox Geocoder JS -->
+  <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+  
+  <!-- Link to external JS file -->
+  <script src="script.js"></script>
+  
+  <script>
+    // Initialize Google Places Autocomplete
+    function initAutocomplete() {
+      const input = document.getElementById('autocomplete');
+      const autocomplete = new google.maps.places.Autocomplete(input);
+
+      autocomplete.addListener('place_changed', function() {
+        const place = autocomplete.getPlace();
+        
+        if (place.geometry && place.geometry.location) {
+          const lat = place.geometry.location.lat();
+          const lng = place.geometry.location.lng();
+          // Display coordinates
+          document.getElementById('coordinates').innerHTML = 
+            `<p>Latitude: ${lat}</p><p>Longitude: ${lng}</p>`;
+          
+          console.log('Coordinates:', { lat, lng });
+        } else {
+          console.log('No coordinates found for this place');
+        }
+      });
+    }
+
+    window.addEventListener('load', initAutocomplete);
+  </script>
+</body>
+</html>

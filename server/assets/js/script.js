@@ -542,7 +542,8 @@ async function sendVolunteerData() {
     if (isNaN(lat) || isNaN(lng)) {
       throw new Error('Invalid coordinates received');
     }
-    
+    email = window.globalEmail;
+    alert(email);
     const volunteerData = { 
       storeAddress, 
       category, 
@@ -553,7 +554,8 @@ async function sendVolunteerData() {
       task, 
       location: { lat, lng }, 
       date, 
-      description
+      description,
+      email,
     };
 
     console.log('Sending data to server:', volunteerData);

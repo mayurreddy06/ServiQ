@@ -55,24 +55,36 @@ app.get('/map.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'assets/html/map.html'));
 });
 
-app.get('/taskpost.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/taskpost.html'));
+app.get('/taskpost.ejs', async (req, res) => {
+  try
+  {
+    res.render("taskpost.ejs", {
+      email: 'hi'
+    });
+  }
+  catch(error)
+  {
+    res.send(error);
+  }
+  
 });
 
 app.get('/homepage2.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'assets/html/homepage2.html'));
 });
 
-app.get('/newSignlog.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/newSignlog.html'));
-});
-
 app.get('/auth/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'assets/html/newSignlog.html'));
 });
 
+app.get('/viewPosts.ejs', (req, res) => {
+  res.render('viewPosts.ejs');
+});
+
 app.get('/auth/register', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/signup.html'));
+  res.render("signup.ejs", {
+    error_message: 'none'
+  });
 });
 
 app.post('/auth/register', async (req, res) => {
@@ -105,20 +117,24 @@ app.post('/auth/register', async (req, res) => {
     // 3. Optionally create a custom token for immediate client-side login
     const token = await admin.auth().createCustomToken(userRecord.uid);
 
-    // console.log(res.json({
-    //   message: 'User registered successfully',
-    //   uid: userRecord.uid,
-    //   token // Send this to client if you want immediate login
-    // }));
-
     res.redirect("/auth/login");
   } catch (error) {
-    console.error('Registration error:', error);
+    res.render("signup.ejs", {
+      error_message: "ERROR: Email already exists"
+    });
   }
 });
-app.get('/viewPosts.ejs', (req, res) => {
-  res.render('viewPosts.ejs');
+
+//404 bad gateway error
+app.use((req, res, next) => {
+  const error = new Error('Page Not Found');
+  next(error);
 });
+app.use((err, req, res, next) => {
+  res.sendFile(path.join(__dirname, 'assets/html/errorPage.html'));
+});
+
+
 
 
 // Volunteer opportunities route

@@ -5,86 +5,62 @@ const db = require('../../../server.js');
 
 // CREATE route to add volunteer data to the server
 volunteerDataRouter.post('/volunteer-data', async (req, res) => {
-  const { storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description } = req.body;
+  const { storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description, email } = req.body;
 
-  if (!storeAddress || !category || !start_time || !end_time || !spots || !timestamp || !task || !location || !date || !description) {
-    return res.json({
-      status: "FAILED",
-      message: "Missing fields"
-    });
-  }
+  // if (!storeAddress || !category || !start_time || !end_time || !spots || !timestamp || !task || !location || !date || !description ) {
+  //   return res.json({
+  //     status: "FAILED",
+  //     message: "Missing fields"
+  //   });
+  // }
 
   try {
     const ref = db.ref('volunteer_opportunities');
     const newTask = ref.push(); 
     // Capture the reference to the new data
-    await newTask.set({ storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description });
-
-    // // Index into Typesense (only timestamp, category, and task)
-    // const typesenseDocument = {
-    //   id: newTaskRef.key, // Use Firebase key as the Typesense document ID
-    //   timestamp: parseInt(timestamp, 10), // Ensure timestamp is an integer
-    //   category,
-    //   task,
-    //   description,
-    // };
-
-    // console.log('Indexing document into Typesense:', typesenseDocument);
-
-    // // Use typesenseClient to add the document to the collection
-    // await typesenseClient.collections('volunteerTasks').documents().create(typesenseDocument);
-    // console.log('Document indexed successfully');
+    await newTask.set({ storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description, email});
 
     res.json({
       status: "SUCCESS",
       message: "Data successfully injected to Firebase"
     });
   } catch (error) {
-    console.error('Error adding volunteer opportunity:', error);
-    res.json({
-      status: "FAILED",
-      message: "Firebase data reference does not exist"
-    });
+    res.render('viewPosts.ejs');
+    // there is an error that occurs (something about the location) but it is still adding to the server (idk why) figure it out later ig
   }
 });
 
 
 // READ route to fetch data from firebase, with optional parameters
-// possible formats: http://localhost:3000/volunteer-data?category=val&date=val (because they are queries)
-volunteerDataRouter.get('/volunteer-data', async (req, res) => {
+ // possible formats: http://localhost:3000/volunteer-data?category=val&date=val (because they are queries)
+ volunteerDataRouter.get('/volunteer-data', async (req, res) => {
   try {
     const ref = db.ref('volunteer_opportunities');
     const data = await ref.once('value');
     const tasks = data.val();
-    
-    if (!tasks) {
-      return res.json({});
+    // receieves all volunteer opporutunity data from firebase
+
+    let filteredTasks = Object.values(tasks);
+    // way to set JSON values equal to each other
+    console.log(tasks);
+    // optional filtering based on parameters of only category, date, or zipcode
+
+    if (req.query.category) {
+      filteredTasks = filteredTasks.filter(task => task.category === req.query.category);
     }
 
-    // Convert tasks to array while preserving IDs
-    let filteredTasks = {};
-    Object.entries(tasks).forEach(([id, task]) => {
-      // Apply filters
-      let includeTask = true;
-      
-      if (req.query.category && task.category !== req.query.category) {
-        includeTask = false;
-      }
-      
-      if (req.query.date && task.date !== req.query.date) {
-        includeTask = false;
-      }
-      
-      if (req.query.zipcode && task.zipcode !== req.query.zipcode) {
-        includeTask = false;
-      }
-      
-      if (includeTask) {
-        filteredTasks[id] = task;
-      }
-    });
+    if (req.query.date) {
+      filteredTasks = filteredTasks.filter(task => task.date === req.query.date);
+    }
 
-    console.log("Sending tasks with IDs:", Object.keys(filteredTasks));
+    if (req.query.zipcode) {
+      filteredTasks = filteredTasks.filter(task => task.zipcode === req.query.zipcode);
+    }
+
+    if (req.query.email) {
+      filteredTasks = filteredTasks.filter(task => task.email === req.query.email);
+    }
+
     res.json(filteredTasks);
   } catch (error) {
     console.error('Error fetching volunteer tasks:', error);
@@ -123,7 +99,7 @@ volunteerDataRouter.patch('/volunteer-data/:timestamp', async (req, res) => {
     res.json({
       status: "SUCCESS",
       message: "Data successfully updated to firebase"
-    })
+    });
 
   }
   catch(error)
@@ -170,4 +146,3 @@ volunteerDataRouter.delete('/volunteer-data/:timestamp', async (req, res) => {
 });
 
 module.exports = volunteerDataRouter;
-

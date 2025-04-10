@@ -64,7 +64,7 @@ function updateNavbar(user) {
       <div class="nav-links">
         <a href="/homepage2.html" class="link-cta">Home</a>
         <a href="/map.html" class="link-cta">Learn More</a>
-        <a href="/taskpost.html" class="link-cta">Tasks</a>
+        <a href="/taskpost.ejs" class="link-cta">Tasks</a>
       </div>
       <div class="user-section">
         <span class="user-email" id="user-email-display">${user.email}</span>
@@ -122,7 +122,7 @@ function updateNavbar(user) {
       <div class="nav-links">
         <a href="/homepage2.html" class="link-cta">Home</a>
         <a href="/map.html" class="link-cta">Learn More</a>
-        <a href="/newSignlog.html" class="login-cta">Login Here</a>
+        <a href="/auth/login" class="login-cta">Login Here</a>
       </div>
     `;
   }
@@ -202,8 +202,10 @@ authStatePromise.then(user => {
   
   if (user) {
     console.log("User is signed in:", user.email);
+
+    window.globalEmail = user.email;
     
-    if (window.location.pathname.includes('newSignlog.html')) {
+    if (window.location.pathname.includes('/auth/login')) {
       console.log("User is on login page, redirecting to homepage");
       window.location.href = 'homepage2.html';
     }

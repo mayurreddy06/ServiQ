@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Sign Up</title>
-    <link rel="stylesheet" href="../css/signup.css">
+    <link rel="stylesheet" href="/css/signup.css">
 </head>
 <body>
 
@@ -19,11 +19,14 @@
                 <input type="password" placeholder="Confirm" id="agency-reenter-password" required>
                 <p class="help-text">Use 8 or more characters with a number and symbol</p>
             </div>
-
-            
-
             <div class="actions">
-                <button type="submit">Sign up</button>
+                <button type="submit" id = "submit-button">Sign up</button>
+            </div>
+            <div class = "error-message">
+                <% if  ( (locals.error_message) !== 'none') { %>
+                <p id = "error-tag" style = "color: red"><%= locals.error_message%></p>
+                <% } %>
+                
             </div>
         </form>
     </div>
