@@ -8,7 +8,7 @@
 
 main
 {
-    height: 75vh;
+    height: 80vh;
     background-color: var(--primary-color);
     display: flex;
     justify-content: center;
