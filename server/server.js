@@ -3,21 +3,8 @@ const path = require('path');
 const admin = require('firebase-admin');
 const nodemailer = require('nodemailer');
 const { exec } = require('child_process');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
-// const Typesense = require('typesense');
-
-// // Initialize Typesense Client
-// const typesenseClient = new Typesense.Client({
-//   nodes: [
-//     {
-//       host: 'bgrwny8ik1eu94djp-1.a1.typesense.net', // Replace with your Typesense Cloud node
-//       port: '443',                                  // Use 443 for Typesense Cloud
-//       protocol: 'https',                            // Use 'https' for Typesense Cloud
-//     },
-//   ],
-//   apiKey: 'VXyvCuyJft5EEFTSaXfm0SaadQMSTRRn', // Use Admin API Key
-//   connectionTimeoutSeconds: 2,
-// });
 
 const serviceAccount = require(process.env.FIREBASE_JSON);
 const app = express();
@@ -25,6 +12,7 @@ const PORT = 3002;
 const { getAuth } = require('firebase-admin/auth');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'assets/views'));
+app.use(cookieParser("secret"));
 
 // Initialize Firebase Admin
 admin.initializeApp({
@@ -40,41 +28,34 @@ module.exports = db;
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'assets/views'));
 
+const session = require('express-session');
+const flash = require('connect-flash');
+app.use(session({
+  secret: 'userVerification',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {maxAge: 60000}
+}));
+
 // Middleware
 app.use(express.static(path.join(__dirname, 'assets')));
 app.use(express.json());
 
 //middleware: automatically passing in form data by the name attribute
-app.use(express.urlencoded({extended: true}))
+app.use(express.urlencoded({extended: true}));
+
+app.use(flash());
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/homepage2.html'));
+  res.render("homePage.ejs");
 });
 
-app.get('/map.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/map.html'));
+app.get('/about', (req, res) => {
+  res.render("about.ejs");
 });
 
 app.get('/taskpost.ejs', async (req, res) => {
-  try
-  {
-    res.render("taskpost.ejs", {
-      email: 'hi'
-    });
-  }
-  catch(error)
-  {
-    res.send(error);
-  }
-  
-});
-
-app.get('/homepage2.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/homepage2.html'));
-});
-
-app.get('/auth/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'assets/html/newSignlog.html'));
+  res.render("taskpost.ejs");
 });
 
 app.get('/viewPosts.ejs', (req, res) => {
@@ -82,19 +63,24 @@ app.get('/viewPosts.ejs', (req, res) => {
 });
 
 app.get('/auth/register', (req, res) => {
-  res.render("signup.ejs", {
-    error_message: 'none'
-  });
+  const registerError = req.flash('registerError');
+  res.render("signup.ejs", {registerError});
 });
 
+
 app.post('/auth/register', async (req, res) => {
-  const {agencyName, agencyDesc, email, password} = req.body;
+  const {agencyName, agencyDesc, email, password, password2} = req.body;
   // values from the name = attribute in the form html
 
   if (!email || !password || !agencyName || !agencyDesc) {
-    return res.status(400).json({
-       error: 'Missing required fields' 
-      });
+    req.flash('errorMsg', 'Not all required fields are filled out');
+    return res.redirect('/auth/register');
+  }
+
+  if (!(password === (password2)))
+  {
+    req.flash('registerError', 'The passwords do not match');
+    return res.redirect('/auth/register');
   }
 
   try {
@@ -114,27 +100,71 @@ app.post('/auth/register', async (req, res) => {
       createdAt: new Date().toISOString()
     });
 
-    // 3. Optionally create a custom token for immediate client-side login
-    const token = await admin.auth().createCustomToken(userRecord.uid);
+    // store email from here
 
-    res.redirect("/auth/login");
+    return res.redirect("/auth/login");
   } catch (error) {
-    res.render("signup.ejs", {
-      error_message: "ERROR: Email already exists"
-    });
+    if (error.code == "auth/email-already-exists")
+      {
+        req.flash('registerError', 'The email is already in use by another account');
+      }
+      else if (error.code == "auth/invalid-password")
+      {
+        req.flash('registerError', 'The password must be atleast 6 characters long');
+      }
+      return res.redirect('/auth/register');
   }
 });
 
-//404 bad gateway error
-app.use((req, res, next) => {
-  const error = new Error('Page Not Found');
-  next(error);
-});
-app.use((err, req, res, next) => {
-  res.sendFile(path.join(__dirname, 'assets/html/errorPage.html'));
+app.post('/auth/google', (req, res) => {
+  const {email} = req.body;
+  console.log("this is the email retrieved " + email);
+  console.log(req.session);
+  console.log(req.session.id);
+  req.session.visited = true;
+  res.cookie("hello", "world", {maxAge: 60000, signed: true});
+  req.session.user = email;
+  return res.redirect("/");
 });
 
+// setting a session to certain routes only (save for later): https://stackoverflow.com/questions/28603084/node-express-session-as-middleware-does-not-set-cookie
 
+app.get('/auth/login', (req, res) => {
+  res.render("signIn.ejs");
+});
+
+app.post('/auth/login', (req, res) => {
+  const {email} = req.body;
+  console.log("this is the email " + email);
+  req.session.visited = true;
+  res.cookie("hello", "world", {maxAge: 60000, signed: true});
+  req.session.user = ({email});
+  console.log(req.session);
+  // already redirected in the front end
+  return res.json({status: "success"});
+});
+
+app.get("/auth/status", (req, res) => {
+  // return req.session.user ? res.status(200).json({user: req.session.user}) : res.status(401).json({message: "user not logged in"});
+  if (req.session.user)
+  {
+    console.log(req.session.user.email);
+    res.render("navbar.ejs", {email: req.session.user.email});
+  }
+  else
+  {
+    res.render("navbar.ejs", {email: undefined});
+  }
+  
+});
+//404 bad gateway error (add back once we finish the whole thing)
+// app.use((req, res, next) => {
+//   const error = new Error('Page Not Found');
+//   next(error);
+// });
+// app.use((err, req, res, next) => {
+//   res.sendFile(path.join(__dirname, 'assets/html/errorPage.html'));
+// });
 
 
 // Volunteer opportunities route
@@ -219,6 +249,7 @@ app.post('/send-email', async (req, res) => {
     });
 
   } catch (error) {
+    console.log(error);
     console.error("Error in send-email route:", error);
     
     const errorResponse = {

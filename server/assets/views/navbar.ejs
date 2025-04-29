@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel = "stylesheet" href = "../css/newNavBar.css">
+</head>
+<body>
+    <header>
+        <div class = "container">
+            <nav>
+                <img src = "../images/ServiQ-trans.png">
+                <div class = "external-pages right-header">
+                    <a href="/" class = "link-cta">Home</a>
+                    <a href="/about" class = "link-cta">Learn More</a>
+                    <a href="/auth/login" class = "login-cta">Login Here</a>
+                    <% if (typeof (locals.email) !== "undefined") { %>
+                        <a> <%=locals.email%></a>
+                    <% } %>
+
+                </div>
+            </nav>
+        </div>
+    </header>
+</body>
+</html>

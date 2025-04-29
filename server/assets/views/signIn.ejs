@@ -6,20 +6,11 @@
     <title>Document</title>
     <link rel = "stylesheet" href = "../css/newNavBar.css">
     <link rel = "stylesheet" href = "../css/newlogin.css">
+    
+    
 </head>
 <body>
-    <header>
-        <div class = "container">
-            <nav>
-                <img src = "../images/ServiQ-trans.png">
-                <div class = "external-pages right-header">
-                    <a href="/homepage2.html" class = "link-cta">Home</a>
-                    <a href="/map.html" class = "link-cta">Learn More</a>
-                    <a href="/auth/login" class = "login-cta">Login Here</a>
-                </div>
-            </nav>
-        </div>
-    </header>
+    <%-include('navbar.ejs')%>
     <section>
         <div class = "container">
             <main>
@@ -33,30 +24,37 @@
                         <h2> Don't waste your time </h2>
                         <p> Join others to begin posting and finding other volunteers today</p>
                         <br>
-                        <a id = "learn-more-cta">Learn More</a>
+                        <button id = "google-sign" style = "border: 1px solid black; cursor: pointer">  
+                            <span href = "">Sign in with google</span>            
+                        </button>
                     </div>
                     <div class = "right-side">
                         <h1> Login </h1>
                         <p class = "right-p-margin"> Before we get started, your organization must login or register if you don't already have an account.</p>
                         <form id="signin-form">
                             <p>Username</p>
-                            <input type = "email" id = "email-entry" class = "login-input" name = "username">
+                            <input type = "email" id = "email-entry" class = "login-input" name = "email" value = "hi89@gmail.com">
                             <br>
                             <p>Password</p>
-                            <input type = "password" id = "password-entry" class = "login-input" name = "password">
+                            <input type = "password" id = "password-entry" class = "login-input" name = "password" value = "123456">
                             <div class = "createOrLogin">
                                 <a href = "/auth/register" id = "create-cta">Create an account?</a>
                                 <button type = "submit" value = "Login" id = "btn-cta">Login</button>
                             </div>
-                            <div id="login-error" style="display: none; color: red; margin-top: 10px;"></div>
+                            <div class = "error-message" style = "display: flex; align-items: center; height: 5vh">
+                                <p id = "error-tag" style = "color: red;"></p>
+                            </div>
                         </form>
                     </div>
                 </div>
             </main>
         </div>
     </section>
-
-    <script type="module" src="../js/signin_script.js"></script>
     
+    
+    
+<script type = "module" src = "../js/google.js"></script>
+<script type = "module" src = "../js/signin_script.js"></script>
 </body>
+
 </html>

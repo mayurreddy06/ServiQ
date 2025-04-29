@@ -328,11 +328,11 @@ async function fetchAndDisplayMarkers2()
         .setLngLat([key.location.lng, key.location.lat])
         .addTo(map);
         markers.push(marker);
+        marker.getElement().addEventListener('click', () => {
+          openCustomPopup(storeAddress, category, key);
+        });
 
   }
-  marker.getElement().addEventListener('click', () => {
-    openCustomPopup(storeAddress, category, key);
-  });
   console.log("Displayed " + markers.length + " markers on the map");
 
 }
