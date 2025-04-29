@@ -14,14 +14,23 @@
                 <div class = "external-pages right-header">
                     <a href="/" class = "link-cta">Home</a>
                     <a href="/about" class = "link-cta">Learn More</a>
-                    <a href="/auth/login" class = "login-cta">Login Here</a>
+                    <% if (typeof (locals.email) === "undefined") { %>
+                        <a href="/auth/login" class = "login-cta">Login Here</a>
+                    <% } %>
                     <% if (typeof (locals.email) !== "undefined") { %>
-                        <a> <%=locals.email%></a>
+                    <a href = "/taskpost.ejs">Dashboard</a>
+                        <div style = "position:relative">
+                            <span id = "user-email-display" style = "cursor:pointer"> <%=locals.email%></span>
+                            <div id="logout-container" style = "position:absolute">
+                                <button id="logout-link" class="login-cta">Sign Out</button>
+                            </div>
+                        </div>
                     <% } %>
 
                 </div>
             </nav>
         </div>
     </header>
+    <script src = "../js/signOut.js"></script>
 </body>
 </html>

@@ -23,7 +23,7 @@
                 <button type="submit" id = "submit-button">Sign up</button>
             </div>
             <div class = "error-message">
-                <% if (locals.registerError) { %>
+                <% if (typeof (locals.registerError) !== "undefined") { %>
                 <p id = "error-tag" style = "color: red"><%= locals.registerError %></p>
                 <% } %>
                 

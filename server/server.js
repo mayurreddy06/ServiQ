@@ -46,6 +46,24 @@ app.use(express.urlencoded({extended: true}));
 
 app.use(flash());
 
+// Volunteer opportunities route
+const volunteerDataRouter = require('./assets/js/routes/volunteerData.js');
+const rateLimiter = require('./assets/js/middleware/rateLimiter.js');
+app.use("/", volunteerDataRouter);
+
+app.use((req, res, next) => {
+  if (req.session.user)
+  {
+    res.locals.email = req.session.user.email;
+  }
+  else
+  {
+    res.locals.email = undefined;
+  }
+  next();
+});
+// middleware to check if the user is logged in.
+
 app.get('/', (req, res) => {
   res.render("homePage.ejs");
 });
@@ -146,17 +164,15 @@ app.post('/auth/login', (req, res) => {
 
 app.get("/auth/status", (req, res) => {
   // return req.session.user ? res.status(200).json({user: req.session.user}) : res.status(401).json({message: "user not logged in"});
-  if (req.session.user)
-  {
-    console.log(req.session.user.email);
-    res.render("navbar.ejs", {email: req.session.user.email});
-  }
-  else
-  {
-    res.render("navbar.ejs", {email: undefined});
-  }
+  res.render("navbar.ejs");
   
 });
+
+app.get("/auth/logout", (req, res) => {
+  req.session.destroy();
+  return res.status(200).json({message: "user successfully logged out"});
+});
+
 //404 bad gateway error (add back once we finish the whole thing)
 // app.use((req, res, next) => {
 //   const error = new Error('Page Not Found');
@@ -167,10 +183,7 @@ app.get("/auth/status", (req, res) => {
 // });
 
 
-// Volunteer opportunities route
-const volunteerDataRouter = require('./assets/js/routes/volunteerData.js');
-const rateLimiter = require('./assets/js/middleware/rateLimiter.js');
-app.use("/", volunteerDataRouter);
+
 
 require('dotenv').config();
 
