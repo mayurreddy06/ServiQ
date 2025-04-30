@@ -34,7 +34,8 @@ app.use(session({
   secret: 'userVerification',
   resave: false,
   saveUninitialized: false,
-  cookie: {maxAge: 60000}
+  cookie: {maxAge: 60000 * 10}
+  // session connect.id lasts 10 minutes
 }));
 
 // Middleware
@@ -134,17 +135,6 @@ app.post('/auth/register', async (req, res) => {
   }
 });
 
-app.post('/auth/google', (req, res) => {
-  const {email} = req.body;
-  console.log("this is the email retrieved " + email);
-  console.log(req.session);
-  console.log(req.session.id);
-  req.session.visited = true;
-  res.cookie("hello", "world", {maxAge: 60000, signed: true});
-  req.session.user = email;
-  return res.redirect("/");
-});
-
 // setting a session to certain routes only (save for later): https://stackoverflow.com/questions/28603084/node-express-session-as-middleware-does-not-set-cookie
 
 app.get('/auth/login', (req, res) => {
@@ -155,21 +145,22 @@ app.post('/auth/login', (req, res) => {
   const {email} = req.body;
   console.log("this is the email " + email);
   req.session.visited = true;
-  res.cookie("hello", "world", {maxAge: 60000, signed: true});
+  res.cookie("hello", "world", {maxAge: 60000 * 10, signed: true});
+  // user can be logged in for 10 minutes
   req.session.user = ({email});
   console.log(req.session);
   // already redirected in the front end
-  return res.json({status: "success"});
+  return res.status(200).json({status: "success"});
 });
 
+// method of checking is user is logged in in the front end
 app.get("/auth/status", (req, res) => {
-  // return req.session.user ? res.status(200).json({user: req.session.user}) : res.status(401).json({message: "user not logged in"});
-  res.render("navbar.ejs");
-  
+  return req.session.user ? res.status(200).json({user: req.session.user}) : res.status(401).json({message: "user not logged in"});
 });
 
 app.get("/auth/logout", (req, res) => {
   req.session.destroy();
+  res.clearCookie("hello");
   return res.status(200).json({message: "user successfully logged out"});
 });
 

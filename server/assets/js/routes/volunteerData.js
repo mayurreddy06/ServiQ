@@ -7,13 +7,6 @@ const db = require('../../../server.js');
 volunteerDataRouter.post('/volunteer-data', async (req, res) => {
   const { storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description, email } = req.body;
 
-  // if (!storeAddress || !category || !start_time || !end_time || !spots || !timestamp || !task || !location || !date || !description ) {
-  //   return res.json({
-  //     status: "FAILED",
-  //     message: "Missing fields"
-  //   });
-  // }
-
   try {
     const ref = db.ref('volunteer_opportunities');
     const newTask = ref.push(); 

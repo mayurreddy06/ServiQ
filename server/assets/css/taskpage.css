@@ -392,58 +392,14 @@
     }
 }
 
-/* Location Input */
-#autocomplete {
-    width: 100%;
-    padding: 12px 15px;
-    margin: 10px 0 20px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 16px;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s;
-}
 
-#autocomplete:focus {
-    outline: none;
-    border-color: #4CAF50;
-    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
-}
 
-/* Date Input */
-#date {
-    width: 100%;
-    padding: 12px 15px;
-    margin: 10px 0 20px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 16px;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s;
-}
-
-#date:focus {
-    outline: none;
-    border-color: #4CAF50;
-    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
-}
-
-/* Location and Date Containers */
-.location, 
-.calendar {
-    width: 100%;
-    max-width: 600px; /* Match this to your other form fields */
-    margin: 0 auto 20px; /* Center the containers */
-    padding: 0 15px;
-    box-sizing: border-box;
-}
 
 .location{
     margin-top:25px;
 }
 /* Input Fields */
-#autocomplete,
-#date {
+input {
     width: 100%;
     padding: 12px 15px;
     border: 1px solid #ddd;
@@ -454,8 +410,7 @@
     box-sizing: border-box; /* Include padding in width calculation */
 }
 
-#autocomplete:focus,
-#date:focus {
+input:focus {
     outline: none;
     border-color: #4CAF50;
     box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
@@ -463,14 +418,12 @@
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-    .location,
-    .calendar {
+    label {
         max-width: 100%;
         padding: 0 10px;
     }
     
-    #autocomplete,
-    #date {
+    label {
         padding: 10px 12px;
         font-size: 15px;
     }

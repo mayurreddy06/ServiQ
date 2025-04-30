@@ -19,7 +19,7 @@ document.getElementById("google-sign").addEventListener("click", () => {
     console.log(email);
     
     // sending the email the user logged in with to the node js backend
-    const response = await fetch('http://localhost:3002/auth/google', {
+    const response = await fetch('http://localhost:3002/auth/login', {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -27,6 +27,7 @@ document.getElementById("google-sign").addEventListener("click", () => {
     // Automatically converted to "username=example&password=password"
     body: new URLSearchParams({email}),
     });
+    window.location.href = "/";
 
   }).catch((error) => {
     // Handle Errors here.
