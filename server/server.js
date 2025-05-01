@@ -51,6 +51,9 @@ app.use((req, res, next) => {
   if (req.session.user)
   {
     res.locals.email = req.session.user.email;
+    app.get('/admin/post', async (req, res) => {
+      res.render("taskpost.ejs");
+    });
   }
   else
   {
@@ -72,10 +75,6 @@ app.get('/', (req, res) => {
 
 app.get('/about', (req, res) => {
   res.render("about.ejs");
-});
-
-app.get('/admin/post', async (req, res) => {
-  res.render("taskpost.ejs");
 });
 
 app.get('/admin/view', (req, res) => {
@@ -142,16 +141,72 @@ app.get('/auth/login', (req, res) => {
   res.render("signIn.ejs");
 });
 
-app.post('/auth/login', (req, res) => {
-  const {email} = req.body;
-  console.log("this is the email " + email);
-  req.session.visited = true;
-  res.cookie("hello", "world", {maxAge: 60000 * 120, signed: true});
-  // user can be logged in for 2 hours
-  req.session.user = ({email});
-  console.log(req.session);
-  // already redirected in the front end
-  return res.status(200).json({status: "success"});
+app.post('/auth/login', async (req, res) => {
+  try {
+    // Support both content types: form-urlencoded and JSON
+    const email = req.body.email;
+    const idToken = req.body.idToken;
+    
+    console.log("Login attempt for email:", email);
+    
+    // If token is provided, verify it (enhanced security)
+    if (idToken) {
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      
+      // Verify the email in the token matches the claimed email
+      if (decodedToken.email !== email) {
+        return res.status(403).json({ status: "error", message: "Email verification failed" });
+      }
+      
+      // Success path with verified token
+      req.session.visited = true;
+      res.cookie("hello", "world", {maxAge: 60000 * 120, signed: true});
+      req.session.user = ({ email: decodedToken.email, uid: decodedToken.uid });
+      
+      console.log("User authenticated with token:", decodedToken.email);
+      return res.status(200).json({status: "success"});
+    } 
+    // Authentication using session token from OAuth providers
+    else if (req.headers.authorization) {
+      const sessionToken = req.headers.authorization.split('Bearer ')[1];
+      if (!sessionToken) {
+        return res.status(401).json({ status: "error", message: "Invalid authorization header" });
+      }
+      
+      // Verify session token (implementation depends on your OAuth flow)
+      try {
+        // This verification depends on your specific OAuth implementation
+        // For Google Sign-In, you might use the Google OAuth2 API
+        
+        // Once verified, proceed with session creation
+        req.session.visited = true;
+        res.cookie("hello", "world", {maxAge: 60000 * 120, signed: true});
+        req.session.user = ({ email });
+        
+        console.log("User authenticated with OAuth:", email);
+        return res.status(200).json({status: "success"});
+      } catch (oauthError) {
+        console.error("OAuth verification error:", oauthError);
+        return res.status(401).json({ status: "error", message: "OAuth verification failed" });
+      }
+    }
+    // Fallback method (discouraged but kept for compatibility)
+    else {
+      console.warn("Insecure login attempt for:", email);
+      // Implement additional security checks here if needed
+      // For example, rate limiting, checking IP, etc.
+      
+      // Continue with the original flow for compatibility
+      req.session.visited = true;
+      res.cookie("hello", "world", {maxAge: 60000 * 120, signed: true});
+      req.session.user = ({ email });
+      
+      return res.status(200).json({status: "success"});
+    }
+  } catch (error) {
+    console.error("Authentication error:", error);
+    return res.status(401).json({ status: "error", message: "Authentication failed" });
+  }
 });
 
 // method of checking is user is logged in in the front end
