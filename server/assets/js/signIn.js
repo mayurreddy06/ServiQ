@@ -15,37 +15,32 @@ document.getElementById('signin-form').addEventListener('submit', async (event) 
   try {
       const accountCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = accountCredential.user;
+      
+      // Get the ID token from Firebase authentication
+      const idToken = await user.getIdToken();
+      
       const response = await fetch('http://localhost:3002/auth/login', {
         method: "POST",
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
         },
-        // Automatically converted to "username=example&password=password"
-        body: new URLSearchParams({email}),
+        // Send both email and idToken for verification
+        body: JSON.stringify({ email, idToken }),
         credentials: 'include'
-        });
-      if (response.ok)
-      {
+      });
+      
+      if (response.ok) {
         window.location.href = "/";
-      }
-      else
-      {
+      } else {
         console.log("extensive time fetching rest api route");
       }
-
-      
   } catch(error) {
       let message = "There was an error when logging in";
-      if (error.code === 'auth/user-not-found')
-      {
+      if (error.code === 'auth/user-not-found') {
         message = "An account with this email doesn't exist";
-      }
-      else if (error.code ===  'auth/invalid-credential')
-      {
+      } else if (error.code ===  'auth/invalid-credential') {
         message = "An account with this email doesn't exist or the password is incorrect";
-      }
-      else if (error.code === 'auth/wrong-password')
-      {
+      } else if (error.code === 'auth/wrong-password') {
         message = "Invalid password";
       }
       let data = message;
