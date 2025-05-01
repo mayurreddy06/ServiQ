@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Event Posting</title>
-        <link rel="stylesheet" href="../css/taskpage.css">
+        <link rel="stylesheet" href="/css/editTask.css">
         <!-- Mapbox CSS -->
         <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
         <!-- Google Places API -->
@@ -13,17 +13,16 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     </head>
     <body class="taskpage-body">
-        <%-include('navbar.ejs')%>
         <div id="map"></div>
         <div class="event-text">
-            <h1>Post an Event</h1>
+            <h1>Updating an event</h1>
         </div>
-        
-        <div>        
+        <div>  
+            <label>Update the following fields to update your task post. Any field that is not filled out will stay the same.</label>      
             <form class="task-post">
                 <div class="location">
                     <label for="autocomplete">Enter a Location</label>
-                    <input type="text" id="autocomplete" name="location" onclick="initAutocomplete()" required>
+                    <input type="text" id="autocomplete" name="category" onclick="initAutocomplete()" required>
                 </div>
                 
                 <div class="calendar">
@@ -187,7 +186,8 @@
 
         <!-- Include Mapbox JS -->
         <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-        <script src="../js/taskPost.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src = "/js/editTask.js"></script>
     </body>
+    
 </html>

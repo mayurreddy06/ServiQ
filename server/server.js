@@ -82,6 +82,10 @@ app.get('/admin/view', (req, res) => {
   res.render('viewPosts.ejs');
 });
 
+app.get('/admin/edit/:timestamp', (req, res) => {
+  res.render('editTask.ejs');
+});
+
 app.get('/auth/register', (req, res) => {
   const registerError = req.flash('registerError');
   res.render("signup.ejs", {registerError});
