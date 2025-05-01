@@ -147,22 +147,16 @@ app.get('/auth/login', (req, res) => {
 
 app.post('/auth/login', async (req, res) => {
   try {
-    // Support both content types: form-urlencoded and JSON
     const email = req.body.email;
     const idToken = req.body.idToken;
     
     console.log("Login attempt for email:", email);
-    
-    // If token is provided, verify it (enhanced security)
     if (idToken) {
-      const decodedToken = await admin.auth().verifyIdToken(idToken);
-      
-      // Verify the email in the token matches the claimed email
+      const decodedToken = await admin.auth().verifyIdToken(idToken);    
       if (decodedToken.email !== email) {
         return res.status(403).json({ status: "error", message: "Email verification failed" });
       }
-      
-      // Success path with verified token
+
       req.session.visited = true;
       res.cookie("hello", "world", {maxAge: 60000 * 120, signed: true});
       req.session.user = ({ email: decodedToken.email, uid: decodedToken.uid });
@@ -170,19 +164,14 @@ app.post('/auth/login', async (req, res) => {
       console.log("User authenticated with token:", decodedToken.email);
       return res.status(200).json({status: "success"});
     } 
-    // Authentication using session token from OAuth providers
+
     else if (req.headers.authorization) {
       const sessionToken = req.headers.authorization.split('Bearer ')[1];
       if (!sessionToken) {
         return res.status(401).json({ status: "error", message: "Invalid authorization header" });
       }
-      
-      // Verify session token (implementation depends on your OAuth flow)
+
       try {
-        // This verification depends on your specific OAuth implementation
-        // For Google Sign-In, you might use the Google OAuth2 API
-        
-        // Once verified, proceed with session creation
         req.session.visited = true;
         res.cookie("hello", "world", {maxAge: 60000 * 120, signed: true});
         req.session.user = ({ email });
@@ -194,13 +183,9 @@ app.post('/auth/login', async (req, res) => {
         return res.status(401).json({ status: "error", message: "OAuth verification failed" });
       }
     }
-    // Fallback method (discouraged but kept for compatibility)
+
     else {
       console.warn("Insecure login attempt for:", email);
-      // Implement additional security checks here if needed
-      // For example, rate limiting, checking IP, etc.
-      
-      // Continue with the original flow for compatibility
       req.session.visited = true;
       res.cookie("hello", "world", {maxAge: 60000 * 120, signed: true});
       req.session.user = ({ email });
@@ -237,8 +222,6 @@ app.get("/auth/logout", (req, res) => {
 
 
 require('dotenv').config();
-
-// Email configuration
 const transporter = nodemailer.createTransport({
   host: 'smtp.zoho.com',
   port: 465,
@@ -252,16 +235,15 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Email verification on startup
+
 transporter.verify((error) => {
   if (error) {
-    console.error('❌ Email transporter verification failed:', error);
+    console.error('Email transporter verification failed:', error);
   } else {
-    console.log('✅ Email transporter is ready');
+    console.log('Email transporter is ready');
   }
 });
 
-// Volunteer registration and email endpoint
 app.post('/sendEmail', async (req, res) => {
   const { email, storeAddress, category, taskId} = req.body;
   
@@ -279,7 +261,6 @@ app.post('/sendEmail', async (req, res) => {
       return res.status(401).json({ error: "Task not found" });
     }
 
-    // Initialize registrations if needed
     const registrations = taskData.registrations || {
       count: 0,
       volunteers: {}
@@ -289,13 +270,11 @@ app.post('/sendEmail', async (req, res) => {
       return res.status(400).json({ error: "Already registered for this task" });
     }
 
-    // Update registration data
     registrations.count += 1;
     registrations.volunteers[safeEmail] = true;
     
     await taskRef.update({ registrations });
 
-    // Send confirmation email
     const mailOptions = {
       from: process.env.EMAIL,
       to: email,
@@ -331,7 +310,7 @@ app.post('/sendEmail', async (req, res) => {
   }
 });
 
-// Start server
+// start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

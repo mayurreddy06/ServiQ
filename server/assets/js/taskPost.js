@@ -102,8 +102,8 @@ document.querySelector(".task-post").addEventListener("submit", async function(e
   document.addEventListener('DOMContentLoaded', function () {
     // Initialize Flatpickr on the date input
     flatpickr('#date', {
-        dateFormat: 'Y-m-d', // Optional format for the date
-        minDate: 'today',    // Optional: Prevent selecting past dates
+        dateFormat: 'Y-m-d',
+        minDate: 'today',
     })
   });
     

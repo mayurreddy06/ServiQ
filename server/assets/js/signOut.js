@@ -6,7 +6,7 @@ if (emailDisplay && logoutContainer) {
     emailDisplay.style.cursor = 'pointer';
       
     emailDisplay.addEventListener('click', (e) => {
-    e.stopPropagation(); // Prevent event from bubbling up
+    e.stopPropagation();
     // Toggle logout container visibility
     if (logoutContainer.style.display === 'none' || !logoutContainer.style.display) {
       logoutContainer.style.display = 'block';

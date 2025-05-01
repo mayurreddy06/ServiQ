@@ -1,7 +1,7 @@
 const ACCESS_TOKEN = 'pk.eyJ1IjoidmlzaGFscHV0dGFndW50YSIsImEiOiJjbTUxaDUxMGQxeGpnMmtwcHVycGhqaHhsIn0.IWxQPRNmfEJWT-k8sTCGlA';
 mapboxgl.accessToken = ACCESS_TOKEN;
 
-console.log("✅ Script loaded! Waiting for map to initialize...");
+console.log("Script loaded. Waiting for map to initialize...");
 
 const map = new mapboxgl.Map({
   container: 'map',
@@ -50,7 +50,7 @@ document.querySelector('.homePage-form').addEventListener('submit', async (e) =>
   const address = document.getElementById('autocomplete').value;
   if (address) {
     await reZoomMap(address);
-    fetchAndDisplayMarkers(); // Refresh markers after re-zooming
+    fetchAndDisplayMarkers();
   }
 });
 
@@ -80,7 +80,6 @@ async function reZoomMap(value) {
       }
     }
 
-    // For addresses, use Google Places data if available
     const autocompleteInput = document.getElementById('autocomplete');
     if (autocompleteInput && autocompleteInput.dataset.place) {
       const place = JSON.parse(autocompleteInput.dataset.place);
@@ -96,7 +95,6 @@ async function reZoomMap(value) {
       }
     }
 
-    // Fallback to Mapbox geocoding for addresses
     const geocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(value)}.json?access_token=${ACCESS_TOKEN}`;
     const response = await fetch(geocodingUrl);
     const data = await response.json();
@@ -385,7 +383,7 @@ function initAutocomplete() {
 
 // Function to open the custom popup
 async function openCustomPopup(storeAddress, category, taskId, task) {
-  console.log("📌 Opening custom popup for:", { storeAddress, category, taskId, task });
+  console.log("Opening custom popup for:", { storeAddress, category, taskId, task });
 
   document.getElementById('popupLocation').innerText = storeAddress;
   document.getElementById('popupTask').innerText = task;
@@ -394,7 +392,7 @@ async function openCustomPopup(storeAddress, category, taskId, task) {
   document.getElementById('customPopup').style.display = 'block';
 
   document.getElementById('registerBtn').onclick = async function () {
-    console.log("📩 Register button clicked!");
+    console.log("Register button clicked!");
 
     const email = document.getElementById('popupEmail').value.trim();
     if (!email) {
@@ -402,7 +400,7 @@ async function openCustomPopup(storeAddress, category, taskId, task) {
       return;
     }
 
-    console.log(`📨 Sending request to /send-email for: ${email}`);
+    console.log(`Sending request to /send-email for: ${email}`);
 
     try {
       const response = await fetch("/sendEmail", {
@@ -412,16 +410,16 @@ async function openCustomPopup(storeAddress, category, taskId, task) {
       });
 
       const result = await response.json();
-      console.log("📬 Response received:", result);
+      console.log("Response received:", result);
 
       if (response.ok) {
         alert(`Registration successful! You are volunteer #${result.count}.`);
         closeCustomPopup();
       } else {
-        alert(result.message || "❌ Error sending email.");
+        alert(result.message || "Error sending email.");
       }
     } catch (error) {
-      console.error("❌ Fetch error:", error);
+      console.error("Fetch error:", error);
       alert("Something went wrong.");
     }
   };
