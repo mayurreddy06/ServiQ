@@ -3,35 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel = "stylesheet" href = "../css/newNavBar.css">
     <link rel = "stylesheet" href = "../css/viewPosts.css">
     <title>Document</title>
 </head>
 <body>
-    <header>
-        <div class = "container">
-            <nav>
-                <img src = "../images/ServiQ-trans.png">
-                <div class = "external-pages">
-                    <a href="/" class = "link-cta">Home</a>
-                    <a href="map.html" class = "link-cta">Learn more</a>
-                    <a href="newSignlog.html" class = "login-cta">Login Here</a>
-                    <input type = "image" id = "profile-image" src = "../images/default-profile.png">
-                </div>
-            </nav>
-        </div>
-    </header>
+    <%-include('navbar.ejs')%>
     <header>
         <div class = "container" id = "page-info">
             <div id = "button-align">
                 <div class = "button-borders">
                     <button class = "top-btn-cta" id = "view-btn">View Posts</button>
                     <button class = "top-btn-cta" id = "post-btn">Post New</button>
-                </div>
-                
+                </div>               
             </div>
             <div id = "hero">
-                <table>
+                <table id = "viewTable">
                     <tr id = "header">
                       <th id = "task">Task</th>
                       <th>Date</th>
@@ -39,24 +25,10 @@
                       <th>Location</th>
                       <th>Spots</th>
                     </tr>
-                    <tr>
-                      <td id = "task">Eating Food</td>
-                      <td>05-27-2006</td>
-                      <td>5:00PM</td>
-                      <td>9185 Cambrian Commons Dr.</td>
-                      <th>5</th>
-                    </tr>
-                    <tr>
-                      <td></td>
-                    </tr>
-                  </table>
+                </table>
             </div>
-            
-            
-            
         </div>
-            
     </header>
-
+    <script src = "../js/viewPosts.js"></script>
 </body>
 </html>

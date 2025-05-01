@@ -3,61 +3,61 @@
     --secondary-color: #e7a10a;
     --white: white;
     --text-color: rgb(45, 39, 39);
+    --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    --border-radius: 15px;
 }
 
-/* Base Reset */
-html, body {
-    overflow-x: hidden;
-    width: 100%;
+/* Base Styles */
+body {
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
+    font-size: 16px;
+    background-color: var(--white);
+    color: #2d4579;
+}
+
+main {
+    min-height: 80vh;
+    background-color: var(--primary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 155px;
+    flex-wrap: wrap;
+    width: 100vw;
     box-sizing: border-box;
 }
 
-*, *:before, *:after {
-    box-sizing: inherit;
-}
-
-
-/* Main Content */
-main {
-    width: 100%;
-    min-height: 75vh;
-    background-color: var(--primary-color);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 40px;
-    padding: 40px 20px;
-}
-
 .hero {
+    margin-top: 10%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 25px;
-    width: 100%;
-    max-width: 525px;
+    gap: 30px;
+    width: 525px;
+    height: 600px;
+    padding: 0 1rem;
     text-align: center;
 }
 
-.hero h1, .hero p {
+.hero h1, 
+.hero p {
     color: var(--white);
     margin: 0;
     padding: 0 10px;
 }
 
-.hero p {
-    line-height: 1.5;
-    font-size: 16px;
-}
-
-.text-emp {
+.hero h1 {
     font-size: clamp(1.8rem, 8vw, 3rem);
     line-height: 1.2;
     word-break: break-word;
+}
+
+.hero p {
+    line-height: 1.5;
+    font-size: clamp(1rem, 3vw, 16px);
 }
 
 .hero-buttons {
@@ -75,11 +75,17 @@ main {
     text-decoration: none;
     text-align: center;
     width: 100%;
+    transition: all 0.3s ease;
 }
 
 #get-started-cta {
     color: var(--text-color);
     background-color: var(--white);
+}
+
+#get-started-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow);
 }
 
 #learn-more-cta {
@@ -88,18 +94,24 @@ main {
     background-color: transparent;
 }
 
+#learn-more-cta:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
 #volunteer-img {
-    width: 100%;
+    width: 120%;
     max-width: 650px;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    object-fit: contain;
 }
 
 /* Form Section */
 #homePage-form {
     background-color: var(--primary-color);
     padding: 20px;
-    width: 100%;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
 }
 
 .homePage-form {
@@ -115,74 +127,120 @@ main {
     width: 100%;
     height: 45px;
     border: none;
-    border-radius: 15px;
+    border-radius: var(--border-radius);
     padding: 0 15px;
     font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.homePage-form input:focus {
+    outline: 2px solid var(--secondary-color);
+    transform: scale(1.02);
 }
 
 .homePage-form button {
     background-color: var(--secondary-color);
     border: none;
     color: white;
-    border-radius: 15px;
+    border-radius: var(--border-radius);
     font-size: 15px;
     height: 45px;
     cursor: pointer;
-    width: 100%;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.homePage-form button:hover {
+    background-color: #d19109;
+    transform: translateY(-2px);
 }
 
 /* Map Section */
 #homePage-map {
-    height: 50vh;
-    width: 100%;
+    height: 80vh;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    position: relative;
 }
 
-/* Media Queries */
-@media (min-width: 480px) {
-    .hero-buttons {
-        flex-direction: row;
-        justify-content: center;
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    main {
+        gap: 100px;
     }
     
-    .hero-buttons a {
-        width: auto;
-        padding: 10px 25px;
+    #volunteer-img {
+        max-width: 550px;
+        width: 110%;
     }
 }
 
-@media (min-width: 768px) {
+@media (max-width: 768px) {
     main {
-        flex-direction: row;
-        gap: 40px;
-        padding: 40px;
+        flex-direction: column;
+        padding: 2rem 0;
+        gap: 30px;
+        height: auto;
     }
 
     .hero {
-        align-items: flex-start;
-        text-align: left;
+        order: 1;
+        padding: 0 1.5rem;
+        width: 90%;
+        height: auto;
+        gap: 20px;
     }
 
-    .homePage-form {
-        flex-direction: row;
+    #volunteer-img {
+        order: 2;
+        width: 85%;
+        max-width: 500px;
+        margin-top: 1rem;
     }
 
-    .homePage-form button {
-        width: auto;
-        padding: 0 25px;
+    .hero-buttons {
+        max-width: 100%;
     }
 }
 
-@media (min-width: 1024px) {
-    main {
-        gap: 80px;
+@media (max-width: 480px) {
+    .hero {
+        padding: 0 1rem;
+        width: 95%;
+        gap: 15px;
     }
-    
-    .text-emp {
-        font-size: 3rem;
-        line-height: 1.3;
+
+    .hero h1 {
+        font-size: 1.8rem;
     }
-    
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    #volunteer-img {
+        width: 95%;
+    }
+
     .hero-buttons a {
-        padding: 10px 40px;
+        padding: 0.7rem 0;
+        font-size: 1rem;
     }
 }
+
+@media (max-width: 375px) {
+    .hero h1 {
+        font-size: 1.6rem;
+    }
+    
+    #volunteer-img {
+        width: 100%;
+    }
+}
+
+/* Include all your original remaining styles below */
+/* ... (your existing .filter-panel, .filter-group, etc. styles) ... */

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email | ServiQ</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        .content-box {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .divider {
+            height: 1px;
+            background-color: #e0e0e0;
+            margin: 25px 0;
+        }
+        .verification-box {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .verification-code {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #4CAF50;
+            margin: 15px 0;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            text-align: center;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #3e8e41;
+        }
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+            margin-top: 30px;
+        }
+        .error-message {
+            color: #dc3545;
+            margin-bottom: 15px;
+        }
+        .resend-link {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .resend-link a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        .resend-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">ServiQ</div>
+        <h1>Verify your email address</h1>
+    </div>
+
+    <div class="content-box">
+        <p>In order to start using your ServiQ account, you need to verify your email address.</p>
+        
+        <div class="divider"></div>
+
+        <div class="verification-box">
+            <p>We've sent a 6-digit verification code to:</p>
+            <p><strong><%= email %></strong></p>
+            
+            <% if (messages.error) { %>
+                <div class="error-message"><%= messages.error %></div>
+            <% } %>
+
+            <form action="/auth/verify-email" method="POST">
+                <div class="form-group">
+                    <label for="code">Enter verification code:</label>
+                    <input type="text" id="code" name="code" required maxlength="6" pattern="\d{6}" 
+                           title="Please enter a 6-digit code">
+                </div>
+                <button type="submit" class="btn">Verify Email Address</button>
+            </form>
+        </div>
+
+        <div class="resend-link">
+            Didn't receive a code? <a href="#" id="resendCode">Resend verification code</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>If you did not sign up for this account, you can ignore this email.</p>
+    </div>
+
+    <script>
+        document.getElementById('resendCode').addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                const response = await fetch('/auth/resend-verification', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    credentials: 'same-origin'
+                });
+                
+                const result = await response.json();
+                if (response.ok) {
+                    alert('New verification code sent! Please check your email.');
+                } else {
+                    alert(result.error || 'Failed to resend code. Please try again later.');
+                }
+            } catch (error) {
+                alert('An error occurred. Please try again.');
+                console.error('Resend error:', error);
+            }
+        });
+
+        // Auto-focus the code input
+        document.getElementById('code').focus();
+        
+        // Auto-advance after 6 digits (optional)
+        document.getElementById('code').addEventListener('input', function(e) {
+            if (this.value.length === 6) {
+                this.form.submit();
+            }
+        });
+    </script>
+</body>
+</html>

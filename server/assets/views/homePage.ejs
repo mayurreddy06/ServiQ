@@ -4,38 +4,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
     <title>Document</title>
-    <link rel = "stylesheet" href = "../css/newNavBar.css">
     <link rel = "stylesheet" href = "../css/newHome.css">
     <link rel = "stylesheet" href = "../css/mapstyles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel = "stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-    <header>
-        <div class = "container">
-            <nav>
-                <img src = "../images/ServiQ-trans.png">
-                <div class = "external-pages right-header">
-                    <a href="/homepage2.html" class = "link-cta">Home</a>
-                    <a href="/map.html" class = "link-cta">Learn more</a>
-                    <a href="/newSignlog.html" class = "login-cta">Login Here</a>
-                </div>
-            </nav>
-        </div>
-    </header>
+    <%-include('navbar.ejs')%>
     <section>
         <div class = "container">
             <main>
                 <div class = "hero">
+
                     <h1 class = "text-emp"> Never Has It Been Easier to Get Involved </h1>
                     <p> Empower others by finding opportunities in your local community by utilizing
-                        our AI-powered search query and interactive map.
+                        our enhanced search query and interactive map.
                     </p>
                     <div class = "hero-buttons">
-                        <a id = "get-started-cta" href="/newSignlog.html">Get Started</a>
-                        <a id = "learn-more-cta">Learn More</a>
+
+                        <a id = "get-started-cta" href="auth/login">Get Started</a>
+                        <% if (typeof (locals.email) !== "undefined") {  %>
+                          <script>
+                            document.getElementById("get-started-cta").textContent = "Dashboard";
+                            document.getElementById("get-started-cta").setAttribute("href", "admin/post");
+                          </script>
+                        <% } %>
+                        <a href = "/about" id = "learn-more-cta">Learn More</a>
                     </div>
                 </div>
-                <img id = "volunteer-img" src = "../images/volunteering.jpg">
+                <img id = "volunteer-img" src = "../images/image2.jpg">
+
+                
                 
             </main>
             
@@ -83,8 +81,6 @@
                   </div>
                 </div>
               </div>
-            
-              <script type="module" src="../js/signin_script.js"></script>
               <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
               <script src = "../js/script.js"></script>
               <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRuZeVsj0JhzbxkUeV5FYb8PQVB-8zHEU&libraries=places"></script>
@@ -117,6 +113,7 @@
                 <span class="close-popup" onclick="closeCustomPopup()">&times;</span>
                 <h2>Volunteer Registration</h2>
                 <p><strong>Location:</strong> <span id="popupLocation"></span></p>
+                <p><strong>Task:</strong> <span id="popupTask"></span></p>
                 <p><strong>Category:</strong> <span id="popupCategory"></span></p>
                 <input type="email" id="popupEmail" placeholder="Enter your email">
                 <button id="registerBtn">Register</button>

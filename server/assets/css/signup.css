@@ -90,3 +90,24 @@ p a {
 p a:hover {
   text-decoration: underline;
 }
+
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+  color: #666;
+}
+
+.login-link a {
+  color: #4CAF50;
+  text-decoration: none;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+/* Loading state for button */
+button[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

@@ -1,39 +1,5 @@
-
-/* Header & Navigation */
-header {
-    width: 100%;
-}
-
-.container {
-    width: 100%;
-    max-width: 100vw;
-    overflow: hidden;
-    padding: 0 15px;
-}
-
-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 0;
-    width: 100%;
-}
-
-nav img {
-    max-width: 180px;
-    height: auto;
-}
-
-.external-pages {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-}
-
-.external-pages a {
-    white-space: nowrap;
-}
-:root {
+:root
+{
     --primary-color: #4CAF50;
     --white: white;
     --text-color: rgb(45, 39, 39);
@@ -42,69 +8,59 @@ nav img {
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
-body {
+body
+{
     font-family: Arial, Helvetica, sans-serif;
-    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
-
-.container {
+.container
+{
     width: 100%;
-    max-width: 1533px;
-    margin: 0 auto;
-    padding: 0 20px;
+    max-width: 100%;
 }
-
-/* Navigation Layout */
-nav {
+nav
+{
     display: flex;
-    justify-content: space-between; /* Pushes logo left and nav right */
+    justify-content: space-between;
     align-items: center;
     height: 70px;
     padding: 0 20px;
-    width: 100%;
+    box-sizing: border-box;
 }
-
-/* Logo Styles */
 nav img {
     width: 75px;
-    height: auto;
-    margin-right: auto; /* Ensures logo stays left */
 }
-
-/* Navigation Links Container */
-.external-pages {
+.external-pages
+{
     display: flex;
-    gap: 20px;
+    gap: 35px;
     color: var(--text-color);
+    padding-right: 75px;
     align-items: center;
-    margin-left: auto; /* Pushes everything right */
+    flex-wrap: nowrap;
+    min-width: 0;
 }
-
 .nav-links {
     display: flex;
-    gap: 20px;
+    gap: 35px;
     align-items: center;
+    flex-shrink: 1;
 }
-
-/* Link Styles */
-.external-pages a, 
-.external-pages input {
+.external-pages a, input
+{
     text-decoration: none;
-    font-size: 16px;
+    font-size: 18px;
     position: relative;
     color: var(--text-color);
     white-space: nowrap;
 }
-
 .external-pages a::before,
 .external-pages input::before {
     content: '';
     position: absolute;
     width: 100%;
-    height: 3px;
+    height: 4px;
     border-radius: 4px;
     background-color: var(--primary-color);
     bottom: 0;
@@ -112,39 +68,48 @@ nav img {
     transform-origin: right;
     transform: scaleX(0);
     transition: transform .3s ease-in-out;
-}
+  }
 
-.external-pages a:hover::before,
-.external-pages input:hover::before {
-    transform-origin: left;
-    transform: scaleX(1);
+a:hover::before,input:hover::before
+{
+  transform-origin: left;
+  transform: scaleX(1);
 }
-
-/* Button Styles */
-.login-cta {
-    padding: 8px 12px;
+.link-cta
+{
+    color: var(--text-color);
+}
+.login-cta
+{
+    padding: 10px 20px;
     background-color: var(--primary-color);
     border-radius: 5px;
     color: var(--white) !important;
     font-weight: bold;
     border: none;
     cursor: pointer;
-    min-width: 80px;
+    white-space: nowrap;
+    min-width: 100px;
     text-align: center;
-    font-size: 16px;
+    transition: background-color 0.15s;
 }
 
-/* User Section Styles */
+.login-cta:hover{
+    background-color: #3c863e;
+
+}
 .user-section {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
+    margin-left: 10px;
+    flex-shrink: 0;
     position: relative;
 }
 
 .user-email {
     color: var(--text-color);
-    font-size: 16px;
+    font-size: 18px;
     font-weight: normal;
     text-decoration: none;
     position: relative;
@@ -153,17 +118,21 @@ nav img {
     transition: color 0.3s ease;
 }
 
-#profile-image {
+.user-email:hover {
+    color: var(--primary-color);
+}
+
+#profile-image
+{
     width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
+    height: 100%;
 }
 
 #logout-container {
     position: absolute;
-    top: 50px;
-    right: 0;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     z-index: 100;
     background-color: white;
@@ -171,95 +140,18 @@ nav img {
     border-radius: 6px;
     border: 1px solid #e0e0e0;
     display: none;
+
+    /*code for transition*/
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+#logout-container.show{
+    opacity: 1;
+    pointer-events:auto;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 1200px) {
-    .external-pages {
-        gap: 15px;
-    }
-    
-    .nav-links {
-        gap: 15px;
-    }
-}
-
-@media (max-width: 992px) {
-    nav {
-        padding: 0 15px;
-    }
-    
-    nav img {
-        width: 65px;
-    }
-    
-    .external-pages a, 
-    .external-pages input {
-        font-size: 15px;
-    }
-}
-
-@media (max-width: 768px) {
-    nav {
-        height: 60px;
-    }
-    
-    nav img {
-        width: 60px;
-    }
-    
-    .external-pages {
-        gap: 12px;
-    }
-    
-    .login-cta {
-        padding: 6px 10px;
-        font-size: 15px;
-    }
-}
-
-@media (max-width: 576px) {
-    nav {
-        padding: 0 10px;
-    }
-    
-    nav img {
-        width: 50px;
-    }
-    
-    .external-pages {
-        gap: 8px;
-    }
-    
-    .external-pages a, 
-    .external-pages input {
-        font-size: 14px;
-    }
-    
-    .user-email {
-        display: none; /* Hide email on smallest screens */
-    }
-    
-    #profile-image {
-        width: 35px;
-        height: 35px;
-    }
-}
-
-/* Special case for very small screens */
-@media (max-width: 400px) {
-    .nav-links {
-        gap: 6px;
-    }
-    
-    .external-pages a, 
-    .external-pages input {
-        font-size: 13px;
-    }
-    
-    .login-cta {
-        min-width: 70px;
-        padding: 5px 8px;
-        font-size: 14px;
-    }
+#logout-link {
+    position: static;
+    display: block;
 }

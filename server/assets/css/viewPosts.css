@@ -13,8 +13,8 @@
 #page-info
 {
     height: 100vh;
-    background-color: var(--primary-color);
-    color: var(--white);
+    background-color: var(--white);
+    color: var(--text-color);
 }
 #button-align
 {
@@ -58,18 +58,20 @@ table
 {
     padding: 0px 20px;
     max-height: 250px;
-    width: 50%;
+    width: 75%;
     /* border collapse ensures only 1 line sepearation instead of multiple borders */
     margin: 0 auto;
+    border: 1px solid black;
 }
-tr:hover
+tr:hover:not(#header)
 {
     cursor: pointer;
-    background-color: black;
+    background-color: #F5F5F5;
 }
 td
 {
-    font-size: 10px;
+    font-size: 20px;
+    padding: 10px 5px;
 }
 th, td {
     
@@ -80,4 +82,9 @@ th, td {
 {
     border-left: 5px solid white;
     padding-left: 4px;
+}
+#button-div
+{
+    display: flex;
+
 }

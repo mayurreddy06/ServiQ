@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ServiQ Map</title>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="../css/newNavBar.css">
+  <link rel="stylesheet" href="../css/aboutUs.css">
+  <link rel="icon" type="image/png" href="../images/ServiQ_logo.png" />
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwHozpYoJS8xgURnkkICo7L0vw8xW2Oak&libraries=places"></script>
+  
+</head>
+<body>
+  <%-include('navbar.ejs')%>
+  <section>
+    <div class = "container">
+      <article class = "article-intro">
+        <div class = "introduction">
+          <h2>Our Mission</h2>
+          <p>We are a group of highly talented and motivated college students aiming to create a reliable repository and system helping out local nonprofits and organizations. We value client
+            satisfication highly, and will design components to meet the needs of your preferences.
+          </p>
+        </div>
+      </article>
+      <article class = "article-hero">
+        <div class = "grid">
+          <div class = "grid-item">
+            <img src = "../images/google-maps.jpg">
+            <h3>Powered by Google Maps</h3>
+            <p> We provide a real-time updating repository, enhanced with advanced querying and filtaration system, allowing users
+              to seamlessly search and find opportunities to fit their schedule
+            </p>
+          </div>
+          <div class = "grid-item">
+            <img src = "../images/dashboard-icon.jpg">
+            <h3>Secure Authentication</h3>
+            <p>Create an account or login to manage and view your posted tasks as an organizations. View the number of people who signed up
+              for your event in your admin dashboard, editing and posting new tasks to the repository as needed.
+            </p>
+          </div>
+          <div class = "grid-item">
+            <img src = "../images/email-icon.jpg">
+            <h3>Immediate Notification</h3>
+            <p>Our automated email system allows users to get instant notification regarding time of event, and sign up. Another plus, this system
+              is accessible in the admin dashboard for the use of sending reminders and updated information.
+            </p>
+          </div>
+          </article>
+      </div>
+      
+
+    </div>
+  </section>
+  
+  <script type="module" src="../js/signin_script.js"></script>
+
+</body>
+</html>
