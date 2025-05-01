@@ -115,3 +115,9 @@ main
 {
     height: 80vh;
 }
+
+/* a.disabled {
+    pointer-events: none;
+    cursor: default;
+  } */
+/* if <a tag has class disabled, the button will not be clickable */

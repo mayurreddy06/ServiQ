@@ -1,7 +1,6 @@
-const ACCESS_TOKEN = 'pk.eyJ1IjoidmlzaGFscHV0dGFndW50YSIsImEiOiJjbTUxaDUxMGQxeGpnMmtwcHVycGhqaHhsIn0.IWxQPRNmfEJWT-k8sTCGlA';
+// rewrite for backend later??
 document.querySelector(".task-post").addEventListener("submit", async function(event) {
     event.preventDefault();
-    alert("welp about to go");
     try {
       // Validate required fields
       const storeAddress = document.getElementById('autocomplete').value;
@@ -24,24 +23,11 @@ document.querySelector(".task-post").addEventListener("submit", async function(e
           email = "userNotLoggedIn@gmail.com";
         });
         
-        let lat;
-        let lng;
-        const geocodeUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(storeAddress)}.json?access_token=${ACCESS_TOKEN}`;
-        await fetch(geocodeUrl)
-        .then(async response => await response.json())
-        .then(data => {
-          if (data.features && data.features.length > 0) {
-            const location = data.features[0].center;
-            lat = location[1];
-            lng = location[0];
-          } else {
-            console.log(`No results found for ${address}`);
-          }
-        })
-        .catch(error => {
-          console.error('Error geocoding:', error);
-          throw error;
-        });
+        // google places API to find lng & lat
+        const autocompleteInput = document.getElementById('autocomplete');
+        const place = JSON.parse(autocompleteInput.dataset.place);
+        let lng = place.geometry.location.lng;
+        let lat = place.geometry.location.lat;
   
       const volunteerData = { 
         storeAddress, 

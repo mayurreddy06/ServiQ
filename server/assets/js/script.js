@@ -244,100 +244,6 @@ function loopThroughJSON(obj, regex, targetKey) {
   return value; // Return null if nothing found
 }
 
-async function fetchAndDisplayMarkers2()
-{
-  markers.forEach(marker => marker.remove());
-  markers = [];
-  // store volunteer objects in an array
-
-
-  const categorySelected = "";
-  const dateSelected = "";
-  const zipcodeSelected = "";
-  const GET_REQUEST = "/volunteer-data";
-  let filterCounter = 0;
-
-
-  let useCategory = document.getElementById("toggle-category").checked;
-  if (useCategory)
-  {
-    filterCounter++;
-    categorySelected = document.getElementById('category-type');
-    if (filterCounter === 1)
-    {
-      GET_REQUEST += "?";
-    }
-    else
-    {
-      GET_REQUEST += "&";
-    }
-    GET_REQUEST += ("category=" + categorySelected);
-  }
-
-
-  let useCalendar = document.getElementById("toggle-date").checked;
-  if (useCalendar)
-  {
-    filterCounter++;
-    try
-    {
-      const dateElement = document.getElementById('event-date');
-      dateSelected = new Date(dateElement.value).toISOString().split('T')[0];
-    }
-    catch(error)
-    {
-      dateSelected = "01-01-2025";
-    }
-    if (filterCounter === 1)
-    {
-        GET_REQUEST += "?";
-    }
-    else
-    {
-        GET_REQUEST += "&";
-    }
-    GET_REQUEST += ("date=" + dateSelected);
-  }
-
-
-  let useZipcode = document.getElementById("toggle-zipcode").checked;
-  if (useZipcode)
-  {
-    filterCounter++;
-    zipcodeSelected = document.getElementById('zipcode').value;
-    if (filterCounter === 1)
-    {
-        GET_REQUEST += "?";
-    }
-    else
-    {
-        GET_REQUEST += "&";
-    }
-    GET_REQUEST += ("zipcode=" + zipcodeSelected);
-  }
-  const response = await fetch(GET_REQUEST);
-  if (!response.ok)
-  {
-    console.error('Failed to fetch volunteer data' + response.text());
-  }
-  let volunteerObjects = response.json();
-
-  for (var key in volunteerObjects)
-  {
-    const marker = new mapboxgl.Marker()
-        .setLngLat([key.location.lng, key.location.lat])
-        .addTo(map);
-        markers.push(marker);
-        marker.getElement().addEventListener('click', () => {
-          openCustomPopup(storeAddress, category, key);
-        });
-
-  }
-  console.log("Displayed " + markers.length + " markers on the map");
-
-}
-// Add click event to show custom popup
-
 
 async function fetchAndDisplayMarkers() {
   try {
@@ -478,7 +384,7 @@ function initAutocomplete() {
 }
 
 // Function to open the custom popup
-function openCustomPopup(storeAddress, category, taskId, task) {
+async function openCustomPopup(storeAddress, category, taskId, task) {
   console.log("📌 Opening custom popup for:", { storeAddress, category, taskId, task });
 
   document.getElementById('popupLocation').innerText = storeAddress;
@@ -499,7 +405,7 @@ function openCustomPopup(storeAddress, category, taskId, task) {
     console.log(`📨 Sending request to /send-email for: ${email}`);
 
     try {
-      const response = await fetch("http://localhost:3002/send-email", {
+      const response = await fetch("/sendEmail", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, storeAddress, category, taskId }),

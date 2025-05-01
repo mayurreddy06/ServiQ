@@ -18,7 +18,8 @@ volunteerDataRouter.post('/volunteer-data', async (req, res) => {
       message: "Data successfully injected to Firebase"
     });
   } catch (error) {
-    res.render('viewPosts.ejs');
+    console.log(error);
+    throw error;
     // there is an error that occurs (something about the location) but it is still adding to the server (idk why) figure it out later ig
   }
 });
@@ -33,28 +34,31 @@ volunteerDataRouter.post('/volunteer-data', async (req, res) => {
     const tasks = data.val();
     // receieves all volunteer opporutunity data from firebase
 
-    let filteredTasks = Object.values(tasks);
-    // way to set JSON values equal to each other
-    console.log(tasks);
-    // optional filtering based on parameters of only category, date, or zipcode
+    let filteredTasks = Object.entries(tasks); // Fix here
 
     if (req.query.category) {
-      filteredTasks = filteredTasks.filter(task => task.category === req.query.category);
+      filteredTasks = filteredTasks.filter(([_, task]) => task.category === req.query.category);
     }
 
     if (req.query.date) {
-      filteredTasks = filteredTasks.filter(task => task.date === req.query.date);
+      filteredTasks = filteredTasks.filter(([_, task]) => task.date === req.query.date);
     }
 
     if (req.query.zipcode) {
-      filteredTasks = filteredTasks.filter(task => task.zipcode === req.query.zipcode);
+      filteredTasks = filteredTasks.filter(([_, task]) => task.zipcode === req.query.zipcode);
     }
 
     if (req.query.email) {
-      filteredTasks = filteredTasks.filter(task => task.email === req.query.email);
+      filteredTasks = filteredTasks.filter(([_, task]) => task.email === req.query.email);
     }
 
-    res.json(filteredTasks);
+    if (req.query.timestamp) {
+      filteredTasks = filteredTasks.filter(([_, task]) => task.timestamp === req.query.timestamp);
+    }
+
+    const result = Object.fromEntries(filteredTasks);
+
+    res.json(result);
   } catch (error) {
     console.error('Error fetching volunteer tasks:', error);
     res.json({
@@ -88,7 +92,7 @@ volunteerDataRouter.patch('/volunteer-data/:timestamp', async (req, res) => {
     }
     const updatingFields = req.body;
     await ref.child(filteredTask).update(updatingFields);
-
+    alert("successfully deleted");
     res.json({
       status: "SUCCESS",
       message: "Data successfully updated to firebase"

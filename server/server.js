@@ -34,8 +34,8 @@ app.use(session({
   secret: 'userVerification',
   resave: false,
   saveUninitialized: false,
-  cookie: {maxAge: 60000 * 10}
-  // session connect.id lasts 10 minutes
+  cookie: {maxAge: 60000 * 120}
+  // session connect.id lasts 2 hours
 }));
 
 // Middleware
@@ -47,11 +47,6 @@ app.use(express.urlencoded({extended: true}));
 
 app.use(flash());
 
-// Volunteer opportunities route
-const volunteerDataRouter = require('./assets/js/routes/volunteerData.js');
-const rateLimiter = require('./assets/js/middleware/rateLimiter.js');
-app.use("/", volunteerDataRouter);
-
 app.use((req, res, next) => {
   if (req.session.user)
   {
@@ -61,9 +56,15 @@ app.use((req, res, next) => {
   {
     res.locals.email = undefined;
   }
+  res.set('Cache-Control', 'no-store');
   next();
 });
 // middleware to check if the user is logged in.
+
+// Volunteer opportunities route
+const volunteerDataRouter = require('./assets/js/routes/volunteerData.js');
+const rateLimiter = require('./assets/js/middleware/rateLimiter.js');
+app.use("/", volunteerDataRouter);
 
 app.get('/', (req, res) => {
   res.render("homePage.ejs");
@@ -73,11 +74,11 @@ app.get('/about', (req, res) => {
   res.render("about.ejs");
 });
 
-app.get('/taskpost.ejs', async (req, res) => {
+app.get('/admin/post', async (req, res) => {
   res.render("taskpost.ejs");
 });
 
-app.get('/viewPosts.ejs', (req, res) => {
+app.get('/admin/view', (req, res) => {
   res.render('viewPosts.ejs');
 });
 
@@ -145,8 +146,8 @@ app.post('/auth/login', (req, res) => {
   const {email} = req.body;
   console.log("this is the email " + email);
   req.session.visited = true;
-  res.cookie("hello", "world", {maxAge: 60000 * 10, signed: true});
-  // user can be logged in for 10 minutes
+  res.cookie("hello", "world", {maxAge: 60000 * 120, signed: true});
+  // user can be logged in for 2 hours
   req.session.user = ({email});
   console.log(req.session);
   // already redirected in the front end
@@ -202,8 +203,8 @@ transporter.verify((error) => {
 });
 
 // Volunteer registration and email endpoint
-app.post('/send-email', async (req, res) => {
-  const { email, storeAddress, category, taskId } = req.body;
+app.post('/sendEmail', async (req, res) => {
+  const { email, storeAddress, category, taskId} = req.body;
   
   if (!email || !storeAddress || !category || !taskId) {
     return res.status(400).json({ error: "Missing required fields" });
@@ -216,7 +217,7 @@ app.post('/send-email', async (req, res) => {
     const taskData = taskSnapshot.val();
 
     if (!taskData) {
-      return res.status(404).json({ error: "Task not found" });
+      return res.status(401).json({ error: "Task not found" });
     }
 
     // Initialize registrations if needed
