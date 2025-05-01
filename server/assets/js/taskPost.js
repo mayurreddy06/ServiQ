@@ -98,3 +98,12 @@ document.querySelector(".task-post").addEventListener("submit", async function(e
       }
     });
   }
+  
+  document.addEventListener('DOMContentLoaded', function () {
+    // Initialize Flatpickr on the date input
+    flatpickr('#date', {
+        dateFormat: 'Y-m-d',
+        minDate: 'today',
+    })
+  });
+    

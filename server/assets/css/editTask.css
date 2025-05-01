@@ -1,3 +1,7 @@
+body
+{
+    font-family: Arial;
+}
 .event-footer {
     margin-top: 50px;
     display: flex;
@@ -5,10 +9,9 @@
     width: 100%;
 }
 
-
 .submit-button {
-    display: block;
-    margin: 0 auto;
+    display: flex;
+    justify-content: center; /* Center horizontally */
     color: white;
     background-color: #4CAF50;
     border: none;
@@ -71,7 +74,7 @@
     transition: background 0.2s ease;
     justify-content: start;
     text-align: center;
-    min-width: 120px;
+    min-width: 100px;
 }
 
 .cbx:hover {

@@ -25,9 +25,6 @@ admin.initializeApp({
 const db = admin.database();
 module.exports = db;
 
-// Configure view engine
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'assets/views'));
 
 const session = require('express-session');
 const flash = require('connect-flash');
@@ -80,6 +77,9 @@ transporter.verify((error) => {
 app.use(async (req, res, next) => {
   if (req.session.user) {
     res.locals.email = req.session.user.email;
+    app.get('/admin/post', async (req, res) => {
+      res.render("taskpost.ejs");
+    });
     
     // Sync verification status from database
     try {
@@ -150,10 +150,6 @@ app.get('/', (req, res) => {
 
 app.get('/about', (req, res) => {
   res.render("about.ejs");
-});
-
-app.get('/admin/post', async (req, res) => {
-  res.render("taskpost.ejs");
 });
 
 app.get('/admin/view', (req, res) => {

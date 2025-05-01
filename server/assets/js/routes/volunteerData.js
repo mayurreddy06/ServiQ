@@ -6,7 +6,6 @@ const db = require('../../../server.js');
 // CREATE route to add volunteer data to the server
 volunteerDataRouter.post('/volunteer-data', async (req, res) => {
   const { storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description, email } = req.body;
-
   try {
     const ref = db.ref('volunteer_opportunities');
     const newTask = ref.push(); 
@@ -32,9 +31,8 @@ volunteerDataRouter.post('/volunteer-data', async (req, res) => {
     const ref = db.ref('volunteer_opportunities');
     const data = await ref.once('value');
     const tasks = data.val();
-    // receieves all volunteer opporutunity data from firebase
 
-    let filteredTasks = Object.entries(tasks); // Fix here
+    let filteredTasks = Object.entries(tasks); 
 
     if (req.query.category) {
       filteredTasks = filteredTasks.filter(([_, task]) => task.category === req.query.category);
@@ -53,7 +51,7 @@ volunteerDataRouter.post('/volunteer-data', async (req, res) => {
     }
 
     if (req.query.timestamp) {
-      filteredTasks = filteredTasks.filter(([_, task]) => task.timestamp === req.query.timestamp);
+      filteredTasks = filteredTasks.filter(([_, task]) => task.timestamp === parseInt(req.query.timestamp));
     }
 
     const result = Object.fromEntries(filteredTasks);
@@ -61,7 +59,7 @@ volunteerDataRouter.post('/volunteer-data', async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error('Error fetching volunteer tasks:', error);
-    res.json({
+    res.status(401).json({
       status: "FAILED",
       message: "Data could not be fetched from Firebase"
     });
