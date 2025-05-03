@@ -106,8 +106,9 @@ app.use(async (req, res, next) => {
   next();
 });
 
-// Enhanced verification middleware
+// // Enhanced verification middleware
 app.use(async (req, res, next) => {
+  // checks to see if user isn't logged in, and if they are on a route that isnt possible unless logged in
   const allowedRoutes = [
     '/', 
     '/auth/login', 
@@ -154,6 +155,43 @@ app.get('/about', (req, res) => {
 
 app.get('/admin/view', (req, res) => {
   res.render('viewPosts.ejs');
+});
+
+app.get("/auth/google", async (req, res) => {
+  const { email, uid } = req.query;
+  const userRef = db.ref(`agency_accounts/${uid}`);
+  const snapshot = await userRef.once("value");
+
+  if (snapshot.exists()) {
+    req.session.user = {
+      uid,
+      email,
+      isVerified: true
+    };
+    return res.redirect("/");
+  } else {
+    return res.render("googleSignUp");
+  }
+});
+
+app.post("/auth/google/", async (req, res) => {
+  const { agencyName, agencyDesc, uid, email } = req.body; // get from frontend Firebase Auth
+
+  await db.ref(`agency_accounts/${uid}`).set({
+    email,
+    name: agencyName,
+    accountType: 'agency',
+    agencyDescription: agencyDesc,
+    createdAt: new Date().toISOString()
+  });
+
+  req.session.user = {
+    uid,
+    email,
+    isVerified: true
+  };
+  res.json({success: true, verified: true});
+
 });
 
 // Auth Routes
@@ -274,19 +312,7 @@ app.post('/auth/login', async (req, res) => {
     }
 
   } catch (error) {
-    console.error('Login error:', error);
-    let message = "Invalid email or password";
-    
-    if (error.code === 'auth/user-not-found') {
-      message = "Account not found";
-    } else if (error.code === 'auth/wrong-password') {
-      message = "Incorrect password";
-    }
-    
-    res.status(401).json({ 
-      success: false,
-      message 
-    });
+    res.status(401).json({message: "Error in back-end login & generating id"});
   }
 });
 
@@ -436,6 +462,10 @@ app.get("/auth/logout", (req, res) => {
     res.clearCookie("hello");
     return res.status(200).json({message: "user successfully logged out"});
   });
+});
+
+app.get("/admin/edit/:timestamp", async(req, res) => {
+  res.render("editTask.ejs");
 });
 
 // Volunteer registration email endpoint

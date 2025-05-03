@@ -3,44 +3,6 @@
 <head>
     <title>Sign Up</title>
     <link rel="stylesheet" href="/css/signup.css">
-    <script>
-        // Handle form submission with AJAX to properly handle verification redirect
-        document.getElementById('agency-register-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const form = e.target;
-            const formData = new FormData(form);
-            const submitButton = document.getElementById('submit-button');
-            
-            submitButton.disabled = true;
-            submitButton.textContent = 'Creating account...';
-            
-            try {
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                if (response.redirected) {
-                    // If registration is successful, redirect to verification page
-                    window.location.href = response.url;
-                } else {
-                    // Handle errors
-                    const result = await response.json();
-                    if (result.error) {
-                        alert(result.error);
-                    }
-                    submitButton.disabled = false;
-                    submitButton.textContent = 'Sign up';
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                submitButton.disabled = false;
-                submitButton.textContent = 'Sign up';
-                alert('An error occurred. Please try again.');
-            }
-        });
-    </script>
 </head>
 <body>
     <div class="form-box">

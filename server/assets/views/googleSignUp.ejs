@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="/css/signup.css">
+</head>
+<body>
+    <div class="form-box">
+        <h2 class="admin-text">Create Agency Information</h2>
+        <p class="subtitle">Before you can complete signing in, please complete the required fields</p>
+
+        <form id="agency-register-form">
+            <div class="signup-info">
+                <input type="text" placeholder="Agency name" id="agency-name" name="agencyName" required>
+                <input type="text" placeholder="Agency description" id="agency-desc" name="agencyDesc" required>
+            </div>
+            <div class="actions" style = "margin-top: 25px">
+                <button type="submit" id="submit-button">Sign in</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        document.getElementById("agency-register-form").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const url = window.location.href;
+            const match = url.match(/email=([^&]+)&uid=([^&]+)/);
+            const email = decodeURIComponent(match[1]);
+            const uid = decodeURIComponent(match[2]);
+            const agencyName = document.getElementById("agency-name").value;
+            const agencyDesc = document.getElementById("agency-desc").value;
+            try
+            {
+                const response = await fetch('/auth/google', {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                },
+                // Automatically converted to "username=example&password=password"
+                body: new URLSearchParams({email, uid, agencyName, agencyDesc}),
+                credentials: 'include'
+                });
+            }
+            catch(error)
+            {
+                console.log(error);
+            }
+            window.location.href = "/";
+            })
+    </script>
+</body>
+</html>

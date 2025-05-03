@@ -1,36 +1,23 @@
-:root {
+:root
+{
     --primary-color: #4CAF50;
     --secondary-color: #e7a10a;
     --white: white;
     --text-color: rgb(45, 39, 39);
-    --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    --border-radius: 15px;
 }
 
-/* Base Styles */
-body {
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    font-size: 16px;
-    background-color: var(--white);
-    color: #2d4579;
-}
-
-main {
-    min-height: 80vh;
+main
+{
+    height: 80vh;
     background-color: var(--primary-color);
     display: flex;
     justify-content: center;
-    align-items: center;
     gap: 155px;
-    flex-wrap: wrap;
-    width: 100vw;
-    box-sizing: border-box;
+    align-items: center;
 }
 
-.hero {
-    margin-top: 10%;
+.hero
+{
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -38,119 +25,99 @@ main {
     gap: 30px;
     width: 525px;
     height: 600px;
-    padding: 0 1rem;
-    text-align: center;
-}
 
-.hero h1, 
-.hero p {
+}
+.hero h1, p
+{
     color: var(--white);
-    margin: 0;
-    padding: 0 10px;
 }
 
-.hero h1 {
-    font-size: clamp(1.8rem, 8vw, 3rem);
-    line-height: 1.2;
-    word-break: break-word;
+.hero p
+{
+    line-height: 30px;
+    font-size: 16px;
+}
+.text-emp
+{
+    font-size: 50px;
+    line-height: 75px;
 }
 
-.hero p {
-    line-height: 1.5;
-    font-size: clamp(1rem, 3vw, 16px);
-}
-
-.hero-buttons {
+.hero-buttons
+{
     display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 100%;
-    max-width: 400px;
+    align-items: center;
+    gap: 10px;
 }
-
-.hero-buttons a {
-    font-size: 18px;
-    padding: 12px 0;
+.hero-buttons a
+{
+    font-size: 20px;
+    padding: 10px 76px;
     border-radius: 7px;
     text-decoration: none;
-    text-align: center;
-    width: 100%;
-    transition: all 0.3s ease;
 }
-
-#get-started-cta {
+#get-started-cta
+{
     color: var(--text-color);
     background-color: var(--white);
 }
-
-#get-started-cta:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--box-shadow);
+#get-started-cta:hover
+{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
-
-#learn-more-cta {
+#learn-more-cta
+{
     color: var(--white);
     border: 1px solid var(--white);
-    background-color: transparent;
+}
+#learn-more-cta:hover
+{
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
 }
 
-#learn-more-cta:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+#volunteer-img
+{
+    width: 650px;
+    border-radius: 25px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
 
-#volunteer-img {
-    width: 120%;
-    max-width: 650px;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    object-fit: contain;
-}
-
-/* Form Section */
-#homePage-form {
+#homePage-form
+{
     background-color: var(--primary-color);
-    padding: 20px;
-    width: 100vw;
-    margin-left: calc(-50vw + 50%);
+    color: var(--white);
 }
-
-.homePage-form {
+.homePage-form
+{
     display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
+    justify-content: center;
+    height: 15vh;
 }
-
-.homePage-form input {
-    width: 100%;
-    height: 45px;
+.form-element
+{
+    height: 20px;
+}
+.homePage-form input
+{
+    width: 350px;
+    height: 40px;
     border: none;
-    border-radius: var(--border-radius);
-    padding: 0 15px;
+    border-radius: 15px;
+    padding-left: 25px;
     font-size: 15px;
-    transition: all 0.3s ease;
+    /* padding left extends the input box as for width, but also fixes the cursor position so it doesn't start on the very left edge */
 }
-
-.homePage-form input:focus {
-    outline: 2px solid var(--secondary-color);
-    transform: scale(1.02);
-}
-
-.homePage-form button {
+.homePage-form button
+{
+    margin-left: 20px;
+    padding: 1px 15px;
     background-color: var(--secondary-color);
     border: none;
     color: white;
-    border-radius: var(--border-radius);
+    border-radius: 15px;
     font-size: 15px;
-    height: 45px;
+    height: 40px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
 }
 
 .homePage-form button:hover {

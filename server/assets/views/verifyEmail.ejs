@@ -163,16 +163,7 @@
                 console.error('Resend error:', error);
             }
         });
-
-        // Auto-focus the code input
         document.getElementById('code').focus();
-        
-        // Auto-advance after 6 digits (optional)
-        document.getElementById('code').addEventListener('input', function(e) {
-            if (this.value.length === 6) {
-                this.form.submit();
-            }
-        });
     </script>
 </body>
 </html>
