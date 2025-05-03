@@ -9,7 +9,7 @@ window.onload = async function()
         .catch(error => {
         email = "userNotLoggedIn@gmail.com";
     });
-    await fetch('http://localhost:3002/volunteer-data?email=' + email)
+    await fetch('http://localhost:3002/volunteer-data')
         .then(async response => await response.json())
         .then(volunteerTasks => {
             for (const taskID in volunteerTasks)

@@ -24,15 +24,19 @@ volunteerDataRouter.post('/volunteer-data', async (req, res) => {
 });
 
 
-// READ route to fetch data from firebase, with optional parameters
- // possible formats: http://localhost:3000/volunteer-data?category=val&date=val (because they are queries)
- volunteerDataRouter.get('/volunteer-data', async (req, res) => {
+volunteerDataRouter.get('/volunteer-data', async (req, res) => {
   try {
+    if (!req.session.user?.email) {
+      return res.status(403).json({ error: "Unauthorized: No user session" });
+    }
+
     const ref = db.ref('volunteer_opportunities');
     const data = await ref.once('value');
-    const tasks = data.val();
+    const tasks = data.val() || {};
 
-    let filteredTasks = Object.entries(tasks); 
+    let filteredTasks = Object.entries(tasks).filter(([_, task]) =>
+      task.email === req.session.user.email
+    );
 
     if (req.query.category) {
       filteredTasks = filteredTasks.filter(([_, task]) => task.category === req.query.category);
@@ -46,98 +50,99 @@ volunteerDataRouter.post('/volunteer-data', async (req, res) => {
       filteredTasks = filteredTasks.filter(([_, task]) => task.zipcode === req.query.zipcode);
     }
 
-    if (req.query.email) {
-      filteredTasks = filteredTasks.filter(([_, task]) => task.email === req.query.email);
-    }
-
     if (req.query.timestamp) {
       filteredTasks = filteredTasks.filter(([_, task]) => task.timestamp === parseInt(req.query.timestamp));
     }
 
     const result = Object.fromEntries(filteredTasks);
-
     res.json(result);
   } catch (error) {
     console.error('Error fetching volunteer tasks:', error);
-    res.status(401).json({
+    res.status(500).json({
       status: "FAILED",
-      message: "Data could not be fetched from Firebase"
+      message: "Internal error fetching tasks"
     });
   }
 });
 
-// UPDATE route to update specificed parameters
+
 volunteerDataRouter.patch('/volunteer-data/:timestamp', async (req, res) => {
-  // possible formats: http://localhost:3000/volunteer-data/1742783993418 because its a param
-  // assuming the RES body has only the updating parameters, which includes the timestamp (the ID) to find the specific volunteer task
-  try
-  {
+  try {
+    if (!req.session.user?.email) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
     const ref = db.ref('volunteer_opportunities');
     const data = await ref.once('value');
-    const tasks = data.val();
+    const tasks = data.val() || {};
 
-    let filteredTask = Object.values(tasks);
-    
-    filteredTask = Object.keys(tasks).find(key => tasks[key].timestamp === parseInt(req.params.timestamp));
-    // this is the corresponding task with the timestamp, which is passed as a parameter (not a query)
+    const taskKey = Object.keys(tasks).find(
+      key => tasks[key].timestamp === parseInt(req.params.timestamp)
+    );
 
-    if (!filteredTask)
-    {
-      return res.json({
-        status: "FAILED",
-        message: "Invalid timestamp"
-      });
+    if (!taskKey) {
+      return res.status(404).json({ error: "Task not found" });
     }
-    const updatingFields = req.body;
-    await ref.child(filteredTask).update(updatingFields);
-    alert("successfully deleted");
+
+    const task = tasks[taskKey];
+    if (task.email !== req.session.user.email) {
+      return res.status(403).json({ error: "Forbidden: Task does not belong to user" });
+    }
+
+    const updates = req.body;
+    await ref.child(taskKey).update(updates);
+
     res.json({
       status: "SUCCESS",
-      message: "Data successfully updated to firebase"
+      message: "Task successfully updated"
     });
 
-  }
-  catch(error)
-  {
-    res.json({
+  } catch (error) {
+    console.error('Error updating task:', error);
+    res.status(500).json({
       status: "FAILED",
-      message: "Firebase data reference does not exist"
+      message: "Error updating task"
     });
   }
 });
 
 volunteerDataRouter.delete('/volunteer-data/:timestamp', async (req, res) => {
-  // possible formats: http://localhost:3000/volunteer-data/1742783993418 because its a param
-  try
-  {
+  try {
+    if (!req.session.user?.email) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
     const ref = db.ref('volunteer_opportunities');
     const data = await ref.once('value');
-    const tasks = data.val();
+    const tasks = data.val() || {};
 
-    let filteredTask = Object.values(tasks);
-    
-    filteredTask = Object.keys(tasks).find(key => tasks[key].timestamp === parseInt(req.params.timestamp));
-    // this is the corresponding task with the timestamp, which is passed as a parameter (not a query)
+    const taskKey = Object.keys(tasks).find(
+      key => tasks[key].timestamp === parseInt(req.params.timestamp)
+    );
 
-    if (!filteredTask)
-    {
-      return res.json({
-        status: "FAILED",
-        message: "Invalid timestamp"
-      });
+    if (!taskKey) {
+      return res.status(404).json({ error: "Task not found" });
     }
-    await ref.child(filteredTask).remove();
 
-    res.json({filteredTask});
+    const task = tasks[taskKey];
+    if (task.email !== req.session.user.email) {
+      return res.status(403).json({ error: "Forbidden: Task does not belong to user" });
+    }
 
-  }
-  catch(error)
-  {
+    await ref.child(taskKey).remove();
     res.json({
+      status: "SUCCESS",
+      message: "Task successfully deleted"
+    });
+
+  } catch (error) {
+    console.error('Error deleting task:', error);
+    res.status(500).json({
       status: "FAILED",
-      message: "Firebase data reference does not exist"
+      message: "Error deleting task"
     });
   }
 });
+
 
 module.exports = volunteerDataRouter;
