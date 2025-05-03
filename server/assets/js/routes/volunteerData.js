@@ -8,84 +8,68 @@ volunteerDataRouter.post('/volunteer-data', async (req, res) => {
   if (!req.session.user?.email) {
     return res.status(403).json({ error: "Unauthorized" });
   }
-
-  const {
-    storeAddress, category, start_time, end_time, spots,
-    timestamp, task, location, date, description
-  } = req.body;
-
-  try {
-    const ref = db.ref('volunteer_opportunities');
-    const newTask = ref.push();
-
-    await newTask.set({
-      storeAddress,
-      category,
-      start_time,
-      end_time,
-      spots,
-      timestamp,
-      task,
-      location,
-      date,
-      description,
-      email: req.session.user.email  // ✅ Always use session
-    });
-
-    res.json({
-      status: "SUCCESS",
-      message: "Task successfully created"
-    });
-  } catch (error) {
-    console.log("Error creating task:", error);
-    res.status(500).json({
-      status: "FAILED",
-      message: "Internal error creating task"
-    });
-  }
+  volunteerDataRouter.post('/volunteer-data', async (req, res) => {
+    const { storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description, email } = req.body;
+    try {
+      const ref = db.ref('volunteer_opportunities');
+      const newTask = ref.push(); 
+      // Capture the reference to the new data
+      await newTask.set({ storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description, email});
+  
+      res.json({
+        status: "SUCCESS",
+        message: "Data successfully injected to Firebase"
+      });
+    } catch (error) {
+      console.log(error);
+      throw error;
+      // there is an error that occurs (something about the location) but it is still adding to the server (idk why) figure it out later ig
+    }
+  });
 });
 
 
 
 volunteerDataRouter.get('/volunteer-data', async (req, res) => {
-  try {
-    if (!req.session.user?.email) {
-      return res.status(403).json({ error: "Unauthorized: No user session" });
+    try {
+      
+      const ref = db.ref('volunteer_opportunities');
+      const data = await ref.once('value');
+      const tasks = data.val();
+  
+      let filteredTasks = Object.entries(tasks); 
+  
+      if (req.query.category) {
+        filteredTasks = filteredTasks.filter(([_, task]) => task.category === req.query.category);
+      }
+  
+      if (req.query.date) {
+        filteredTasks = filteredTasks.filter(([_, task]) => task.date === req.query.date);
+      }
+  
+      if (req.query.zipcode) {
+        filteredTasks = filteredTasks.filter(([_, task]) => task.zipcode === req.query.zipcode);
+      }
+  
+      if (req.query.email) {
+        filteredTasks = filteredTasks.filter(([_, task]) => task.email === req.query.email);
+      }
+  
+      if (req.query.timestamp) {
+        filteredTasks = filteredTasks.filter(([_, task]) => task.timestamp === parseInt(req.query.timestamp));
+      }
+  
+      const result = Object.fromEntries(filteredTasks);
+  
+      res.json(result);
+    } catch (error) {
+      console.error('Error fetching volunteer tasks:', error);
+      res.status(401).json({
+        status: "FAILED",
+        message: "Data could not be fetched from Firebase"
+      });
     }
-
-    const ref = db.ref('volunteer_opportunities');
-    const data = await ref.once('value');
-    const tasks = data.val() || {};
-
-    let filteredTasks = Object.entries(tasks).filter(([_, task]) =>
-      task.email === req.session.user.email
-    );
-
-    if (req.query.category) {
-      filteredTasks = filteredTasks.filter(([_, task]) => task.category === req.query.category);
-    }
-
-    if (req.query.date) {
-      filteredTasks = filteredTasks.filter(([_, task]) => task.date === req.query.date);
-    }
-
-    if (req.query.zipcode) {
-      filteredTasks = filteredTasks.filter(([_, task]) => task.zipcode === req.query.zipcode);
-    }
-
-    if (req.query.timestamp) {
-      filteredTasks = filteredTasks.filter(([_, task]) => task.timestamp === parseInt(req.query.timestamp));
-    }
-
-    const result = Object.fromEntries(filteredTasks);
-    res.json(result);
-  } catch (error) {
-    console.error('Error fetching volunteer tasks:', error);
-    res.status(500).json({
-      status: "FAILED",
-      message: "Internal error fetching tasks"
-    });
-  }
+  
 });
 
 
