@@ -5,23 +5,46 @@ const db = require('../../../server.js');
 
 // CREATE route to add volunteer data to the server
 volunteerDataRouter.post('/volunteer-data', async (req, res) => {
-  const { storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description, email } = req.body;
+  if (!req.session.user?.email) {
+    return res.status(403).json({ error: "Unauthorized" });
+  }
+
+  const {
+    storeAddress, category, start_time, end_time, spots,
+    timestamp, task, location, date, description
+  } = req.body;
+
   try {
     const ref = db.ref('volunteer_opportunities');
-    const newTask = ref.push(); 
-    // Capture the reference to the new data
-    await newTask.set({ storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description, email});
+    const newTask = ref.push();
+
+    await newTask.set({
+      storeAddress,
+      category,
+      start_time,
+      end_time,
+      spots,
+      timestamp,
+      task,
+      location,
+      date,
+      description,
+      email: req.session.user.email  // ✅ Always use session
+    });
 
     res.json({
       status: "SUCCESS",
-      message: "Data successfully injected to Firebase"
+      message: "Task successfully created"
     });
   } catch (error) {
-    console.log(error);
-    throw error;
-    // there is an error that occurs (something about the location) but it is still adding to the server (idk why) figure it out later ig
+    console.log("Error creating task:", error);
+    res.status(500).json({
+      status: "FAILED",
+      message: "Internal error creating task"
+    });
   }
 });
+
 
 
 volunteerDataRouter.get('/volunteer-data', async (req, res) => {

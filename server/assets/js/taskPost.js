@@ -13,16 +13,6 @@ document.querySelector(".task-post").addEventListener("submit", async function(e
       const description = document.getElementById('description').value;
       const timestamp = Date.now();
   
-      let email;
-      await fetch('http://localhost:3002/auth/status')
-        .then(async response => await response.json())
-        .then(data => {
-          email = data.user.email;
-        })
-        .catch(error => {
-          email = "userNotLoggedIn@gmail.com";
-        });
-        
         // google places API to find lng & lat
         const autocompleteInput = document.getElementById('autocomplete');
         const place = JSON.parse(autocompleteInput.dataset.place);
@@ -40,7 +30,6 @@ document.querySelector(".task-post").addEventListener("submit", async function(e
         location: {lat, lng},
         date, 
         description,
-        email,
       };
   
       console.log('Sending data to server:', volunteerData);
