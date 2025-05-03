@@ -242,104 +242,105 @@ function loopThroughJSON(obj, regex, targetKey) {
   return value; // Return null if nothing found
 }
 
-
-async function fetchAndDisplayMarkers() {
-  try {
-    console.log("Fetching data from: /volunteer-data");
-    const response = await fetch('/volunteer-data');
-    if (!response.ok) {
-      console.error('Failed to fetch volunteer tasks:', await response.text());
-      return;
-    }
-
-    const volunteerTasks = await response.json();
-    console.log("Received Data:", volunteerTasks);
-
-    // Get filter values
-    let selectedCategory = "";
-    const categorySelect = document.getElementById('category-type');
-    if (categorySelect) {
-      selectedCategory = categorySelect.value;
-    }
-
-    let selectedDate = "";
-    try {
-      const dateElement = document.getElementById('event-date');
-      selectedDate = new Date(dateElement.value).toISOString().split('T')[0];
-    } catch (error) {
-      selectedDate = "none";
-    }
-    let selectedZipcode = document.getElementById('zipcode').value;
-    selectedZipcode = String(selectedZipcode);
-
-    // Check if filters are enabled
-    let useCategory = document.getElementById("toggle-category").checked;
-    let useCalendar = document.getElementById("toggle-date").checked;
-    let useZipcode = document.getElementById("toggle-zipcode").checked;
-
-    // Clear existing markers
+async function fetchAndDisplayMarkers()
+{
+  try
+  {
     markers.forEach(marker => marker.remove());
-    markers = [];
+  markers = [];
+  // store volunteer objects in an array
+  let categorySelected = "";
+  const dateSelected = "";
+  const zipcodeSelected = "";
+  const GET_REQUEST = "/volunteer-data";
+  let filterCounter = 0;
+  let useCategory = document.getElementById("toggle-category").checked;
+  if (useCategory)
+  {
+    filterCounter++;
+    categorySelected = document.getElementById('category-type').value;
+    if (filterCounter === 1)
+    {
+      GET_REQUEST += "?";
+    }
+    else
+    {
+      GET_REQUEST += "&";
+    }
+    GET_REQUEST += ("category=" + categorySelected);
+  }
+  let useCalendar = document.getElementById("toggle-date").checked;
+  if (useCalendar)
+  {
+    filterCounter++;
+    try
+    {
+      const dateElement = document.getElementById('event-date').value;
+      dateSelected = new Date(dateElement.value).toISOString().split('T')[0];
+    }
+    catch(error)
+    {
+      dateSelected = "01-01-2025";
+    }
+    if (filterCounter === 1)
+    {
+        GET_REQUEST += "?";
+    }
+    else
+    {
+        GET_REQUEST += "&";
+    }
+    GET_REQUEST += ("date=" + dateSelected);
+  }
+  let useZipcode = document.getElementById("toggle-zipcode").checked;
+  if (useZipcode)
+  {
+    filterCounter++;
+    zipcodeSelected = document.getElementById('zipcode').value;
+    if (filterCounter === 1)
+    {
+        GET_REQUEST += "?";
+    }
+    else
+    {
+        GET_REQUEST += "&";
+    }
+    GET_REQUEST += ("zipcode=" + zipcodeSelected);
+  }
+  const response = await fetch(GET_REQUEST);
+  if (!response.ok)
+  {
+    console.error('Failed to fetch volunteer data' + response.text());
+  }
+  let volunteerObjects = await response.json();
 
-    // Process tasks
-    for (const taskId in volunteerTasks) {
-      const specificTask = volunteerTasks[taskId];
-      const { storeAddress, location, category, date, task } = specificTask;
-      
-      // Skip if required fields are missing
-      if (!storeAddress || !location || !category || !date) {
-        console.log("Skipping incomplete task data:", specificTask);
+  for (let taskId in volunteerObjects)
+  {
+    const specificTask = volunteerObjects[taskId];
+    const { storeAddress, location, category, task, spots} = specificTask;
+    try
+    {
+      console.log("hehehehe " + taskId);
+      if (parseInt(specificTask.registrations.count) >= parseInt(spots))
+      {
         continue;
       }
-
-      let taskDate;
-      try {
-        taskDate = new Date(date).toISOString().split('T')[0];
-      } catch (error) {
-        console.error("Error parsing task date:", error);
-        taskDate = "";
-      }
-      
-      const { lat, lng } = location;
-      // Apply filters
-      let shouldDisplay = true;
-      
-      if (useCategory && category.toLowerCase() !== selectedCategory.toLowerCase()) {
-        shouldDisplay = false;
-      }
-      
-      if (useCalendar && taskDate !== selectedDate) {
-        shouldDisplay = false;
-      }
-      
-      if (useZipcode) {
-        const zipcodeFromAddress = /[0-9]{5}(-[0-9]{4})?/g;
-        const foundZipcode = await reverseGeocode(lng, lat, zipcodeFromAddress);
-        if (foundZipcode !== selectedZipcode) {
-          shouldDisplay = false;
-        }
-      }
-      
-      if (!shouldDisplay) 
-        continue;
-
-      // Add marker to the map
+    }
+    catch(error){}
       const marker = new mapboxgl.Marker()
-        .setLngLat([lng, lat])
+        .setLngLat([location.lng, location.lat])
         .addTo(map);
-
       markers.push(marker);
-
-      // Add click event to show custom popup with the correct taskId
       marker.getElement().addEventListener('click', () => {
-        console.log("Opening popup for task:", { taskId, storeAddress, category, task });
+        console.log("hehehehe " + taskId);
         openCustomPopup(storeAddress, category, taskId, task);
       });
-    }
-    
-    console.log(`Displayed ${markers.length} markers on the map`);
-  } catch (error) {
-    console.error('Error fetching or displaying markers:', error);
+  }
+  console.log("Displayed " + markers.length + " markers on the map");
+  }
+  catch(error)
+  {
+    console.log(error);
   }
 }
 
@@ -383,6 +384,7 @@ function initAutocomplete() {
 
 // Function to open the custom popup
 async function openCustomPopup(storeAddress, category, taskId, task) {
+  console.log("hehehe " + taskId);
   console.log("Opening custom popup for:", { storeAddress, category, taskId, task });
 
   document.getElementById('popupLocation').innerText = storeAddress;

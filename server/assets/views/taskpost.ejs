@@ -11,9 +11,16 @@
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRuZeVsj0JhzbxkUeV5FYb8PQVB-8zHEU&libraries=places"></script>
         <!-- Flatpickr CSS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <link rel = "stylesheet" href = "../css/adminButtons.css">
     </head>
     <body class="taskpage-body">
         <%-include('navbar.ejs')%>
+        <div id = "button-align">
+            <div class = "button-borders">
+                <a href = "/admin/post"><button class = "top-btn-cta" id = "view-btn" autofocus >View Posts</button></a>
+                <a href = "/admin/view"><button class = "top-btn-cta" id = "post-btn" autofocus>Post New</button></a>
+            </div>               
+        </div>
         <div id="map"></div>
         <div class="event-text">
             <h1>Post an Event</h1>

@@ -16,34 +16,6 @@
     background-color: var(--white);
     color: var(--text-color);
 }
-#button-align
-{
-    display: flex;
-    justify-content: center;
-}
-.button-borders
-{
-    color: var(--white);
-    font-size: 10px;
-    border: none;
-    padding: 10px 30px;
-    border-radius: 15px;
-}
-.top-btn-cta
-{
-    border: 3px solid var(--white);
-    border-radius: 5px;
-    padding: 3px 15px;
-    color: var(--white);
-    background-color: var(--primary-color);
-    font-size: 25px;
-}
-
-.top-btn-cta:hover
-{
-    background-color: rgb(8, 106, 8);
-    cursor: pointer;
-}
 #hero
 {
     margin-top: 10px;
@@ -56,7 +28,7 @@
 }
 table
 {
-    padding: 0px 20px;
+    /* padding: 0px 20px; */
     max-height: 250px;
     width: 75%;
     /* border collapse ensures only 1 line sepearation instead of multiple borders */
@@ -65,7 +37,6 @@ table
 }
 tr:hover:not(#header)
 {
-    cursor: pointer;
     background-color: #F5F5F5;
 }
 td
@@ -86,5 +57,91 @@ th, td {
 #button-div
 {
     display: flex;
-
 }
+
+.button-cta
+{
+    padding: 10px 18px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    border: 1px solid black;
+}
+.edit-cta
+{
+    background-color: rgb(255, 156, 98);
+    font-weight:700;
+}
+.delete-cta
+{
+    background-color: #96b7ff;
+    font-weight:700;
+}
+
+/* chat gpt styling suggestions */
+#viewTable {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    margin-top: 20px;
+}
+
+#header {
+    background-color: var(--primary-color);
+    color: var(--white);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#header th {
+    padding: 15px 10px;
+    text-align: center;
+    font-size: 18px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+#viewTable tr:not(#header) {
+    transition: all 0.2s ease;
+}
+
+#viewTable tr:not(#header):hover {
+    background-color: #f0f7f0;
+    transform: translateX(2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+#viewTable td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* First column styling */
+#viewTable td:first-child {
+    text-align: left;
+    padding-left: 15px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* Last row border removal */
+#viewTable tr:last-child td {
+    border-bottom: none;
+}
+
+/* Zebra striping for rows */
+#viewTable tr:nth-child(even):not(#header) {
+    background-color: #f9f9f9;
+}
+
+/* Task column specific styling */
+#task {
+    border-left: 5px solid var(--primary-color);
+    padding-left: 10px;
+}
+

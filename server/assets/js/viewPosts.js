@@ -25,6 +25,17 @@ window.onload = async function()
                 let deleteColumn  = document.createElement("td");
                 let editButton = document.createElement("button");
                 let deleteButton = document.createElement("button");
+                console.log(taskData.registrations);
+
+                let spotsValue = "";
+                try
+                {
+                  spotsValue = (parseInt(taskData.spots) - parseInt(taskData.registrations.count)) + "/" + taskData.spots;
+                }
+                catch(error)
+                {
+                  spotsValue = taskData.spots + "/" + taskData.spots;
+                }
 
                 editButton.classList.add("button-cta", "edit-cta");
                 editButton.id = taskData.timestamp;
@@ -35,9 +46,9 @@ window.onload = async function()
                 date.textContent = taskData.date;
                 startTime.textContent = taskData.start_time;
                 address.textContent = taskData.storeAddress;
-                spots.textContent = taskData.spots;
-                editButton.textContent = "edit";
-                deleteButton.textContent = "delete";
+                spots.textContent = spotsValue;
+                editButton.textContent = "Edit";
+                deleteButton.textContent = "Delete";
 
                 editButton.addEventListener("click", async function(event) {
                     const timestamp = this.id;

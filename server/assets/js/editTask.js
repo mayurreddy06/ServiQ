@@ -17,6 +17,7 @@ window.onload = async function ()
             const spots = task.spots;
             const taskName = task.task;
             const description = task.description;
+            console.log("this is the description" + description);
             document.getElementById("autocomplete").setAttribute("value", storeAddress);
             document.getElementById("date").setAttribute("value", date);
             document.getElementById("start_time").setAttribute("value", start_time);
@@ -31,7 +32,7 @@ window.onload = async function ()
             }
             document.getElementById("volunteer-count").setAttribute("value", spots);
             document.getElementById("task").setAttribute("value", taskName);
-            document.getElementById("description").setAttribute("value", description);
+            document.getElementById("description").textContent = description;
         
         });
 }

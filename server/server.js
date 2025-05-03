@@ -476,6 +476,7 @@ app.post('/sendEmail', async (req, res) => {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
+  console.log(taskId);
   try {
     const safeEmail = email.replace(/\./g, "_");
     const taskRef = db.ref(`volunteer_opportunities/${taskId}`);
@@ -497,6 +498,7 @@ app.post('/sendEmail', async (req, res) => {
 
     registrations.count += 1;
     registrations.volunteers[safeEmail] = true;
+    console.log(registrations);
     
     await taskRef.update({ registrations });
 
