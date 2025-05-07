@@ -1,7 +1,7 @@
 // CRUD file for volunteering events and their details, stored in Firebase
 const express = require('express');
 const volunteerData = express.Router();
-const db = require('../../../server.js');
+const db = require('../../server.js');
 volunteerData.get('/', async (req, res) => {
   try {
     const ref = db.ref('volunteer_opportunities');
@@ -50,7 +50,7 @@ volunteerData.get('/', async (req, res) => {
   }
 
 });
-// CREATE route to add volunteer data to the server
+// route to add volunteer data to the server
 volunteerData.post('/', async (req, res) => {
     const { storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description} = req.body;
     const userId = req.session.user.uid;

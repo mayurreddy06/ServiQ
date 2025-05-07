@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Sign Up</title>
-    <link rel="stylesheet" href="/css/signup.css">
+    <link rel="stylesheet" href="/styles/signup.css">
 </head>
 <body>
     <div class="form-box">
@@ -23,6 +23,7 @@
         document.getElementById("agency-register-form").addEventListener("submit", async function(event) {
             event.preventDefault();
             const url = window.location.href;
+            // regex for getting email and uid from url
             const match = url.match(/email=([^&]+)&uid=([^&]+)/);
             const email = decodeURIComponent(match[1]);
             const uid = decodeURIComponent(match[2]);

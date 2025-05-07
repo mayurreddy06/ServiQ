@@ -2,7 +2,7 @@
 const express = require('express');
 const map = express.Router();
 const nodemailer = require('nodemailer');
-const db = require('../../../server.js');
+const db = require('../../server.js');
 
 // nodemailer library email configuration
 const transporter = nodemailer.createTransport({

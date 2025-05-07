@@ -4,7 +4,7 @@ const auth = express.Router();
 const admin = require('firebase-admin');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
-const db = require('../../../server.js');
+const db = require('../../server.js');
 
 
 // verification code generator for verifying email

@@ -1,3 +1,4 @@
+// main back end file, all routes stem from here
 const express = require('express');
 const path = require('path');
 const admin = require('firebase-admin');
@@ -11,8 +12,6 @@ const serviceAccount = require(process.env.FIREBASE_JSON);
 const app = express();
 const PORT = 3002;
 const { getAuth } = require('firebase-admin/auth');
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'assets/views'));
 app.use(cookieParser("secret"));
 
 // Initialize Firebase Admin
@@ -49,6 +48,16 @@ app.use(express.json());
 // allows front end form submissions to sent tags with "name" attribute, stored in req.body
 app.use(express.urlencoded({extended: true}));
 
+// allows app to use ejs files
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, '../client/views'));
+
+// tells the server to look into these files (for the views)
+app.use('/styles', express.static(path.join(__dirname, '../client/styles')));
+app.use('/images', express.static(path.join(__dirname, '../client/images')));
+app.use('/scripts', express.static(path.join(__dirname, '../client/scripts')));
+app.use('/config', express.static(path.join(__dirname, './assets')));
+
 // checks if user is logged in, to set local variables, before performing any routes
 app.use(async (req, res, next) => {
   if (req.session.user?.uid) {
@@ -76,18 +85,18 @@ app.get('/about', (req, res) => {
 });
 
 // routes
-const volunteerData = require('./assets/js/routes/volunteerData.js');
-const loggedIn = require('./assets/js/middleware/loggedIn.js');
+const volunteerData = require('./assets/routes/volunteerData.js');
+const loggedIn = require('./assets/middleware/loggedIn.js');
 app.use("/volunteer-data", loggedIn, volunteerData);
 
-const adminPages = require("./assets/js/routes/admin.js");
+const adminPages = require("./assets/routes/admin.js");
 app.use("/admin", loggedIn, adminPages);
 
-const loggedOut = require("./assets/js/middleware/loggedOut.js");
-const userAuth = require("./assets/js/routes/auth.js");
+const loggedOut = require("./assets/middleware/loggedOut.js");
+const userAuth = require("./assets/routes/auth.js");
 app.use("/auth", loggedOut, userAuth);
 
-const map = require("./assets/js/routes/eventMap.js");
+const map = require("./assets/routes/eventMap.js");
 app.use("/map", map);
 
 // Start server

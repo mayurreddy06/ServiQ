@@ -1,3 +1,4 @@
+// this file is currently not in use, but was previously used to test the nodemailer library initially
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 
