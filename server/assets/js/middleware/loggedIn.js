@@ -2,7 +2,7 @@ const express = require('express');
 const userAuthorized = express.Router();
 
 // checks if user is logged in in order to perform POST, PUT, DELETE to firebase volunteering data
-userAuthorized.use(async (req, res, next) => {
+userAuthorized.use((req, res, next) => {
   // returns so that fetchAndDisplayMarkers() can be used on the home page
   if (req.method === "GET" && req.path === "/")
   {

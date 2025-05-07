@@ -36,6 +36,9 @@ document.querySelector(".task-post").addEventListener("submit", async function(e
         body: JSON.stringify(volunteerData),
       })
       .then(response => response.json())
+      .then(data => {
+        alert("Task successfully posted!");
+      })
       .catch(error => {
         console.log(error);
       });

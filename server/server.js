@@ -83,10 +83,11 @@ app.use("/volunteer-data", loggedIn, volunteerData);
 const adminPages = require("./assets/js/routes/admin.js");
 app.use("/admin", loggedIn, adminPages);
 
+const loggedOut = require("./assets/js/middleware/loggedOut.js");
 const userAuth = require("./assets/js/routes/auth.js");
-app.use("/auth", userAuth);
+app.use("/auth", loggedOut, userAuth);
 
-const map = require("./assets/js/routes/map.js");
+const map = require("./assets/js/routes/eventMap.js");
 app.use("/map", map);
 
 // Start server

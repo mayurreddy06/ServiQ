@@ -5,9 +5,7 @@
   "main": "script.js",
   "scripts": {
     "start": "node server/server.js",
-    "server": "nodemon server/server.js",
-    "test": "newman run postman_collection.json",
-    "server:test": "concurrently \"nodemon server/server.js\" \"wait-on http://localhost:3002 && newman run postman_collection.json\""
+    "server": "nodemon server/server.js"
   },
   "keywords": [],
   "author": "",

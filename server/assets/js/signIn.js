@@ -8,7 +8,6 @@ const auth = getAuth(app);
 
 document.getElementById('signin-form').addEventListener('submit', async (event) => {
   event.preventDefault();
-  // addLoadingIndicator();
   let email = document.getElementById('email-entry').value;
   const password = document.getElementById('password-entry').value;
   console.log("Attempting login with email:", email);

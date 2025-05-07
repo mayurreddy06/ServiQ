@@ -195,7 +195,6 @@ auth.get("/google", async (req, res) => {
   
   auth.post('/verify-email', async (req, res) => {
     const { code } = req.body;
-    console.log(req.session.user);
     const { uid } = req.session.user;
   
     try {
