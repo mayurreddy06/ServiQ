@@ -1,4 +1,3 @@
-// rewrite for backend later??
 document.querySelector(".task-post").addEventListener("submit", async function(event) {
     event.preventDefault();
     try {
@@ -13,11 +12,11 @@ document.querySelector(".task-post").addEventListener("submit", async function(e
       const description = document.getElementById('description').value;
       const timestamp = Date.now();
   
-        // google places API to find lng & lat
-        const autocompleteInput = document.getElementById('autocomplete');
-        const place = JSON.parse(autocompleteInput.dataset.place);
-        let lng = place.geometry.location.lng;
-        let lat = place.geometry.location.lat;
+      // google places API to find lng & lat
+      const autocompleteInput = document.getElementById('autocomplete');
+      const place = await JSON.parse(autocompleteInput.dataset.place);
+      let lng = place.geometry.location.lng;
+      let lat = place.geometry.location.lat;
   
       const volunteerData = { 
         storeAddress, 
@@ -31,31 +30,21 @@ document.querySelector(".task-post").addEventListener("submit", async function(e
         date, 
         description,
       };
-  
-      console.log('Sending data to server:', volunteerData);
-      const response = await fetch('/volunteer-data', {
+      await fetch('/volunteer-data', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(volunteerData),
+      })
+      .then(response => response.json())
+      .catch(error => {
+        console.log(error);
       });
-  
-      const responseText = await response.text();
-      console.log('Server response:', responseText);
-  
-      if (response.ok) {
-        console.log('Volunteer opportunity added successfully');
-        alert('Volunteer opportunity added successfully!');
-        // Clear the form
-        document.querySelector(".task-post").reset();
-        // Refresh markers
-      } else {
-        console.error('Failed to add volunteer data:', responseText);
-        alert('Failed to add volunteer data: ' + responseText);
-      }
-    } catch (error) {
-      console.error('Error in sendVolunteerData:', error);
-      alert('Error: ' + error.message);
     }
+    catch(error)
+    {
+      console.log("Error in front end" + error.message);
+    }
+  
   });
   function initAutocomplete() {
     const input = document.getElementById('autocomplete');

@@ -78,7 +78,7 @@ th, td {
     font-weight:700;
 }
 
-/* chat gpt styling suggestions */
+
 #viewTable {
     border-collapse: separate;
     border-spacing: 0;
@@ -121,7 +121,6 @@ th, td {
     vertical-align: middle;
 }
 
-/* First column styling */
 #viewTable td:first-child {
     text-align: left;
     padding-left: 15px;
@@ -129,17 +128,16 @@ th, td {
     color: #333;
 }
 
-/* Last row border removal */
+/* last row border removal */
 #viewTable tr:last-child td {
     border-bottom: none;
 }
 
-/* Zebra striping for rows */
+/* zebra striping for rows */
 #viewTable tr:nth-child(even):not(#header) {
     background-color: #f9f9f9;
 }
 
-/* Task column specific styling */
 #task {
     border-left: 5px solid var(--primary-color);
     padding-left: 10px;

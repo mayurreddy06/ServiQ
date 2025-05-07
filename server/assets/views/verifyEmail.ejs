@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Your Email | ServiQ</title>
+    <title></title>
+    <!-- html/css/js on one page -->
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -114,10 +115,10 @@
 
         <div class="verification-box">
             <p>We've sent a 6-digit verification code to:</p>
-            <p><strong><%= email %></strong></p>
+            <p><strong><%=locals.email %></strong></p>
             
-            <% if (messages.error) { %>
-                <div class="error-message"><%= messages.error %></div>
+            <% if (typeof locals.emailVerifyError !== "undefined") { %>
+                <div class="error-message"><%=locals.emailVerifyError%></div>
             <% } %>
 
             <form action="/auth/verify-email" method="POST">
@@ -131,7 +132,7 @@
         </div>
 
         <div class="resend-link">
-            Didn't receive a code? <a href="#" id="resendCode">Resend verification code</a>
+            Didn't receive a code? <a id="resendCode">Resend verification code</a>
         </div>
     </div>
 
@@ -142,26 +143,23 @@
     <script>
         document.getElementById('resendCode').addEventListener('click', async (e) => {
             e.preventDefault();
-            try {
-                const response = await fetch('/auth/resend-verification', {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    credentials: 'same-origin'
-                });
-                
-                const result = await response.json();
-                if (response.ok) {
-                    alert('New verification code sent! Please check your email.');
-                } else {
-                    alert(result.error || 'Failed to resend code. Please try again later.');
-                }
-            } catch (error) {
-                alert('An error occurred. Please try again.');
-                console.error('Resend error:', error);
-            }
+                await fetch('/auth/resend-verification')
+                    .then(async response => {
+                        if (!response.ok)
+                        {
+                            const errorBody = await response.json();
+                            const error = new Error(errorBody.error);
+                            error.status = response.status;
+                            throw error;
+                        }
+                        return await response.json();
+                    })
+                    .then(data => {
+                        alert("New verification code sent email");
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
         });
         document.getElementById('code').focus();
     </script>

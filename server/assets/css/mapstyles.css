@@ -1,19 +1,19 @@
-/* Map Container Structure */
+
 #homePage-map {
     position: relative;
     width: 100%;
     height: 80vh;
-    isolation: isolate; /* Creates new stacking context */
+    isolation: isolate; 
 }
 
 #map {
     width: 100%;
     height: 100%;
     position: relative;
-    overflow: hidden; /* Contain all child elements */
+    overflow: hidden; 
 }
 
-/* Filter Panel - Fixed Positioning */
+
 .filter-panel {
     position: absolute;
     top: 20px;
@@ -88,7 +88,7 @@
     cursor: pointer;
 }
 
-/* Mapbox Elements Containment */
+
 .mapboxgl-canvas-container, 
 .mapboxgl-canvas {
     position: absolute;
@@ -126,7 +126,6 @@
     color: #444;
 }
 
-/* Custom Popup - Centered Modal */
 .custom-popup {
     display: none;
     position: fixed;

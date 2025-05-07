@@ -15,7 +15,7 @@ document.getElementById('signin-form').addEventListener('submit', async (event) 
   try {
       const accountCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = accountCredential.user;
-      const response = await fetch('http://localhost:3002/auth/login', {
+      await fetch('/auth/login', {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -23,19 +23,25 @@ document.getElementById('signin-form').addEventListener('submit', async (event) 
         // Automatically converted to "username=example&password=password"
         body: new URLSearchParams({email}),
         credentials: 'include'
+        })
+        .then(async response => {
+          if (!response.ok)
+          {
+            const errorBody = await response.json();
+            const error = new Error(errorBody.error);
+            error.status = response.status;
+            throw error;
+          }
+          return response.json();
+        })
+        .then(data => {
+          window.location.href = "/";
+        })
+        .catch(error => {
+          document.getElementById('error-tag').textContent = "Internal server error";
+          console.log(error);
         });
-      if (response.ok)
-      {
-        window.location.href = "/";
-      }
-      else
-      {
-        console.log("extensive time fetching rest api route");
-      }
-
-      
   } catch(error) {
-      let message = "An account with this email doesn't exist or the password is incorrect";
-      document.getElementById('error-tag').textContent = message;
+      document.getElementById('error-tag').textContent = "An account with this email doesn't exist or the password is incorrect";
   }
 });

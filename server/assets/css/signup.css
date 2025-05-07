@@ -1,7 +1,14 @@
-/* General page styling */
+:root
+{
+  --primary-color: #4CAF50;
+  --white: white;
+  --secondary-color: rgb(105, 100, 100);
+  --text-color: #2d2727;
+
+}
 body {
   background-color: white;
-  color: black;
+  color: var(--text-color);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -9,7 +16,7 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* Form container */
+
 .form-box {
   background-color: #f8f8f8;
   padding: 30px;
@@ -19,7 +26,7 @@ body {
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Form title */
+
 .admin-text {
   font-size: 24px;
   font-weight: bold;
@@ -30,7 +37,6 @@ body {
   margin-bottom: 27px; 
 }
 
-/* Input fields */
 .signup-info {
   display: flex;
   flex-direction: column;
@@ -58,7 +64,7 @@ input::placeholder {
   color: #888;
 }
 
-/* Sign-up button */
+
 button {
   width: 100%;
   padding: 12px;
@@ -75,7 +81,7 @@ button:hover {
   background-color: #017b07;
 }
 
-/* Terms and login link */
+
 p {
   font-size: 16px;
   color: #555;
@@ -106,7 +112,7 @@ p a:hover {
   text-decoration: underline;
 }
 
-/* Loading state for button */
+
 button[disabled] {
   opacity: 0.7;
   cursor: not-allowed;

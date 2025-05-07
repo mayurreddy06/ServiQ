@@ -16,27 +16,22 @@ if (emailDisplay && logoutContainer) {
     });
 }
 document.addEventListener('click', (e) => {
-if (e.target !== emailDisplay && !logoutContainer.contains(e.target)) {
-logoutContainer.style.display = 'none'; }
+if (e.target !== emailDisplay && !logoutContainer.contains(e.target)) 
+{
+    logoutContainer.style.display = 'none'; 
+}
 });
 
 document.getElementById('logout-link').addEventListener('click', async () => {
-    try {
-        const response = await fetch ('http://localhost:3002/auth/logout');
-        if (response.ok)
+    await fetch('/auth/logout')
+        .then(response => response.json())
+        .then(data => {
+            window.location.href = "/"
+        })
+        .catch(error)
         {
-            const status = await response.json();
-            window.location.href = "/";
+            console.log(error);
         }
-        else {
-            console.error('Server returned an error:', response.status);
-        }
-
-    } catch (error) {
-        console.error(error);
-        const errorCode = error.code;
-        const errorMessage = error.message;
-    }
 });
 
 

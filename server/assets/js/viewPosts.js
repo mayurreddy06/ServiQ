@@ -1,15 +1,15 @@
 window.onload = async function()
 {
-    let email;
-    await fetch('http://localhost:3002/auth/status')
+    let uid;
+    await fetch('/auth/status')
         .then(async response => await response.json())
         .then(data => {
-        email = data.user.email;
+        uid = data.uid;
         })
         .catch(error => {
-        email = "userNotLoggedIn@gmail.com";
+        uid = "unauthorized";
     });
-    await fetch('http://localhost:3002/volunteer-data')
+    await fetch('/volunteer-data?userId=' + uid)
         .then(async response => await response.json())
         .then(volunteerTasks => {
             for (const taskID in volunteerTasks)
@@ -25,7 +25,6 @@ window.onload = async function()
                 let deleteColumn  = document.createElement("td");
                 let editButton = document.createElement("button");
                 let deleteButton = document.createElement("button");
-                console.log(taskData.registrations);
 
                 let spotsValue = "";
                 try
@@ -36,7 +35,6 @@ window.onload = async function()
                 {
                   spotsValue = taskData.spots + "/" + taskData.spots;
                 }
-
                 editButton.classList.add("button-cta", "edit-cta");
                 editButton.id = taskData.timestamp;
                 deleteButton.classList.add("button-cta", "delete-cta");
@@ -59,8 +57,7 @@ window.onload = async function()
                 deleteButton.addEventListener("click", async function(event) {
                     const timestamp = this.id;
                     console.log(timestamp);
-                
-                    await fetch('http://localhost:3002/volunteer-data/' + timestamp, {
+                    await fetch('/volunteer-data/' + timestamp, {
                         method: 'DELETE',
                     })
                     .then(response => response.json())

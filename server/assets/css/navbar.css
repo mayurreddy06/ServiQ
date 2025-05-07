@@ -141,7 +141,7 @@ a:hover::before,input:hover::before
     border: 1px solid #e0e0e0;
     display: none;
 
-    /*code for transition*/
+    /* transitions */
     opacity: 0;
     transition: opacity 0.3s ease;
     pointer-events: none;

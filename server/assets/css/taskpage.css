@@ -1,8 +1,19 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+:root
+{
+    --primary-color: #4CAF50;
+    --white: white;
+    --secondary-color: rgb(105, 100, 100);
+    --text-color: #2d2727;
 
+}
 .event-footer {
     margin-top: 50px;
     display: flex;
-    justify-content: center; /* Center horizontally */
+    justify-content: center; 
     width: 100%;
 }
 
@@ -14,15 +25,15 @@
     background-color: #4CAF50;
     border: none;
     font-size: 18px;
-    padding: 8px 14px; /* Increased padding for better click target */
+    padding: 8px 14px; 
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
-    width: 200px; /* Fixed width */
+    width: 200px; 
 }
 
 .submit-button:hover {
-    background-color: #3e8e41; /* Darker shade on hover */
+    background-color: #3e8e41;
 }
 .taskpage-body {
     font-size: 16px;
@@ -176,8 +187,8 @@
 }
 
 .time-selection {
-    display: flex; /* Display hours, minutes, and AM/PM in a row */
-    gap: 10px; /* Space between columns */
+    display: flex; 
+    gap: 10px; 
 }
 
 .time-box {
@@ -206,11 +217,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px; /* Space between arrows and time box */
+    gap: 5px;
 }
 
-
-/* Flatpickr basic styles */
 .calendar .flatpickr-input {
     padding: 8px;
     font-size: 16px;
@@ -240,32 +249,32 @@
     font-size: 14px;
     text-align: center;
     cursor: pointer;
-    position: relative; /* Keeps the day element in position */
-    width: 32px; /* Fixed width for the day */
-    height: 32px; /* Fixed height for the day */
-    line-height: 32px; /* Vertically center text inside the day */
-    display: inline-flex; /* Ensures proper alignment */
-    align-items: center; /* Vertically center text */
-    justify-content: center; /* Horizontally center text */
-    border-radius: 50%; /* Makes it a circle */
+    position: relative; 
+    width: 32px; 
+    height: 32px; 
+    line-height: 32px; 
+    display: inline-flex;
+    align-items: center; 
+    justify-content: center; 
+    border-radius: 50%;
 }
 
 .flatpickr-calendar .flatpickr-day:hover {
-    background-color: #e0e0e0; /* Gray background on hover */
+    background-color: #e0e0e0; 
 }
 
 .flatpickr-calendar .flatpickr-day.selected {
-    background-color: #007bff; /* Blue background for selected date */
+    background-color: #007bff;
     color: white;
-    border-radius: 50%; /* Makes it a perfect circle */
-    width: 32px; /* Fixed width for the circle */
-    height: 32px; /* Fixed height for the circle */
-    line-height: 32px; /* Vertically center text inside the circle */
-    text-align: center; /* Horizontally center text inside the circle */
-    display: inline-flex; /* Ensures proper alignment */
-    align-items: center; /* Vertically center text */
-    justify-content: center; /* Horizontally center text */
-    margin: 0; /* Remove any margin to ensure alignment */
+    border-radius: 50%; /* makes it a perfect circle */
+    width: 32px; 
+    height: 32px; 
+    line-height: 32px; /* vertically center text inside the circle */
+    text-align: center; /* horizontally center text inside the circle */
+    display: inline-flex; /* ensures proper alignment */
+    align-items: center; /* vertically center text */
+    justify-content: center; /* horizontally center text */
+    margin: 0; /* remove any margin to ensure alignment */
 }
 
 .flatpickr-time {
@@ -301,7 +310,7 @@
     text-decoration: underline;
 }
 
-/* Volunteer Count */
+
 #volunteer-count {
     width: 100%;
     padding: 12px 15px;
@@ -319,7 +328,7 @@
     box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
 }
 
-/* Task Input */
+
 #task {
     width: 100%;
     padding: 12px 15px;
@@ -337,7 +346,6 @@
     box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
 }
 
-/* Event Description */
 #description {
     width: 100%;
     min-height: 150px;
@@ -358,7 +366,6 @@
     box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
 }
 
-/* Labels (for all three sections) */
 .task-post label {
     display: block;
     margin-bottom: 8px;
@@ -367,7 +374,6 @@
     font-size: 16px;
 }
 
-/* Responsive Adjustments */
 @media (max-width: 768px) {
     #volunteer-count,
     #task,

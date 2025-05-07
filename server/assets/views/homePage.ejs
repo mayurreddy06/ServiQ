@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
     <title>Document</title>
-    <link rel = "stylesheet" href = "../css/newHome.css">
+    <link rel = "stylesheet" href = "../css/homePage.css">
     <link rel = "stylesheet" href = "../css/mapstyles.css">
     <link rel = "stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
@@ -22,7 +22,7 @@
                     <div class = "hero-buttons">
 
                         <a id = "get-started-cta" href="auth/login">Get Started</a>
-                        <% if (typeof (locals.email) !== "undefined") {  %>
+                        <% if (typeof (locals.uid) !== "undefined") {  %>
                           <script>
                             document.getElementById("get-started-cta").textContent = "Dashboard";
                             document.getElementById("get-started-cta").setAttribute("href", "admin/post");
@@ -31,12 +31,8 @@
                         <a href = "/about" id = "learn-more-cta">Learn More</a>
                     </div>
                 </div>
-                <img id = "volunteer-img" src = "../images/image2.jpg">
-
-                
-                
-            </main>
-            
+                <img id = "volunteer-img" src = "../images/image2.jpg"> 
+            </main>          
         </div>
     </section>
     <section>
@@ -85,29 +81,6 @@
               <script src = "../js/script.js"></script>
               <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRuZeVsj0JhzbxkUeV5FYb8PQVB-8zHEU&libraries=places"></script>
             
-              <script>
-                console.log("map.html loaded");
-            
-                ACCESS_TOKEN = 'pk.eyJ1IjoidmlzaGFscHV0dGFndW50YSIsImEiOiJjbTUxaDUxMGQxeGpnMmtwcHVycGhqaHhsIn0.IWxQPRNmfEJWT-k8sTCGlA';
-                mapboxgl.accessToken = ACCESS_TOKEN;
-            
-                let map = new mapboxgl.Map({
-                  container: 'map',
-                  style: 'mapbox://styles/mapbox/streets-v11',
-                  center: [-82.9988, 39.9612],
-                  zoom: 12
-                });
-            
-                map.addControl(new mapboxgl.NavigationControl());
-                map.addControl(new mapboxgl.FullscreenControl());
-            
-                map.on('load', () => {
-                  console.log("Map loaded, fetching markers...");
-                  fetchAndDisplayMarkers();
-                });
-              </script>
-            
-              <!-- Custom Floating Modal -->
             <div id="customPopup" class="custom-popup">
               <div class="custom-popup-content">
                 <span class="close-popup" onclick="closeCustomPopup()">&times;</span>
@@ -117,6 +90,8 @@
                 <p><strong>Category:</strong> <span id="popupCategory"></span></p>
                 <input type="email" id="popupEmail" placeholder="Enter your email">
                 <button id="registerBtn">Register</button>
+                  <div id = "emailSuccess" class = "hidden">Successful Check Email      <i class="fa-solid fa-check-to-slot" ></i></div>
+                  <div id = "emailError"></div>
               </div>
             </div>
             

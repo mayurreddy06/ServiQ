@@ -4,7 +4,7 @@ window.onload = async function ()
     const lastIndex = url.lastIndexOf('/');
     const timestamp = url.substring(lastIndex + 1);
     await fetch('/volunteer-data?timestamp=' + timestamp)
-        .then(async response => await response.json())
+        .then(response => response.json())
         .then(data => {
             const task = Object.values(data)[0];
             console.log(task);
@@ -34,6 +34,9 @@ window.onload = async function ()
             document.getElementById("task").setAttribute("value", taskName);
             document.getElementById("description").textContent = description;
         
+        })
+        .catch(error => {
+          console.log(error);
         });
 }
 
@@ -51,7 +54,8 @@ document.querySelector(".task-post").addEventListener("submit", async function(e
     const task = document.getElementById('task').value;
     const description = document.getElementById('description').value;
     const autocompleteInput = document.getElementById('autocomplete');
-    const place = JSON.parse(autocompleteInput.dataset.place);
+    // API ISSUES
+    const place = await JSON.parse(autocompleteInput.dataset.place);
     let lng = place.geometry.location.lng;
     let lat = place.geometry.location.lat;
 
@@ -67,12 +71,12 @@ document.querySelector(".task-post").addEventListener("submit", async function(e
         date, 
         description,
       }
-    const response = fetch('/volunteer-data/' + timestamp, {
+    await fetch('/volunteer-data/' + timestamp, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(volunteerData),
     })
-    .then(response => response.json())
+    .then(async response => await response.json())
     .then(data => {
         console.log(data);
         window.location.href = "/admin/view";
@@ -81,10 +85,7 @@ document.querySelector(".task-post").addEventListener("submit", async function(e
         console.log("There was an error updating the fields");
         console.log(error);
     });
-
-
 });
-
 function initAutocomplete() {
   const input = document.getElementById('autocomplete');
   if (!input) {

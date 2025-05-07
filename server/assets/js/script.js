@@ -1,8 +1,7 @@
 const ACCESS_TOKEN = 'pk.eyJ1IjoidmlzaGFscHV0dGFndW50YSIsImEiOiJjbTUxaDUxMGQxeGpnMmtwcHVycGhqaHhsIn0.IWxQPRNmfEJWT-k8sTCGlA';
 mapboxgl.accessToken = ACCESS_TOKEN;
 
-console.log("Script loaded. Waiting for map to initialize...");
-
+// declare map
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/streets-v11',
@@ -10,57 +9,44 @@ const map = new mapboxgl.Map({
   zoom: 12,
 });
 
-// Wait for both the window to load and the map to be ready
-window.onload = function() {
-  console.log("Window loaded");
-}
-
-// Make sure the map is fully loaded before fetching markers
+// call fetch and display markers upon page load
 map.on('load', function() {
-  console.log("Map loaded, fetching markers...");
   fetchAndDisplayMarkers();
 });
 
-// Event listern function to see if filtering boxes have been checked/changed
+// adds user navigation controls to the map
+map.addControl(new mapboxgl.NavigationControl());
+map.addControl(new mapboxgl.FullscreenControl());
+
+// calls fetch and display markers any time the filters are toggled on/off or changed values
 document.addEventListener('DOMContentLoaded', function() {
-  
-  const filterControls = [
-    'category-type',
-    'event-date',
-    'zipcode',
-    'toggle-category',
-    'toggle-date',
-    'toggle-zipcode'
-  ];
-  
+  const filterControls = ['category-type', 'event-date', 'zipcode', 'toggle-category', 'toggle-date', 'toggle-zipcode'];
   filterControls.forEach(id => {
     const element = document.getElementById(id);
-    if (element) {
-      element.addEventListener('change', fetchAndDisplayMarkers);
-    }
+    element.addEventListener('change', fetchAndDisplayMarkers);
   });
 });
 
-document.getElementById('zipcode').addEventListener('change', () => reZoomMap(document.getElementById('zipcode').value));
-
-// Handle form submission for address search
-document.querySelector('.homePage-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  // this prevents the page from refreshing when the form is submitted
+// rezooms map based on address typed in
+document.querySelector('.homePage-form').addEventListener('submit', async (event) => {
+  // prevent page from refereshing upon submitting
+  event.preventDefault();
   const address = document.getElementById('autocomplete').value;
-  if (address) {
-    await reZoomMap(address);
-    fetchAndDisplayMarkers();
-  }
+  await reZoomMap(address);
+  // scrolls to bottom page, where the map is
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+});
+
+// rezooms map based on zipcode in the filter
+document.getElementById('zipcode').addEventListener('change', async () => {
+  const zipcode = document.getElementById('zipcode').value;
+  await reZoomMap(zipcode);
 });
 
 async function reZoomMap(value) {
   try {
-    if (!value) return;
-
-    console.log('Zooming to location:', value);
-    
-    // Check if it's a zipcode (5 digits)
+    // uses mapbox API for zipcodes
+    // regex to check if value is a zipcode (5 characters long)
     if (/^\d{5}$/.test(value)) {
       const geocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(value)}.json?access_token=${ACCESS_TOKEN}&types=postcode`;
       const response = await fetch(geocodingUrl);
@@ -76,136 +62,45 @@ async function reZoomMap(value) {
           speed: 1.2,
           curve: 1,
         });
-        return;
+        
       }
     }
-
-    const autocompleteInput = document.getElementById('autocomplete');
-    if (autocompleteInput && autocompleteInput.dataset.place) {
-      const place = JSON.parse(autocompleteInput.dataset.place);
-      if (place.geometry && place.geometry.location) {
-        console.log('Using stored Google Places coordinates:', place.geometry.location);
-        map.flyTo({
-          center: [place.geometry.location.lng, place.geometry.location.lat],
-          zoom: 12,
-          speed: 1.2,
-          curve: 1,
-        });
-        return;
+    // Uses google places API for address
+    else
+    {
+      const autocompleteInput = document.getElementById('autocomplete');
+      if (autocompleteInput && autocompleteInput.dataset.place) {
+        const place = JSON.parse(autocompleteInput.dataset.place);
+        if (place.geometry && place.geometry.location) {
+          console.log('Using stored Google Places coordinates:', place.geometry.location);
+          map.flyTo({
+            center: [place.geometry.location.lng, place.geometry.location.lat],
+            zoom: 12,
+            speed: 1.2,
+            curve: 1,
+          });
+        }
       }
-    }
-
-    const geocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(value)}.json?access_token=${ACCESS_TOKEN}`;
-    const response = await fetch(geocodingUrl);
-    const data = await response.json();
-    
-    if (data.features && data.features.length > 0) {
-      const [lng, lat] = data.features[0].center;
-      console.log('Found coordinates for address:', { lng, lat });
-      
-      map.flyTo({
-        center: [lng, lat],
-        zoom: 12,
-        speed: 1.2,
-        curve: 1,
-      });
-    } else {
-      console.error('No coordinates found for location:', value);
     }
   } catch (error) {
-    console.error('Error in reZoomMap:', error);
+    console.log(error);
   }
 }
 
-let markers = [];
 // declares markers array
+let markers = [];
 
+// obtains zipcode from address found in api call json
 async function reverseGeocode(lng, lat, regex) {
   let reverseGeoCoding = 'https://api.mapbox.com/search/geocode/v6/reverse?longitude=' + lng + '&latitude=' + lat + '&access_token=' + ACCESS_TOKEN + '';
   const response = await fetch(reverseGeoCoding);
   const data = await response.json();
-  console.log(data);
   const targetKey = 'full_address';
   let zipcode = loopThroughJSON(data, regex, targetKey);
-  console.log("This is the zipcode returned by reverseGeocode" + zipcode);
   return String(zipcode);
 }
 
-async function forwardGeocode(location, regex)
-{
-  try {
-    // If it's a zipcode (5 digits), use a different endpoint
-    if (/^\d{5}$/.test(location)) {
-      const geocodingUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(location)}.json?access_token=${ACCESS_TOKEN}&types=postcode`;
-      const response = await fetch(geocodingUrl);
-      const data = await response.json();
-      
-      if (data.features && data.features.length > 0) {
-        const [lng, lat] = data.features[0].center;
-        return `${lng},${lat}`;
-      }
-      throw new Error('No coordinates found for zipcode');
-    }
-
-    // For non-zipcode locations, use existing Google Places logic
-    const autocompleteInput = document.getElementById('autocomplete');
-    if (autocompleteInput && autocompleteInput.dataset.place) {
-      const place = JSON.parse(autocompleteInput.dataset.place);
-      if (place.geometry && place.geometry.location) {
-        console.log('Using stored Google Places coordinates:', place.geometry.location);
-        return `${place.geometry.location.lng},${place.geometry.location.lat}`;
-      }
-    }
-
-    // First try to get coordinates from the autocomplete input
-    const autocomplete = new google.maps.places.Autocomplete(autocompleteInput);
-    const place = autocomplete.getPlace();
-    
-    if (place && place.geometry && place.geometry.location) {
-      console.log('Using Google Places coordinates:', place.geometry.location);
-      // Store the place data for future use, but only the coordinates
-      const placeData = {
-        geometry: {
-          location: {
-            lat: place.geometry.location.lat(),
-            lng: place.geometry.location.lng()
-          }
-        }
-      };
-      autocompleteInput.dataset.place = JSON.stringify(placeData);
-      return `${place.geometry.location.lng()},${place.geometry.location.lat()}`;
-    }
-    
-    // Fallback to Mapbox if Google Places data not available
-    let forwardGeoCoding = 'https://api.mapbox.com/search/geocode/v6/forward?q=' + 
-      encodeURIComponent(location) + 
-      '&access_token=' + ACCESS_TOKEN + 
-      '&limit=5&types=address,poi';
-    
-    console.log('Fetching coordinates from Mapbox for:', location);
-    const response = await fetch(forwardGeoCoding);
-    const data = await response.json();
-    console.log('Mapbox API response:', data);
-    
-    if (data.features && data.features.length > 0) {
-      // Try to find the most precise result
-      const bestResult = data.features.find(feature => 
-        feature.properties.accuracy === 'point' || 
-        feature.properties.accuracy === 'address'
-      ) || data.features[0];
-      
-      console.log('Selected coordinates from:', bestResult.properties);
-      const coordinates = bestResult.geometry.coordinates;
-      return coordinates.join(','); // Returns "longitude,latitude"
-    }
-    
-    throw new Error('No coordinates found for the given location');
-  } catch (error) {
-    console.error('Error in forwardGeocode:', error);
-    throw error;
-  }
-}
-
+// recursively loops through json (found on stack overflow)
 function loopThroughJSON(obj, regex, targetKey) {
   let value = null;
   
@@ -216,43 +111,40 @@ function loopThroughJSON(obj, regex, targetKey) {
         return obj[key];
       }
       return obj[key].match(regex);
-      // regular expression to extract the zipcode from the full address
     }
     
     if (typeof obj[key] === 'object') {
       if (Array.isArray(obj[key])) {
-        // Loop through array
         for (let i = 0; i < obj[key].length; i++) {
           value = loopThroughJSON(obj[key][i], regex, targetKey);
           if (value) 
             return value; 
         }
       } else {
-        // Call function recursively for object
         value = loopThroughJSON(obj[key], regex, targetKey);
         if (value) 
           return value;
       }
     } else {
-      // Do something with value (keeping your console.log)
       console.log(key + ': ' + obj[key]);
     }
   }
-  
-  return value; // Return null if nothing found
+  return value; 
 }
 
+// fetches markers from the custon rest API and places marker on the location using MapBox API
 async function fetchAndDisplayMarkers()
 {
   try
   {
-    markers.forEach(marker => marker.remove());
+  // clears existing markers
+  markers.forEach(marker => marker.remove());
   markers = [];
   // store volunteer objects in an array
   let categorySelected = "";
-  const dateSelected = "";
-  const zipcodeSelected = "";
-  const GET_REQUEST = "/volunteer-data";
+  let dateSelected = "";
+  let zipcodeSelected = "";
+  let GET_REQUEST = "/volunteer-data";
   let filterCounter = 0;
   let useCategory = document.getElementById("toggle-category").checked;
   if (useCategory)
@@ -275,13 +167,14 @@ async function fetchAndDisplayMarkers()
     filterCounter++;
     try
     {
-      const dateElement = document.getElementById('event-date').value;
-      dateSelected = new Date(dateElement.value).toISOString().split('T')[0];
+      dateSelected = document.getElementById('event-date').value;  
     }
     catch(error)
     {
+      console.log("Error in fetching date " + error);
       dateSelected = "01-01-2025";
     }
+    console.log(dateSelected);
     if (filterCounter === 1)
     {
         GET_REQUEST += "?";
@@ -293,79 +186,66 @@ async function fetchAndDisplayMarkers()
     GET_REQUEST += ("date=" + dateSelected);
   }
   let useZipcode = document.getElementById("toggle-zipcode").checked;
-  if (useZipcode)
-  {
-    filterCounter++;
-    zipcodeSelected = document.getElementById('zipcode').value;
-    if (filterCounter === 1)
-    {
-        GET_REQUEST += "?";
-    }
-    else
-    {
-        GET_REQUEST += "&";
-    }
-    GET_REQUEST += ("zipcode=" + zipcodeSelected);
-  }
-  const response = await fetch(GET_REQUEST);
-  if (!response.ok)
-  {
-    console.error('Failed to fetch volunteer data' + response.text());
-  }
-  let volunteerObjects = await response.json();
-
-  for (let taskId in volunteerObjects)
-  {
-    const specificTask = volunteerObjects[taskId];
-    const { storeAddress, location, category, task, spots} = specificTask;
-    try
-    {
-      console.log("hehehehe " + taskId);
-      if (parseInt(specificTask.registrations.count) >= parseInt(spots))
-      {
-        continue;
-      }
-    }
-    catch(error){}
-      const marker = new mapboxgl.Marker()
-        .setLngLat([location.lng, location.lat])
-        .addTo(map);
-      markers.push(marker);
-      marker.getElement().addEventListener('click', () => {
-        console.log("hehehehe " + taskId);
-        openCustomPopup(storeAddress, category, taskId, task);
-      });
-  }
+  zipcodeSelected = document.getElementById("zipcode").value;
+  await fetch(GET_REQUEST)
+    .then(response => response.json())
+    .then(async volunteerObjects => {
+      // loops through tasks obtained from firebase
+      for (let taskId in volunteerObjects)
+        {
+          const specificTask = volunteerObjects[taskId];
+          const { storeAddress, location, category, task, spots} = specificTask;
+      
+          if (useZipcode)
+          {
+            // regex for obtaining the zipcode value directly from an address
+            const zipcodeFromAddress = /[0-9]{5}(-[0-9]{4})?/g;
+            console.log(location.lat);
+            console.log(location.lng);
+            const foundZipcode = await reverseGeocode(location.lng, location.lat, zipcodeFromAddress);
+            if (parseInt(zipcodeSelected) !== parseInt(foundZipcode))
+            {
+              // skips task if zipcodes are not the same
+              continue;   
+            }
+          }
+          try
+          {
+            if (parseInt(specificTask.registrations.count) >= parseInt(spots))
+            {
+              // skips task if sign up is full for that task
+              continue;
+            }
+          }
+          catch(error){}
+            // map box api to display the marker on the map
+            const marker = new mapboxgl.Marker()
+              .setLngLat([location.lng, location.lat])
+              .addTo(map);
+            markers.push(marker);
+            marker.getElement().addEventListener('click', () => {
+              openCustomPopup(storeAddress, category, taskId, task);
+            });
+        }
+    })
+    .catch(error => {
+      console.log("Error in fetching markers" + error);
+    }); 
   console.log("Displayed " + markers.length + " markers on the map");
   }
   catch(error)
   {
-    console.log(error);
+    console.log("Front end error " + error);
   }
 }
 
-// Add navigation controls to the map
-map.addControl(new mapboxgl.NavigationControl());
-map.addControl(new mapboxgl.FullscreenControl());
-
-let lat = null;
-let lng = null;
-
+// uses google places api to make a drop down menu when user types in address
 function initAutocomplete() {
   const input = document.getElementById('autocomplete');
-  if (!input) {
-    console.error("Autocomplete input element not found");
-    return;
-  }
-  
   const autocomplete = new google.maps.places.Autocomplete(input);
-
   autocomplete.addListener('place_changed', function () {
     const place = autocomplete.getPlace();
-    console.log('Place selected:', place);
-
     if (place.geometry && place.geometry.location) {
-      // Store only the coordinates
       const placeData = {
         geometry: {
           location: {
@@ -375,72 +255,72 @@ function initAutocomplete() {
         }
       };
       input.dataset.place = JSON.stringify(placeData);
-      console.log('Stored place data:', placeData);
-    } else {
-      console.log("No valid coordinates found.");
+    } 
+    else
+    {
+      console.log("There are no valid places available");
+      throw error;
     }
   });
 }
 
-// Function to open the custom popup
+// Function to open the custom popup, viewing the details for a certain task on
 async function openCustomPopup(storeAddress, category, taskId, task) {
-  console.log("hehehe " + taskId);
-  console.log("Opening custom popup for:", { storeAddress, category, taskId, task });
-
   document.getElementById('popupLocation').innerText = storeAddress;
   document.getElementById('popupTask').innerText = task;
   document.getElementById('popupCategory').innerText = category;
-
   document.getElementById('customPopup').style.display = 'block';
 
+  const emailError = document.getElementById("emailError");
+  const emailSuccess = document.getElementById("emailSuccess");
+  emailError.textContent = "";
+  if (!(emailSuccess.classList.contains("hidden")))
+  {
+    emailSuccess.classList.add("hidden");
+  }
+  
+  // sends an email and updates registrations in firebase if register button is clicked
   document.getElementById('registerBtn').onclick = async function () {
-    console.log("Register button clicked!");
-
-    const email = document.getElementById('popupEmail').value.trim();
-    if (!email) {
-      alert("Please enter an email.");
-      return;
+    emailError.textContent = "";
+    if (!(emailSuccess.classList.contains("hidden")))
+    {
+      emailSuccess.classList.add("hidden");
     }
-
-    console.log(`Sending request to /send-email for: ${email}`);
-
-    try {
-      const response = await fetch("/sendEmail", {
-        method: "POST",
+    const email = document.getElementById('popupEmail').value.trim();
+    await fetch('/map/email', {
+        method: 'POST',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, storeAddress, category, taskId }),
-      });
-
-      const result = await response.json();
-      console.log("Response received:", result);
-
-      if (response.ok) {
-        alert(`Registration successful! You are volunteer #${result.count}.`);
-        closeCustomPopup();
-      } else {
-        alert(result.message || "Error sending email.");
-      }
-    } catch (error) {
-      console.error("Fetch error:", error);
-      alert("Something went wrong.");
-    }
-  };
+        })
+        .then(async response => {
+          if (!response.ok)
+          {
+            const errorBody = await response.json();
+            const error = new Error(errorBody.error);
+            error.status = response.status;
+            throw error;
+          }
+          return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            emailSuccess.classList.remove("hidden");
+        })
+        .catch(error => {        
+          if (error.status === 404 || error.status === 405)
+          {
+            emailError.textContent = error;
+          }
+          else
+          {
+            emailError.textContent = "An unknown error occured when trying to register";
+            console.log(error);
+          }
+    });
+    };
 }
 
-// Function to close the custom popup
+// close custom popup
 function closeCustomPopup() {
   document.getElementById('customPopup').style.display = 'none';
-}
-
-// Make sure Google Maps API is loaded before initializing autocomplete
-if (typeof google !== 'undefined' && google.maps && google.maps.places) {
-  initAutocomplete();
-} else {
-  window.addEventListener('load', function() {
-    if (typeof google !== 'undefined' && google.maps && google.maps.places) {
-      initAutocomplete();
-    } else {
-      console.error("Google Maps API not loaded properly");
-    }
-  });
 }

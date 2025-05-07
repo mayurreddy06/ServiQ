@@ -133,6 +133,28 @@ main
     position: relative;
 }
 
+#emailError
+{
+    color:red; 
+    text-align: center; 
+    margin-top: 10px;
+}
+
+#emailSuccess
+{
+    margin-top: 10px;
+    background-color: var(--secondary-color);
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    max-width: 350px;
+    border-radius: 15px;
+}
+
+.hidden
+{
+    display: none;
+}
 
 /* Responsive Adjustments */
 @media (max-width: 1024px) {
