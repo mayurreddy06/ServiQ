@@ -10,31 +10,47 @@ volunteerData.get('/', async (req, res) => {
     let filteredTasks;
     try
     {
+      // converts to array
       filteredTasks = Object.entries(tasks); 
+      // beforehand, it is stored in json {taskID: 1 {category: climate, userId: someID}} etc.
+      // now, if is stored as an array that can be filtered, where the key is the taskID and the value is the task information such as category etc.
+      // [taskID: 1, {category: climate, userId: someID}]
     }
     catch(error)
     {
       return res.status(404).json({error: "No tasks in firebase"});
     }
-    if (req.query.category) {
-      filteredTasks = filteredTasks.filter(([_, task]) => task.category === req.query.category);
+    // filter based on queries
+    // key is not needed so left _ (or null) and value is the task information (still an object)
+    filteredTasks = filteredTasks.filter(([_, task]) => {
+    if (req.query.category)
+    {
+      return task.category === req.query.category;
     }
-
-    if (req.query.date) {
-      filteredTasks = filteredTasks.filter(([_, task]) => task.date === req.query.date);
+      // returns true (keeping the task)
+      return true;
+    });
+    filteredTasks = filteredTasks.filter(([_, task]) => {
+    if (req.query.date)
+    {
+      return task.date === req.query.date;
     }
-
-    if (req.query.zipcode) {
-      filteredTasks = filteredTasks.filter(([_, task]) => task.zipcode === req.query.zipcode);
-    }
-
-    if (req.query.timestamp) {
-      filteredTasks = filteredTasks.filter(([_, task]) => task.timestamp === req.query.timestamp);
-    }
-
-    if (req.query.userId) {
-      filteredTasks = filteredTasks.filter(([_, task]) => task.userId === req.query.userId);
-    }
+      return true;
+    });
+    filteredTasks = filteredTasks.filter(([_, task]) => {
+      if (req.query.timestamp)
+      {
+        return task.timestamp === req.query.timestamp;
+      }
+      return true;
+    });
+    filteredTasks = filteredTasks.filter(([_, task]) => {
+      if (req.query.userId)
+      {
+        return task.userId === req.query.userId;
+      }
+      return true;
+    });
 
     const isInvalidQuery = Object.keys(req.query).some(key => !['category', 'date', 'zipcode', 'timestamp', 'userId'].includes(key));
     if (isInvalidQuery)
@@ -43,7 +59,7 @@ volunteerData.get('/', async (req, res) => {
     }
 
     const result = Object.fromEntries(filteredTasks);
-
+    console.log(result);
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({error: "Data cannot be fetched from firebase"});
@@ -73,8 +89,16 @@ volunteerData.patch('/:timestamp', async (req, res) => {
     const data = await ref.once('value');
     const tasks = data.val();
 
+    // converts to array
+    let filteredTasks = Object.entries(tasks);
     // Filter to find task with matching timestamp
-    const filteredTasks = Object.entries(tasks).filter(([_, task]) => task.timestamp === req.params.timestamp);
+    filteredTasks = filteredTasks.filter(([_, task]) => {
+      if (req.params.timestamp)
+      {
+        return task.timestamp === req.params.timestamp;
+      }
+      return true;
+    });
 
     if (filteredTasks.length === 0) {
       return res.status(404).json({error: "No tasks found with timestamp param in firebase"});
@@ -94,6 +118,7 @@ volunteerData.patch('/:timestamp', async (req, res) => {
     res.status(200).json({message: "Data successfully updated to firebase"});
 
   } catch (error) {
+    console.log(error);
     res.status(500).json({error: "Data could not be updated to firebase"});
   }
 });
@@ -105,8 +130,16 @@ volunteerData.delete('/:timestamp', async (req, res) => {
     const data = await ref.once('value');
     const tasks = data.val();
 
+    // converts to array
+    let filteredTasks = Object.entries(tasks);
     // Filter to find task with matching timestamp
-    const filteredTasks = Object.entries(tasks).filter(([_, task]) => task.timestamp === req.params.timestamp);
+    filteredTasks = filteredTasks.filter(([_, task]) => {
+      if (req.params.timestamp)
+      {
+        return task.timestamp === req.params.timestamp;
+      }
+      return true;
+    });
 
     if (filteredTasks.length === 0) {
       return res.status(404).json({error: "No tasks found with timestamp param in firebase"});
@@ -124,6 +157,7 @@ volunteerData.delete('/:timestamp', async (req, res) => {
     res.status(200).json({message: "Data successfully removed from firebase"});
 
   } catch (error) {
+    console.log(error);
     res.status(500).json({error: "Data could not be updated to firebase"});
   }
 });

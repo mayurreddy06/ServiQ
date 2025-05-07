@@ -55,6 +55,7 @@ window.onload = async function()
                 });
 
                 deleteButton.addEventListener("click", async function(event) {
+                  event.preventDefault();
                     const timestamp = this.id;
                     console.log(timestamp);
                     await fetch('/volunteer-data/' + timestamp, {
