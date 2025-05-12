@@ -281,7 +281,7 @@ auth.get("/google", async (req, res) => {
       await transporter.sendMail(mailOptions);
       res.status(200).json({message: "New verficiation code successfuly sent"});
     } catch (error) {
-      console.error('Resend error:', error);
+      console.log("internal server error " + error);
       res.status(500).json({error});
     }
   });
