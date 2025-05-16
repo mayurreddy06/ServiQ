@@ -16,6 +16,7 @@ if (emailDisplay && logoutContainer) {
     });
 }
 document.addEventListener('click', (e) => {
+    // if the user clicks anywhere else on the page (hence referred to by event.target) the logout container disappears
 if (e.target !== emailDisplay && !logoutContainer.contains(e.target)) 
 {
     logoutContainer.style.display = 'none'; 
@@ -40,6 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const emailDisplay = document.getElementById("user-email-display");
     const logoutContainer = document.getElementById("logout-container");
 
+    // displays the logout container when user clicks (event)
     emailDisplay.addEventListener("click", () => {
         logoutContainer.classList.toggle("show");
     });
