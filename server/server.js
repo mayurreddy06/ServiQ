@@ -7,12 +7,20 @@ const { exec } = require('child_process');
 const cookieParser = require('cookie-parser');
 const crypto = require('crypto');
 require('dotenv').config();
+const cors = require('cors');
 
 const serviceAccount = require(process.env.FIREBASE_JSON);
 const app = express();
 const PORT = 3002;
 const { getAuth } = require('firebase-admin/auth');
 app.use(cookieParser("secret"));
+
+const allowedOrigins = ['http://localhost:3000', 'https://serviq.onrender.com'];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true // needed if you're using cookies or sessions
+}));
 
 // Initialize Firebase Admin
 admin.initializeApp({
