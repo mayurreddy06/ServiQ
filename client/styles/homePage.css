@@ -156,7 +156,58 @@ main
     display: none;
 }
 
-/* Responsive Adjustments */
+@media (max-width: 480px) {
+    main {
+        flex-direction: column;
+        height: auto;
+        gap: 15px;
+    }
+    .hero {
+        width: 100%;
+        text-align: center;
+        line-height: 15px;
+        height: 300px;
+        gap: 15px;
+    }
+    .hero p {
+        overflow-wrap: break-word;
+        font-size: 15px;
+        
+    }
+    .text-emp {
+        font-size: 20px;
+    }
+    .hero-buttons a { 
+        font-size: 17px;
+        padding: 19px 25px;
+    }
+    #volunteer-img {
+        display: none;
+    }
+    .homePage-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        height: 18vh;
+    }
+    .form-element {
+        margin: 0 auto;
+        height: none;
+    }
+    .homePage-form input {
+        width: 75%;
+    }
+    #homePage-search-button {
+        margin: none;
+        display: flex;
+        justify-content: center;
+        height: none;
+        padding: 10px 25px;
+    }
+}
+
+/* Responsive Adjustments
 @media (max-width: 1024px) {
     main {
         gap: 100px;
@@ -229,7 +280,7 @@ main
     #volunteer-img {
         width: 100%;
     }
-}
+} */
 
 /* Include all your original remaining styles below */
 /* ... (your existing .filter-panel, .filter-group, etc. styles) ... */
