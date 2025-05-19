@@ -65,6 +65,8 @@ app.use('/styles', express.static(path.join(__dirname, '../client/styles')));
 app.use('/images', express.static(path.join(__dirname, '../client/images')));
 app.use('/scripts', express.static(path.join(__dirname, '../client/scripts')));
 app.use('/config', express.static(path.join(__dirname, './assets')));
+app.use('/bootstrap', express.static(__dirname + '/../node_modules/bootstrap/dist'));
+app.use('/flatpickr', express.static(__dirname + '/../node_modules/flatpickr/dist'));
 
 // checks if user is logged in, to set local variables, before performing any routes
 app.use(async (req, res, next) => {

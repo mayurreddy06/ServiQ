@@ -135,6 +135,7 @@ auth.get("/google", async (req, res) => {
       // redirects so user verifies email
       return res.redirect('/auth/verify-email');
     } catch (error) {
+      console.log(error);
       if (error.code == "auth/email-already-exists") 
       {
         req.flash('registerError', 'The email is already in use by another account');
@@ -145,7 +146,7 @@ auth.get("/google", async (req, res) => {
       }
       else
       {
-        req.flash('registerError', 'Unknown server error');
+        req.flash('registerError', 'Password does not meet requirements or internal sever error');
       }
       return res.redirect('/auth/register');
     }

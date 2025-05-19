@@ -35,9 +35,11 @@ window.onload = async function()
                 {
                   spotsValue = taskData.spots + "/" + taskData.spots;
                 }
-                editButton.classList.add("button-cta", "edit-cta");
+                editButton.classList.add("edit-button", "btn", "taskPost-btn");
+                editButton.setAttribute("data-bs-toggle", "modal");
+                editButton.setAttribute("data-bs-target", "#PATCHModal");
                 editButton.id = taskData.timestamp;
-                deleteButton.classList.add("button-cta", "delete-cta");
+                deleteButton.classList.add("button-cta", "btn", "taskPost-btn");
                 deleteButton.id = taskData.timestamp;
 
                 task.textContent = taskData.task;
@@ -48,11 +50,11 @@ window.onload = async function()
                 editButton.textContent = "Edit";
                 deleteButton.textContent = "Delete";
 
-                editButton.addEventListener("click", async function(event) {
-                    const timestamp = this.id;
-                    console.log(timestamp);
-                    window.location.href = "/admin/edit/" + timestamp;
-                });
+                // editButton.addEventListener("click", async function(event) {
+                //     const timestamp = this.id;
+                //     console.log(timestamp);
+                //     window.location.href += "/" + timestamp;
+                // });
 
                 deleteButton.addEventListener("click", async function(event) {
                   event.preventDefault();
@@ -91,8 +93,8 @@ window.onload = async function()
         console.log("Error fetching volunteer data");
     });
 }
-function initAutocomplete() {
-  const input = document.getElementById('autocomplete');
+function initAutocomplete(event) {
+  const input = event.target;
   if (!input) {
     console.error("Autocomplete input element not found");
     return;
@@ -124,8 +126,14 @@ function initAutocomplete() {
 
 document.addEventListener('DOMContentLoaded', function () {
   // Initialize Flatpickr on the date input
-  flatpickr('#date', {
+  flatpickr('#datePOST', {
+      dateFormat: 'Y-m-d',
+      minDate: 'today',
+  })
+  flatpickr('#datePATCH', {
       dateFormat: 'Y-m-d',
       minDate: 'today',
   })
 });
+var myModal = document.getElementById('myModal')
+var myInput = document.getElementById('myInput')

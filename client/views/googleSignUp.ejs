@@ -5,7 +5,9 @@
     <link rel="stylesheet" href="/styles/signup.css">
 </head>
 <body>
-    <div class="form-box">
+    <%-include('navbar.ejs')%>
+    <div class = "contentSignUp">
+        <div class="form-box card">
         <h2 class="admin-text">Create Agency Information</h2>
         <p class="subtitle">Before you can complete signing in, please complete the required fields</p>
 
@@ -19,6 +21,9 @@
             </div>
         </form>
     </div>
+
+    </div>
+    
     <script>
         document.getElementById("agency-register-form").addEventListener("submit", async function(event) {
             event.preventDefault();

@@ -1,7 +1,4 @@
-*{
-    margin: 0;
-    padding: 0;
-}
+
 :root
 {
     --primary-color: #4CAF50;
@@ -9,10 +6,6 @@
     --secondary-color: rgb(105, 100, 100);
     --text-color: #2d2727;
 
-}
-body
-{
-    font-family: Arial;
 }
 .event-footer {
     margin-top: 50px;

@@ -11,24 +11,30 @@
 </head>
 <body>
     <%-include('navbar.ejs')%>
-    <section>
-        <div class = "container">
+    <section class = "card heroCard">
+        <div class = "container heroContainer">
             <main>
                 <div class = "hero">
 
-                    <h1 class = "text-emp"> Never Has It Been Easier to Get Involved </h1>
+                    <h1 class = "text-emp" data-mobile = "Never Has It Been Easier" data-desktop = "Never Has It Been Easier to Get Involved"></h1>
                     <p> Empower others by finding opportunities in your local community by utilizing
                         our enhanced search query and interactive map.
                     </p>
-                    <div class = "hero-buttons">
 
-                        <a id = "get-started-cta" href="auth/login">Get Started</a>
-                        <% if (typeof (locals.uid) !== "undefined") {  %>
+                    <div class = "hero-buttons">
+                        <div>
+                          <a id = "get-started-cta" href="auth/login">Get Started</a>
+                        </div>
+                        <div>
+                          <% if (typeof (locals.uid) !== "undefined") {  %>
                           <script>
                             document.getElementById("get-started-cta").textContent = "Dashboard";
                             document.getElementById("get-started-cta").setAttribute("href", "admin/post");
                           </script>
-                        <% } %>
+                          <% } %>
+                        </div>
+                        
+                        
                         <a href = "/about" id = "learn-more-cta">Learn More</a>
                     </div>
                 </div>
@@ -37,7 +43,7 @@
         </div>
     </section>
     <section>
-        <div class = "container scroll-section" id = "homePage-form">
+        <div class = "container1 scroll-section" id = "homePage-form">
             <form class = "homePage-form" onsubmit="fetchAndDisplayMarkers(); return false;">
                 <input type="text" id="autocomplete" name="store-location" onclick="initAutocomplete()" class="form-element reZoom" placeholder="Enter Address or Zipcode" required>
                 <div id = "testing">
@@ -48,13 +54,13 @@
         </div>
     </section>
     <section>
-        <div class = "container" id = "homePage-map">
+        <div class = "container1" id = "homePage-map">
             <div id="map">
                 <!-- Filter Panel -->
                 <div class="filter-panel">
                   <h3>Filters</h3>
                   <div id = "mobile-flex-adj">
-                      <div class="filter-group">
+                      <div class="filter-group" id = "zipcode-filter-group">
                       <label><input type="checkbox" id="toggle-zipcode"> Zipcode</label>
                       <input type="number" id="zipcode" min="00501" max="99950" value="43035" class = "filter-input-box reZoom">
                       </div>
@@ -62,7 +68,7 @@
                       <div class="filter-group">
                         <label><input type="checkbox" id="toggle-category"> Category</label>
                         <select id="category-type" class = "filter-input-box">
-                          <option value="education">Education</option>
+                          <option value="education" class = "filter-input-box">Education</option>
                           <option value="community">Community Service</option>
                           <option value="environment">Environment & Conservation</option>
                           <option value="climate">Climate</option>

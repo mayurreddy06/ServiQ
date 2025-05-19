@@ -22,7 +22,7 @@
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-    width: 280px;
+    width: 200px;
     z-index: 1000;
     border: 2px solid #4CAF50;
 }
@@ -38,7 +38,7 @@
 }
 
 .filter-group {
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     background: #f8f9fa;
     padding: 12px;
     border-radius: 8px;
@@ -84,35 +84,42 @@
     box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
     .filter-panel {
-        top: 80%;
-        left: -2%;
+        /* display: flex; */
+        position: absolute;
+        top: 69%;
         font-size: 10px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        width: 95%;
-        height: 15%;
+        width: 85%;
         
-
     }
+    .filter-input-box {
+        width: 100%;
+    }
+    /* #category-type {
+        width: 100%;
+        height: 68%;
+    } */
     #map {
         display: flex;
-        justify-content: center;
+        justify-content: center;  
     }
     #mobile-flex-adj {
         display: flex;
-        gap: 1px;
         justify-content: center;
     }
     .filter-panel h3 {
         display: none;
     }
-    .filter-group {
+    /* .filter-group {
         margin-bottom: 0px;
-    }
+        width: 50%;
+        border: 1px solid black;
+    } */
+     .filter-group {
+        overflow: auto;
+        width: 300px;
+     }
     
 }
 

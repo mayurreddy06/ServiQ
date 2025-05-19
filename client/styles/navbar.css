@@ -13,13 +13,13 @@
 body
 {
     font-family: Arial, Helvetica, sans-serif;
+    font-size: 25px;
 }
-.container
+.container1
 {
     width: 100%;
-    max-width: 100%;
 }
-nav
+/* nav
 {
     display: flex;
     justify-content: space-between;
@@ -27,9 +27,9 @@ nav
     height: 70px;
     padding: 0 20px;
     box-sizing: border-box;
-}
-nav img {
-    width: 75px;
+} */
+img {
+    width: 50px;
 }
 .external-pages
 {
@@ -81,16 +81,15 @@ a:hover::before,input:hover::before
 }
 .login-cta
 {
-    padding: 10px 20px;
+    padding: 7px 20px;
     background-color: var(--primary-color);
     border-radius: 5px;
-    color: var(--white) !important;
+    color: var(--white);
     font-weight: bold;
     border: none;
     cursor: pointer;
-    white-space: nowrap;
-    min-width: 100px;
     text-align: center;
+    min-width: 80px;
     transition: background-color 0.15s;
 }
 
@@ -155,3 +154,15 @@ a:hover::before,input:hover::before
     position: static;
     display: block;
 }
+
+.nav-link {
+    font-size: 20px !important;
+    /* !important overrides any other styling set, so overrides bootstrap */
+}
+
+/* makes menu bar for admin drop down to the left (stack overflow) */
+.dropdown-menu {
+   right: 0 !important;
+   left: auto !important;
+}
+

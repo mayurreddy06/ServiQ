@@ -5,15 +5,20 @@
     --white: white;
     --text-color: rgb(45, 39, 39);
 }
-
 main
 {
+    margin: 0 !important;
+    padding: 0 !important;
     height: 80vh;
     background-color: var(--primary-color);
     display: flex;
-    justify-content: center;
-    gap: 155px;
+    justify-content: space-between;
     align-items: center;
+}
+.card {
+    background-color: var(--primary-color) !important;
+    border: none !important;
+    border-radius: 0px !important;
 }
 
 .hero
@@ -23,7 +28,7 @@ main
     justify-content: center;
     align-items: center;
     gap: 30px;
-    width: 525px;
+    max-width: 40%;
     height: 600px;
 
 }
@@ -36,6 +41,10 @@ main
 {
     line-height: 30px;
     font-size: 16px;
+    margin-left: 0.5vh;
+}
+.text-emp::before {
+    content: attr(data-desktop);
 }
 .text-emp
 {
@@ -45,14 +54,17 @@ main
 
 .hero-buttons
 {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 0.5vh;
+    /* padding: 4vh; */
 }
 .hero-buttons a
 {
+    white-space: nowrap;
     font-size: 20px;
-    padding: 10px 76px;
+    padding: 1vh 9.5vh;
     border-radius: 7px;
     text-decoration: none;
 }
@@ -77,7 +89,7 @@ main
 
 #volunteer-img
 {
-    width: 650px;
+    width: 75vh;
     border-radius: 25px;
     box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
@@ -156,7 +168,7 @@ main
     display: none;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 1150px) {
     main {
         flex-direction: column;
         height: auto;
@@ -169,13 +181,21 @@ main
         height: 300px;
         gap: 15px;
     }
+    .hero {
+        align-items: space-around;
+        max-width: none;
+    }
     .hero p {
         overflow-wrap: break-word;
         font-size: 15px;
-        
     }
     .text-emp {
-        font-size: 20px;
+        font-size: 25px;
+        color: transparent;
+    }
+    .text-emp::before {
+        content: attr(data-mobile);
+        color: white;
     }
     .hero-buttons a { 
         font-size: 17px;
@@ -196,7 +216,7 @@ main
         height: none;
     }
     .homePage-form input {
-        width: 75%;
+        width: 60%;
     }
     #homePage-search-button {
         margin: none;
@@ -205,82 +225,7 @@ main
         height: none;
         padding: 10px 25px;
     }
-}
-
-/* Responsive Adjustments
-@media (max-width: 1024px) {
-    main {
-        gap: 100px;
-    }
-    
-    #volunteer-img {
-        max-width: 550px;
-        width: 110%;
+    #zipcode-filter-group {
+        display: none;
     }
 }
-
-@media (max-width: 768px) {
-    main {
-        flex-direction: column;
-        padding: 2rem 0;
-        gap: 30px;
-        height: auto;
-    }
-
-    .hero {
-        order: 1;
-        padding: 0 1.5rem;
-        width: 90%;
-        height: auto;
-        gap: 20px;
-    }
-
-    #volunteer-img {
-        order: 2;
-        width: 85%;
-        max-width: 500px;
-        margin-top: 1rem;
-    }
-
-    .hero-buttons {
-        max-width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
-    .hero {
-        padding: 0 1rem;
-        width: 95%;
-        gap: 15px;
-    }
-
-    .hero h1 {
-        font-size: 1.8rem;
-    }
-
-    .hero p {
-        font-size: 1rem;
-    }
-
-    #volunteer-img {
-        width: 95%;
-    }
-
-    .hero-buttons a {
-        padding: 0.7rem 0;
-        font-size: 1rem;
-    }
-}
-
-@media (max-width: 375px) {
-    .hero h1 {
-        font-size: 1.6rem;
-    }
-    
-    #volunteer-img {
-        width: 100%;
-    }
-} */
-
-/* Include all your original remaining styles below */
-/* ... (your existing .filter-panel, .filter-group, etc. styles) ... */

@@ -41,6 +41,6 @@ document.getElementById('signin-form').addEventListener('submit', async (event) 
           console.log(error);
         });
   } catch(error) {
-      document.getElementById('error-tag').textContent = "An account with this email doesn't exist or the password is incorrect";
+      document.getElementById('error-tag').textContent = "Invalid Login Credentials";
   }
 });

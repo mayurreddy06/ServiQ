@@ -18,7 +18,7 @@ volunteerData.get('/', async (req, res) => {
     }
     catch(error)
     {
-      return res.status(404).json({error: "No tasks in firebase"});
+      return res.status(500).json({});
     }
     // filter based on queries
     // key is not needed so left _ (or null) and value is the task information (still an object)

@@ -7,50 +7,68 @@
     <link rel="icon" href="../images/ServiQ_logo.png" type="image/x-icon">
     <link rel = "stylesheet" href = "../styles/login.css">   
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
     <%-include('navbar.ejs')%>
-    <section>
-        <div class = "container">
-            <main>
-                <div class = "login-panel">
-                    <div class = "left-side">
-                        <div class = "fix-image">
-                            <img src = "../images/ServiQ_logo.png">
-                        </div>
-                        <!-- this is to allow for us to use display: flex to just center the image itself, you can't do this without wrapping
-                         it inside of a div element -->
-                        <h2> Don't waste your time </h2>
-                        <p> Join others to begin posting and finding other volunteers today</p>
-                        <br>
-                        <button id = "google-sign" style = "border: 1px solid black; cursor: pointer">Sign in With Google        
-                        </button>
-                    </div>
+        <!-- Section: Design Block -->
+<section class = "flex-grow-1">
+  <!-- Jumbotron -->
+  <div class="d-flex align-items-center px-4 py-5 px-md-5 text-center text-lg-start" style="min-height: calc(100vh - 80px); background-color: hsl(0, 0%, 96%)">
+    <div class="container">
+      <div class="row gx-lg-5 justify-content-center align-items-center">
+        <div class="col-lg-6 mb-5 mb-lg-0">
+          <h1 class="my-5 display-3 fw-bold ls-tight">
+            The Best Chance <br />
+            <span class="text-primary" id = "override-boot">to market opportunities</span>
+          </h1>
+          <p style="color: hsl(217, 10%, 50.8%)">
+            As a registered service agency, your organization will be able to post, edit, update, and delete
+                            service opportunities for users to see on our map. It's time to enhance your organization and give
+                            others the opportunity to be more involved in their community.
+          </p>
+        </div>
+
+        <div class="col-lg-6 mb-5 mb-lg-0">
+            <div class = "card">
+                <div class="card-body rounded py-4 px-3">
                     <div class = "right-side">
-                        <h1> Login </h1>
-                        <p class = "right-p-margin"> Before we get started, your organization must login or register if you don't already have an account.</p>
-                        <form id="signin-form">
-                            <p>Username</p>
-                            <input type = "email" id = "email-entry" class = "login-input" name = "email">
-                            <br>
-                            <p>Password</p>
-                            <input type = "password" id = "password-entry" class = "login-input" name = "password">
-                            <div class = "createOrLogin">
-                                <a href = "/auth/register" id = "create-cta">Create an account?</a>
-                                <button type = "submit" value = "Login" id = "btn-cta">Login</button>
+                        <!-- 2 column grid layout with text inputs for the first and last names -->
+                        <form id = "signin-form">
+                                <h1> Login </h1>
+                                <p class = "right-p-margin"> Before we get started, your organization must login or register if you don't already have an account.</p>
+                                <div>
+                                    <p>Email</p>
+                                    <input type = "email" id = "email-entry" class = "login-input" name = "email">
+                                    <br>
+                                    <p>Password</p>
+                                    <input type = "password" id = "password-entry" class = "login-input" name = "password">
+                                    <div class = "createOrLogin">
+                                        <a href = "/auth/register" id = "create-cta">Create an account?</a>
+                                        <button type = "submit" value = "Login" id = "btn-cta">Login</button>
+                                    </div>
+                                    
+                                    <div class = "error-message" style = "display: flex; align-items: top; height: 6vh">
+                                            <p id = "error-tag" style = "color: red; text-align: center"></p>
+                                    </div>
+                                    <p class = "hrDivider">OR</p>
+                                    
+                                </div>
+                            </form>
+                            <div class = "text-center">
+                                        <button id = "google-sign" style = "border: 1px solid black; cursor: pointer">Sign in With Google        
+                                        </button>
                             </div>
-                            
-                            <div class = "error-message" style = "display: flex; align-items: center; height: 5vh">
-                                    <p id = "error-tag" style = "color: red;"></p>
-                            </div>
-                        </form>
+
+                        <!-- Register buttons -->
+                        
+                        </div>
                     </div>
                 </div>
-            </main>
         </div>
-    </section>
-    
-    
-    
+      </div>
+    </div>
+  </div>
+  <!-- Jumbotron -->
+</section>
 <script type = "module" src = "../scripts/google.js"></script>
 <script type = "module" src = "../scripts/signIn.js"></script>
 </body>
