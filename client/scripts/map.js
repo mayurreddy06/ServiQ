@@ -35,11 +35,20 @@ document.querySelector('.homePage-form').addEventListener('submit', async (event
   const address = document.getElementById('autocomplete').value;
   await reZoomMap(address);
   // scrolls to bottom page, where the map is
-  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  const mediaQuery = window.matchMedia('(max-width: 768px)');
+  if (!mediaQuery.matches)
+  {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  }
+  
 });
 
 document.getElementById('autocomplete').addEventListener('click', () => {
-  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  const mediaQuery = window.matchMedia('(max-width: 768px)');
+  if (!mediaQuery.matches)
+  {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  }
 })
 
 // rezooms map based on zipcode in the filter
@@ -329,16 +338,4 @@ async function openCustomPopup(storeAddress, category, taskId, task) {
 // close custom popup
 function closeCustomPopup() {
   document.getElementById('customPopup').style.display = 'none';
-}
-
-const mediaQuery = window.matchMedia('(max-width: 1150px)');
-
-if (mediaQuery.matches) {
-  // Screen is 768px or less
-  let element = document.querySelector(".heroContainer");
-  element.classList.remove("container");
-  console.log(element.classList);
-  let element2 = document.querySelector(".heroCard");
-  element2.classList.remove("card");
-  console.log(element2.classList);
 }

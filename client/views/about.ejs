@@ -14,93 +14,65 @@
 <body>
   <%-include('navbar.ejs')%>
   <section>
-    <div class = "d-flex align-items-center" style = "background-color: hsl(0, 0%, 96%)">
-    <div class = "container">
-      <div class = "introduction">
-      <div class = "card intro-card">
-        
-          <h2 class = "fw-bold">Our <span id = "green-span-cta">Mission</span></h2>
-          <p style = "color: hsl(217, 10%, 50.8%)">We are a group of highly talented and motivated college students aiming to create a reliable repository and system helping out local nonprofits and organizations. We value client
-            satisfication highly, and will design components to meet the needs of your preferences.
-          </p>
-          <button class = "btn" id = "linked-in-cta">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-linkedin" viewBox="0 0 16 16">
-  <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z"/>
-</svg>     Follow Our LinkedIn</button>
+    <!-- Hero Banner Section -->
+    <div class="d-flex align-items-center" style="background-color: hsl(0, 0%, 96%)">
+      <div class="container py-5">
+        <div class="introduction">
+          <div class="card intro-card">
+            <h2 class="fw-bold">Our <span id="green-span-cta">Mission</span></h2>
+            <p class="my-4" style="color: hsl(217, 10%, 50.8%)">
+              We are a group of highly talented and motivated college students aiming to create a reliable repository 
+              and system helping out local nonprofits and organizations. We value client satisfaction highly, 
+              and will design components to meet the needs of your preferences.
+            </p>
+            <button onclick = "location.href ='https://linkedin.com/company/serviq-serve-with-purpose/';" class="btn d-flex align-items-center justify-content-center gap-2" id="linked-in-cta">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-linkedin" viewBox="0 0 16 16">
+                <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z"/>
+              </svg>
+              Follow Our LinkedIn
+            </button>
+          </div>
         </div>
-        
       </div>
     </div>
-    </div>
-    <div>
-
-    </div>
-      <div class="card-group container">
-  <div class="card">
-    <img class="card-img-top" src="../images/google-maps.jpg" alt="Card image cap">
-    <div class="card-body">
-      <h5 class="card-title">Powered by APIs</h5>
-      <p class="card-text">We provide a real-time updating repository, enhanced with advanced querying and filtaration system, allowing users
-              to seamlessly search and find opportunities to fit their schedule, seamlessly powered by MapBox and Google Places API for location-based search and markers</p>
-    </div>
-  </div>
-  <div class="card">
-    <img class="card-img-top" src="../images/dashboard-icon.jpg" alt="Card image cap">
-    <div class="card-body">
-      <h5 class="card-title">Dashboard</h5>
-      <p class="card-text">Create an account or login to manage and view your posted tasks as an organizations. View the number of people who signed up
-              for your event in your admin dashboard, editing and posting new tasks to the repository as needed.</p>
-    </div>
-  </div>
-  <div class="card">
-    <img class="card-img-top" src="../images/email-icon.jpg" alt="Card image cap">
-    <div class="card-body">
-      <h5 class="card-title">Notification</h5>
-      <p class="card-text">Our automated email system allows users to get instant notification regarding time of event, and sign up. Another plus, this system
-              is accessible in the admin dashboard for the use of sending reminders and updated information.</p>
-    </div>
-  </div>
-</div>
-
-
-
-      <!-- <article class = "article-intro">
-        <div class = "introduction">
-          <h2>Our Mission</h2>
-          <p>We are a group of highly talented and motivated college students aiming to create a reliable repository and system helping out local nonprofits and organizations. We value client
-            satisfication highly, and will design components to meet the needs of your preferences.
-          </p>
-        </div>
-      </article>
-      <article class = "article-hero">
-        <div class = "grid">
-          <div class = "grid-item">
-            <img src = "../images/google-maps.jpg">
-            <h3>Powered by Google Maps</h3>
-            <p> We provide a real-time updating repository, enhanced with advanced querying and filtaration system, allowing users
-              to seamlessly search and find opportunities to fit their schedule
+    
+    <!-- Feature Cards Section -->
+    <div class="container py-5">
+      <div class="card-group">
+        <div class="card rounded shadow-sm hover-card">
+          <img class="card-img-top p-3" src="../images/google-maps.jpg" alt="Google Maps API">
+          <div class="card-body">
+            <h5 class="card-title fw-bold">Powered by APIs</h5>
+            <p class="card-text">
+              We provide a real-time updating repository, enhanced with advanced querying and filtration system, allowing users
+              to seamlessly search and find opportunities to fit their schedule, seamlessly powered by MapBox and Google Places API for location-based search and markers.
             </p>
           </div>
-          <div class = "grid-item">
-            <img src = "../images/dashboard-icon.jpg">
-            <h3>Secure Authentication</h3>
-            <p>Create an account or login to manage and view your posted tasks as an organizations. View the number of people who signed up
+        </div>
+        <div class="card rounded shadow-sm hover-card mx-md-4">
+          <img class="card-img-top p-3" src="../images/dashboard-icon.jpg" alt="Dashboard">
+          <div class="card-body">
+            <h5 class="card-title fw-bold">Dashboard</h5>
+            <p class="card-text">
+              Create an account or login to manage and view your posted tasks as an organization. View the number of people who signed up
               for your event in your admin dashboard, editing and posting new tasks to the repository as needed.
             </p>
           </div>
-          <div class = "grid-item">
-            <img src = "../images/email-icon.jpg">
-            <h3>Immediate Notification</h3>
-            <p>Our automated email system allows users to get instant notification regarding time of event, and sign up. Another plus, this system
+        </div>
+        <div class="card rounded shadow-sm hover-card">
+          <img class="card-img-top p-3" src="../images/email-icon.jpg" alt="Email Notifications">
+          <div class="card-body">
+            <h5 class="card-title fw-bold">Notification</h5>
+            <p class="card-text">
+              Our automated email system allows users to get instant notification regarding time of event, and sign up. Another plus, this system
               is accessible in the admin dashboard for the use of sending reminders and updated information.
             </p>
           </div>
-          </article>
-      </div> -->
-      
-
+        </div>
+      </div>
     </div>
   </section>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

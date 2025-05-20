@@ -1,61 +1,64 @@
-*{
+/* aboutUs.css - Updated with responsive fixes while maintaining existing styles */
+* {
     margin: 0;
     padding: 0;
 }
-:root
-{
+
+:root {
     --primary-color: #4CAF50;
     --secondary-color: #e7a10a;
     --white: white;
     --text-color: rgb(45, 39, 39);
     --admin-color: #2d4579;
 }
-.article-intro
-{
+
+.article-intro {
     display: flex;
     padding-left: 35px;
     justify-content: center;
     height: 30vh;
     background-color: var(--primary-color);
     color: var(--white);
-
 }
-.introduction
-{
+
+.introduction {
     display: flex;
     justify-content: flex-start;
     height: 30vh;
     align-items: center;
     width: 100% !important;
 }
+
 .intro-card {
     max-width: 100vh;
     border: none !important;
     background-color: transparent !important;
 }
-.introduction h2
-{
+
+.introduction h2 {
     font-size: bolder;
     font-size: 50px;
 }
-.introduction p
-{
+
+.introduction p {
     font-size: 15px;
+    line-height: 1.6;
+    max-width: 90%;
 }
-.article-hero
-{
+
+.article-hero {
     height: 60vh;
     background-color: var(--primary-color);
 }
-.grid
-{
+
+.grid {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 75px;
 }
-.grid-item
-{
+
+.grid-item {
     background: var(--white);
     width: 300px;
     padding: 0px 15px;
@@ -63,20 +66,64 @@
     box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
     border-radius: 25px;
 }
-.grid-item:hover
-{
+
+.grid-item:hover {
     transform: scale(1.05);
     box-shadow: 0 0 20px rgba(0,255,255,0.5);
 }
+
 .card-img-top {
     height: 20vh !important;
     object-fit: contain !important;
 }
+
 #linked-in-cta {
     color: white;
     background-color: var(--admin-color);
     width: 25vh;
 }
+
 #green-span-cta {
     color: var(--primary-color) !important;
+}
+
+/* New styles to enhance responsiveness and card styling */
+.card {
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    height: 100%;
+}
+
+.hover-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+.card-title {
+    color: var(--text-color);
+    font-weight: bold;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.card-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background-color: var(--primary-color);
+}
+
+.card-text {
+    color: #6c757d;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.card-group {
+    gap: 1.5rem;
 }

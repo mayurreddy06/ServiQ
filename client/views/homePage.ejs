@@ -11,37 +11,44 @@
 </head>
 <body>
     <%-include('navbar.ejs')%>
-    <section class = "card heroCard">
-        <div class = "container heroContainer">
-            <main>
-                <div class = "hero">
+    <section class="card heroCard">
+  <div class="container heroContainer py-4">
+    <div class="row align-items-center">
+      
+      <!-- Text Section (Left) -->
+      <div class="col-md-6">
+        <div class="hero px-3">
+          <h1 class="fw-bold mb-2 text-black">
+            Getting <span class="accent-text">Involved</span> Has Never Been <span class="accent-text">Easier</span>
+          </h1>
+          
+          <p class="mb-4 text-secondary">
+            Empower others by joining our platform and finding your next volunteer opportunity. Utilize our search query and interactive map to find the event to suit your needs.
+          </p>
 
-                    <h1 class = "text-emp" data-mobile = "Never Has It Been Easier" data-desktop = "Never Has It Been Easier to Get Involved"></h1>
-                    <p> Empower others by finding opportunities in your local community by utilizing
-                        our enhanced search query and interactive map.
-                    </p>
+          <div class="hero-buttons d-flex flex-column gap-2 w-100">
+            <a id="get-started-cta" href="auth/login" class="btn btn-lg w-100 py-2 rounded-3">Get Started</a>
 
-                    <div class = "hero-buttons">
-                        <div>
-                          <a id = "get-started-cta" href="auth/login">Get Started</a>
-                        </div>
-                        <div>
-                          <% if (typeof (locals.uid) !== "undefined") {  %>
-                          <script>
-                            document.getElementById("get-started-cta").textContent = "Dashboard";
-                            document.getElementById("get-started-cta").setAttribute("href", "admin/view");
-                          </script>
-                          <% } %>
-                        </div>
-                        
-                        
-                        <a href = "/about" id = "learn-more-cta">Learn More</a>
-                    </div>
-                </div>
-                <img id = "volunteer-img" src = "../images/image2.jpg"> 
-            </main>          
+            <% if (typeof locals.uid !== "undefined") { %>
+              <script>
+                document.getElementById("get-started-cta").textContent = "Dashboard";
+                document.getElementById("get-started-cta").setAttribute("href", "admin/view");
+              </script>
+            <% } %>
+
+            <a href="/about" id="learn-more-cta" class="btn btn-lg w-100 py-2 rounded-3">Learn More</a>
+          </div>
         </div>
-    </section>
+      </div>
+
+      <!-- Image Section (Right) -->
+      <div class="col-md-6 d-flex justify-content-center">
+        <img id="volunteer-img" src="../images/image2.jpg" alt="Volunteer" class="img-fluid">
+      </div>
+    </div>
+  </div>
+</section>
+
     <section>
         <div class = "container1 scroll-section" id = "homePage-form">
             <form class = "homePage-form" onsubmit="fetchAndDisplayMarkers(); return false;">

@@ -4,12 +4,13 @@
     --secondary-color: #e7a10a;
     --white: white;
     --text-color: rgb(45, 39, 39);
+    --light-bg: #f5f5f7;
 }
 main
 {
     margin: 0 !important;
     padding: 0 !important;
-    height: 80vh;
+    height: 50vh !important;
     background-color: var(--primary-color);
     display: flex;
     justify-content: space-between;
@@ -21,6 +22,32 @@ main
     border-radius: 0px !important;
 }
 
+/* Updated for new design */
+.card.heroCard {
+    background-color: var(--light-bg) !important;
+}
+#img-flex {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 60vh; /* This ensures full viewport height */
+}
+
+#volunteer-img {
+    width: auto; /* or set a max-width instead */
+    height: auto;
+    max-width: 100%;
+    max-height: 50vh;
+    border-radius: 25px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+                rgba(0, 0, 0, 0.12) 0px -12px 30px,
+                rgba(0, 0, 0, 0.12) 0px 4px 6px,
+                rgba(0, 0, 0, 0.17) 0px 12px 13px,
+                rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    flex-shrink: 0; /* prevent shrinking */
+}
+
+
 .hero
 {
     display: flex;
@@ -28,13 +55,13 @@ main
     justify-content: center;
     align-items: center;
     gap: 30px;
-    max-width: 40%;
-    height: 600px;
-
+    max-width: 100%;
+    height: 70vh;
 }
-.hero h1, p
-{
-    color: var(--white);
+
+/* Updated for new design */
+.hero h1 {
+    color: black;
 }
 
 .hero p
@@ -42,6 +69,7 @@ main
     line-height: 30px;
     font-size: 16px;
     margin-left: 0.5vh;
+    color: #6c757d;
 }
 .text-emp::before {
     content: attr(data-desktop);
@@ -52,13 +80,20 @@ main
     line-height: 75px;
 }
 
+/* Added for highlighting words in green */
+.accent-text {
+    color: var(--primary-color);
+}
+
+/* Updated for new design */
 .hero-buttons
 {
     display: flex !important;
+    flex-direction: column !important;
     justify-content: flex-start !important;
     align-items: center !important;
-    gap: 0.5vh;
-    /* padding: 4vh; */
+    gap: 10px !important;
+    width: 100%;
 }
 .hero-buttons a
 {
@@ -67,32 +102,33 @@ main
     padding: 1vh 9.5vh;
     border-radius: 7px;
     text-decoration: none;
+    width: 100%;
+    text-align: center;
 }
+
+/* Updated for new design */
 #get-started-cta
 {
-    color: var(--text-color);
-    background-color: var(--white);
+    background-color: var(--primary-color);
+    color: var(--white);
 }
 #get-started-cta:hover
 {
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
+
+/* Updated for new design */
 #learn-more-cta
 {
-    color: var(--white);
-    border: 1px solid var(--white);
+    background-color: white;
+    color: var(--text-color);
+    border: 1px solid #ddd;
 }
 #learn-more-cta:hover
 {
     box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
 }
 
-#volunteer-img
-{
-    width: 75vh;
-    border-radius: 25px;
-    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
-}
 
 #homePage-form
 {
@@ -103,6 +139,7 @@ main
 {
     display: flex;
     justify-content: center;
+    align-items: center;
     height: 15vh;
 }
 .form-element
@@ -178,12 +215,7 @@ main
         width: 100%;
         text-align: center;
         line-height: 15px;
-        height: 300px;
-        gap: 15px;
-    }
-    .hero {
-        align-items: space-around;
-        max-width: none;
+        height: 50vh;
     }
     .hero p {
         overflow-wrap: break-word;
@@ -200,9 +232,6 @@ main
     .hero-buttons a { 
         font-size: 17px;
         padding: 19px 25px;
-    }
-    #volunteer-img {
-        display: none;
     }
     .homePage-form {
         display: flex;
@@ -226,6 +255,11 @@ main
         padding: 10px 25px;
     }
     #zipcode-filter-group {
+        display: none;
+    }
+}
+@media (max-width: 767px) {
+    #volunteer-img {
         display: none;
     }
 }
