@@ -1,3 +1,25 @@
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const auth = getAuth();
+
+// Wrap native fetch to automatically attach the Firebase ID token
+window.authorizedFetch = async (input, init = {}) => {
+  const user = auth.currentUser;
+  const token = user ? await user.getIdToken() : null;
+
+  const headers = new Headers(init.headers || {});
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+
+  return fetch(input, {
+    ...init,
+    headers,
+    credentials: 'include' // optional, keep if you use cookies
+  });
+};
+
+
 document.querySelector(".task-post").addEventListener("submit", async function(event) {
     event.preventDefault();
     try {
@@ -31,7 +53,7 @@ document.querySelector(".task-post").addEventListener("submit", async function(e
         date, 
         description,
       };
-      await fetch('/volunteer-data', {
+      await authorizedFetch('/volunteer-data', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(volunteerData),

@@ -1,3 +1,23 @@
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const auth = getAuth();
+
+// Wrap native fetch to automatically attach the Firebase ID token
+window.authorizedFetch = async (input, init = {}) => {
+  const user = auth.currentUser;
+  const token = user ? await user.getIdToken() : null;
+
+  const headers = new Headers(init.headers || {});
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+
+  return fetch(input, {
+    ...init,
+    headers,
+    credentials: 'include' // optional, keep if you use cookies
+  });
+};
 
 
 document.addEventListener('DOMContentLoaded', () =>
@@ -9,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () =>
       editManual.addEventListener("click", async () => {
         const timestamp = editManual.id;
         console.log(timestamp);
-        await fetch('/volunteer-data?timestamp=' + timestamp)
+        await authorizedFetch('/volunteer-data?timestamp=' + timestamp)
         .then(response => response.json())
         .then(data => {
           // FIX USE QUERY SELECTOR AND ADD A COMMON CLASS FOR THE ALL EDIT ONES
@@ -69,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () =>
                 date, 
                 description,
               }
-            await fetch('/volunteer-data/' + timestamp, {
+            await authorizedFetch('/volunteer-data/' + timestamp, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(volunteerData),

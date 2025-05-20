@@ -6,6 +6,22 @@ import { firebaseConfig } from '/scripts/firebaseConfig.js'
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+window.authorizedFetch = async (input, init = {}) => {
+  const user = auth.currentUser;
+  const token = user ? await user.getIdToken() : null;
+
+  const headers = new Headers(init.headers || {});
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+
+  return fetch(input, {
+    ...init,
+    headers,
+    credentials: 'include' // optional, keep if you use cookies
+  });
+};
+
 document.getElementById('signin-form').addEventListener('submit', async (event) => {
   event.preventDefault();
   let email = document.getElementById('email-entry').value;
@@ -14,7 +30,7 @@ document.getElementById('signin-form').addEventListener('submit', async (event) 
   try {
       const accountCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = accountCredential.user;
-      await fetch('/auth/login', {
+      await authorizedFetch('/auth/login', {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
