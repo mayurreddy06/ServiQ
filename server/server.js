@@ -11,11 +11,11 @@ const cors = require('cors');
 
 const serviceAccount = require(process.env.FIREBASE_JSON);
 const app = express();
-const PORT = 3002;
+const PORT = 3000;
 const { getAuth } = require('firebase-admin/auth');
 app.use(cookieParser("secret"));
 
-const allowedOrigins = ['http://localhost:3000', 'https://serviq.onrender.com'];
+const allowedOrigins = ['http://localhost:3000', 'https://serviq.onrender.com', 'https://serviq-volunteer.org'];
 
 app.use(cors({
   origin: allowedOrigins,
