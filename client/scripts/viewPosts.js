@@ -1,7 +1,29 @@
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const auth = getAuth();
+
+// Wrap native fetch to automatically attach the Firebase ID token
+window.authorizedFetch = async (input, init = {}) => {
+  const user = auth.currentUser;
+  const token = user ? await user.getIdToken() : null;
+
+  const headers = new Headers(init.headers || {});
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+
+  return fetch(input, {
+    ...init,
+    headers,
+    credentials: 'include' // optional, keep if you use cookies
+  });
+};
+
+
 window.onload = async function()
 {
     let uid;
-    await fetch('/auth/status')
+    await authorizedFetch('/auth/status')
         .then(async response => await response.json())
         .then(data => {
         uid = data.uid;
@@ -9,7 +31,7 @@ window.onload = async function()
         .catch(error => {
         uid = "unauthorized";
     });
-    await fetch('/volunteer-data?userId=' + uid)
+    await authorizedFetch('/volunteer-data?userId=' + uid)
         .then(async response => await response.json())
         .then(volunteerTasks => {
             for (const taskID in volunteerTasks)
@@ -60,7 +82,7 @@ window.onload = async function()
                   event.preventDefault();
                     const timestamp = this.id;
                     console.log(timestamp);
-                    await fetch('/volunteer-data/' + timestamp, {
+                    await authorizedFetch('/volunteer-data/' + timestamp, {
                         method: 'DELETE',
                     })
                     .then(response => response.json())
