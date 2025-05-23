@@ -27,11 +27,26 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: process.env.FIREBASE_URL
 });
+
 const session = require('express-session');
 const flash = require('connect-flash');
+
+// Create a simple file-based session store for production
+const FileStore = require('session-file-store')(session);
+
 app.use(session({
+  store: process.env.NODE_ENV === 'production' 
+    ? new FileStore({
+        path: './sessions',
+        ttl: 7200, // 2 hours in seconds
+        retries: 5,
+        factor: 1,
+        minTimeout: 50,
+        maxTimeout: 86400
+      })
+    : undefined, // Use default MemoryStore in development
   secret: 'userVerification',
-  resave: true,
+  resave: false, // Changed to false as recommended
   saveUninitialized: false,
   cookie: {
     maxAge: 60000 * 120,
