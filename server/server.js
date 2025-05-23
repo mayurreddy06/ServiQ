@@ -33,9 +33,32 @@ admin.initializeApp({
 const session = require('express-session');
 const flash = require('connect-flash');
 
-// For now, use MemoryStore but suppress the warning
-// You can upgrade to a proper store later when you have time to test thoroughly
+// Create a simple file-based session store for production with better error handling
+let sessionStore;
+if (process.env.NODE_ENV === 'production') {
+  try {
+    const FileStore = require('session-file-store')(session);
+    sessionStore = new FileStore({
+      path: './sessions',
+      ttl: 7200,
+      retries: 5,
+      factor: 1,
+      minTimeout: 50,
+      maxTimeout: 86400
+    });
+    
+    // Handle FileStore errors gracefully
+    sessionStore.on('error', (error) => {
+      console.error('Session store error:', error);
+    });
+  } catch (error) {
+    console.warn('Failed to initialize FileStore, falling back to MemoryStore:', error);
+    sessionStore = undefined;
+  }
+}
+
 app.use(session({
+  store: sessionStore,
   secret: 'userVerification',
   resave: false,
   saveUninitialized: false,
@@ -45,12 +68,6 @@ app.use(session({
     sameSite: 'strict'
   }
 }));
-
-// Add error handling for session store
-app.use((err, req, res, next) => {
-  console.error('Session store error:', err);
-  next(err);
-});
 app.use(flash());
 
 // Database reference
