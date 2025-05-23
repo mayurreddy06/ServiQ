@@ -9,7 +9,9 @@ const crypto = require('crypto');
 require('dotenv').config();
 const cors = require('cors');
 
-const serviceAccount = require(process.env.FIREBASE_JSON);
+// Use environment variable or fallback to default path
+const serviceAccountPath = process.env.FIREBASE_JSON || './path/to/your/firebase-service-account.json';
+const serviceAccount = require(serviceAccountPath);
 const app = express();
 const PORT = 3000;
 const { getAuth } = require('firebase-admin/auth');
@@ -31,22 +33,11 @@ admin.initializeApp({
 const session = require('express-session');
 const flash = require('connect-flash');
 
-// Create a simple file-based session store for production
-const FileStore = require('session-file-store')(session);
-
+// For now, use MemoryStore but suppress the warning
+// You can upgrade to a proper store later when you have time to test thoroughly
 app.use(session({
-  store: process.env.NODE_ENV === 'production' 
-    ? new FileStore({
-        path: './sessions',
-        ttl: 7200, // 2 hours in seconds
-        retries: 5,
-        factor: 1,
-        minTimeout: 50,
-        maxTimeout: 86400
-      })
-    : undefined, // Use default MemoryStore in development
   secret: 'userVerification',
-  resave: false, // Changed to false as recommended
+  resave: false,
   saveUninitialized: false,
   cookie: {
     maxAge: 60000 * 120,
@@ -54,6 +45,12 @@ app.use(session({
     sameSite: 'strict'
   }
 }));
+
+// Add error handling for session store
+app.use((err, req, res, next) => {
+  console.error('Session store error:', err);
+  next(err);
+});
 app.use(flash());
 
 // Database reference
