@@ -155,39 +155,44 @@ auth.get("/google", async (req, res) => {
   auth.get('/login', (req, res) => {
     res.render("signIn.ejs");
   });
-  
   auth.post('/login', async (req, res) => {
-    const {email} = req.body;
-    console.log(email);
-    
-    try {
-      // user authentication directly with Firebase's authentication system
-      const userCredential = await admin.auth().getUserByEmail(email);
-      const userRecord = userCredential;
-  
-      // check if user exists in database
-      const userRef = db.ref(`agency_accounts/${userRecord.uid}`);
-      const snapshot = await userRef.once('value');
-      const userData = snapshot.val();
-  
-      if (!userData) {
-        return res.status(404).json({error: "User does not exist in Firebase"});
-      }
-  
-      // create session
-      req.session.user = {
-        uid: userRecord.uid,
-        email: userRecord.email,
-        isVerified: userData.isVerified || false
-      };
-  
-      return res.status(200).json({message: "User successfully logged in"});
-  
-    } catch (error) {
-      return res.status(500).json({error: "Internal server error" + error});
+  try {
+    // Get the ID token from the Authorization header (sent by your authorizedFetch)
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({error: "No authentication token provided"});
     }
-  });
-  
+    
+    const idToken = authHeader.split('Bearer ')[1];
+    
+    // Verify the Firebase ID token (this confirms password was correct)
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const uid = decodedToken.uid;
+    const email = decodedToken.email;
+
+    // Check if user exists in database
+    const userRef = db.ref(`agency_accounts/${uid}`);
+    const snapshot = await userRef.once('value');
+    const userData = snapshot.val();
+
+    if (!userData) {
+      return res.status(404).json({error: "User does not exist in Firebase"});
+    }
+
+    // Create session
+    req.session.user = {
+      uid: uid,
+      email: email,
+      isVerified: userData.isVerified || false
+    };
+
+    return res.status(200).json({message: "User successfully logged in"});
+
+  } catch (error) {
+    console.error('Login error:', error);
+    return res.status(500).json({error: "Authentication failed: " + error.message});
+  }
+});
   
   auth.get('/verify-email', (req, res) => {
     const emailVerifyError = req.flash('emailVerifyError');
