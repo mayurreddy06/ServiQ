@@ -65,7 +65,7 @@ app.use(session({
   name: "mycookieapp",
   cookie: {
     maxAge: 60000 * 120,
-    secure: true,
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'none'
   }
 }));
@@ -138,6 +138,12 @@ app.use("/auth", loggedOut, userAuth);
 
 const map = require("./assets/routes/eventMap.js");
 app.use("/map", map);
+
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).send(err);
+});
+
 
 // Start server
 app.listen(PORT, () => {
