@@ -62,10 +62,11 @@ app.use(session({
   secret: 'userVerification',
   resave: false,
   saveUninitialized: false,
+  name: "mycookieapp",
   cookie: {
     maxAge: 60000 * 120,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict'
+    secure: true,
+    sameSite: 'none'
   }
 }));
 app.use(flash());
