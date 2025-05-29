@@ -9,13 +9,15 @@ const crypto = require('crypto');
 require('dotenv').config();
 const cors = require('cors');
 
-const serviceAccount = require(process.env.FIREBASE_JSON);
+// Use environment variable or fallback to default path
+const serviceAccountPath = process.env.FIREBASE_JSON || './path/to/your/firebase-service-account.json';
+const serviceAccount = require(serviceAccountPath);
 const app = express();
-const PORT = 3002;
+const PORT = 3000;
 const { getAuth } = require('firebase-admin/auth');
 app.use(cookieParser("secret"));
 
-const allowedOrigins = ['http://localhost:3000', 'https://serviq.onrender.com'];
+const allowedOrigins = ['http://localhost:3000', 'https://serviq.onrender.com', 'https://serviq-volunteer.org'];
 
 app.use(cors({
   origin: allowedOrigins,
@@ -27,11 +29,38 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: process.env.FIREBASE_URL
 });
+
 const session = require('express-session');
 const flash = require('connect-flash');
+
+// Create a simple file-based session store for production with better error handling
+let sessionStore;
+if (process.env.NODE_ENV === 'production') {
+  try {
+    const FileStore = require('session-file-store')(session);
+    sessionStore = new FileStore({
+      path: './sessions',
+      ttl: 7200,
+      retries: 5,
+      factor: 1,
+      minTimeout: 50,
+      maxTimeout: 86400
+    });
+    
+    // Handle FileStore errors gracefully
+    sessionStore.on('error', (error) => {
+      console.error('Session store error:', error);
+    });
+  } catch (error) {
+    console.warn('Failed to initialize FileStore, falling back to MemoryStore:', error);
+    sessionStore = undefined;
+  }
+}
+
 app.use(session({
+  store: sessionStore,
   secret: 'userVerification',
-  resave: true,
+  resave: false,
   saveUninitialized: false,
   cookie: {
     maxAge: 60000 * 120,
