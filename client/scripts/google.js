@@ -33,7 +33,6 @@ document.getElementById("google-sign").addEventListener("click", async () => {
     const user = result.user;
     const email = result.user.email;
     const uid = user.uid;
-    alert("hi");
     await authorizedFetch('/auth/google/verify/', {
         method: "POST",
         headers: {
@@ -46,11 +45,13 @@ document.getElementById("google-sign").addEventListener("click", async () => {
         .then(async response => {
           if (!response.ok)
           {
+            alert("response is not ok but fetch is successful");
             const errorBody = await response.json();
             const error = new Error(errorBody.error);
             error.status = response.status;
             throw error;
           }
+          alert("response fetched and is ok");
           return response.json();
         })
         .then(data => {
