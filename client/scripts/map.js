@@ -338,7 +338,7 @@ async function openCustomPopup(storeAddress, category, taskId, task) {
             emailSuccess.classList.remove("hidden");
         })
         .catch(error => {        
-          if (error.status === 404 || error.status === 405)
+          if (error.status === 400 || error.status === 404 || error.status === 405)
           {
             emailError.textContent = error;
           }
