@@ -52,11 +52,10 @@ auth.post("/google/verify", async (req, res) => {
         console.error("Session failed to save:", err);
         return res.status(500).json({ error: "Failed to save session" });
       }
+      // if the user exists in the database, we log them
+      console.log("Session has just been created");
+      return res.status(200).json({message: "Google user exists in the database"});
     })
-    
-    // if the user exists in the database, we log them
-    console.log("Session has just been created");
-    return res.status(200).json({message: "Google user exists in the database"});
   }
   catch(error)
   {
