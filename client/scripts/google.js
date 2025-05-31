@@ -17,7 +17,38 @@ document.getElementById("google-sign").addEventListener("click", async () => {
     const user = result.user;
     const email = result.user.email;
     const uid = user.uid;
-    window.location.href = "/auth/google?email=" + email + "&uid=" + uid;
+    await authorizedFetch('/auth/google/verify/', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        // Automatically converted to "username=example&password=password"
+        body: new URLSearchParams({email, uid}),
+        credentials: 'include'
+        })
+        .then(async response => {
+          if (!response.ok)
+          {
+            const errorBody = await response.json();
+            const error = new Error(errorBody.error);
+            error.status = response.status;
+            throw error;
+          }
+          return response.json();
+        })
+        .then(data => {
+          window.location.href = "/";
+        })
+        .catch(error => {
+          if (error.status === 406)
+          {
+            window.location.href = "/auth/google";
+          }
+          else
+          {
+            console.error(error);
+          }
+        });
   }).catch((error) => {
     // Handle Errors here.
     console.log(error);

@@ -28,38 +28,49 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-auth.get("/google", async (req, res) => {
-  try {
-    const { email, uid } = req.query;
+auth.post("/google/verify", async (req, res) => {
+  try
+  {
+    const {uid, email} = req.body;
     const userRef = db.ref(`agency_accounts/${uid}`);
     const snapshot = await userRef.once("value");
-  
-    if (snapshot.exists()) {
-      req.session.user = {
-        uid,
-        email,
-        isVerified: true
-      };
-      // redirects back to the homepage, successfully logs in user
-      return res.redirect("/");
-    } else {
-      // if this is the users first time logging in with this google account, it has them redirect to POST to create agency name and description
-      return res.render("googleSignUp.ejs");
+    if (!(snapshot.exists()))
+    {
+      req.session.user = {tempGoogleUid: uid, tempGoogleEmail: email}
+      // temporary variables to use in /google post request below
+      return res.status(406).json({error: "Google user does not exist in the database"})
+      /*
+      if the user doesn't exist in the database, that means its there first time signing up with a google email
+      we have to redirect them to another page where they can add their agency name and description
+      */
     }
-  } catch (error) {
-    console.error('Google auth error:', error);
-    return res.status(500).json({error: "Authentication failed"});
+    req.session.user = {uid, email, isVerified: true}
+    // if the user exists in the database, we log them
+    console.log("Session has just been created");
+    return res.status(200).json({message: "Google user exists in the database"});
+  }
+  catch(error)
+  {
+    console.error(error);
+    return res.status(500).json({error: "Intenral server error when trying to verify google account in database"});
   }
 });
+
+
+auth.get("/google", async (req, res) => {
+  res.render("googleSignUp.ejs");
+});
+// google page if user doesn't exist in the database
+
   
 auth.post("/google", async (req, res) => {
   try {
     // found in googlesignup.ejs
-    const { agencyName, agencyDesc, uid, email } = req.body;
+    const { agencyName, agencyDesc} = req.body;
   
     // adds google account directly in firebase database with agency name and description
-    await db.ref(`agency_accounts/${uid}`).set({
-      email,
+    await db.ref(`agency_accounts/${req.session.user.tempGoogleUid}`).set({
+      email: req.session.user.tempGoogleEmail,
       name: agencyName,
       accountType: 'agency',
       agencyDescription: agencyDesc,
@@ -67,10 +78,13 @@ auth.post("/google", async (req, res) => {
     });
   
     req.session.user = {
-      uid,
-      email,
+      uid: req.session.user.tempGoogleUid,
+      email: req.session.user.tempGoogleEmail,
       isVerified: true
     };
+    delete req.session.user.tempGoogleUid;
+    delete req.session.user.tempGoogleEmail;
+
     res.status(200).json({message: "User information successfully stored in firebase"});
   } catch (error) {
     console.error('Google signup error:', error);

@@ -66,7 +66,7 @@ app.use(session({
   cookie: {
     maxAge: 60000 * 120,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'none'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   }
 }));
 app.use(flash());
