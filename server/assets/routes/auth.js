@@ -44,7 +44,15 @@ auth.post("/google/verify", async (req, res) => {
       we have to redirect them to another page where they can add their agency name and description
       */
     }
-    req.session.user = {uid, email, isVerified: true}
+    try
+    {
+      req.session.user = {uid, email, isVerified: true}
+    }
+    catch(error)
+    {
+      return res.status(500).send(`<pre>${err.stack}</pre>`);
+    }
+    
     // if the user exists in the database, we log them
     console.log("Session has just been created");
     return res.status(200).json({message: "Google user exists in the database"});
