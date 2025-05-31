@@ -146,6 +146,22 @@ function loopThroughJSON(obj, regex, targetKey) {
   return value; 
 }
 
+window.authorizedFetch = async (input, init = {}) => {
+  const user = auth.currentUser;
+  const token = user ? await user.getIdToken() : null;
+
+  const headers = new Headers(init.headers || {});
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+
+  return fetch(input, {
+    ...init,
+    headers,
+    credentials: 'include' // optional, keep if you use cookies
+  });
+};
+
 // fetches markers from the custon rest API and places marker on the location using MapBox API
 async function fetchAndDisplayMarkers()
 {
@@ -201,7 +217,7 @@ async function fetchAndDisplayMarkers()
   }
   let useZipcode = document.getElementById("toggle-zipcode").checked;
   zipcodeSelected = document.getElementById("zipcode").value;
-  await fetch(GET_REQUEST)
+  await authorizedFetch(GET_REQUEST)
     .then(response => response.json())
     .then(async volunteerObjects => {
       // loops through tasks obtained from firebase

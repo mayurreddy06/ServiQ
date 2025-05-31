@@ -17,6 +17,7 @@ document.getElementById("google-sign").addEventListener("click", async () => {
     const user = result.user;
     const email = result.user.email;
     const uid = user.uid;
+    alert("hi");
     await authorizedFetch('/auth/google/verify/', {
         method: "POST",
         headers: {
