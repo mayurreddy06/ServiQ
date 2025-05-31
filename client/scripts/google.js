@@ -64,7 +64,7 @@ document.getElementById("google-sign").addEventListener("click", async () => {
           }
           else
           {
-            console.error(error);
+            alert("error" + error);
           }
         });
   }).catch((error) => {
