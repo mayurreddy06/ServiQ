@@ -29,6 +29,7 @@ const transporter = nodemailer.createTransport({
 });
 
 auth.post("/google/verify", async (req, res) => {
+  console.log("hi");
   try
   {
     const {uid, email} = req.body;
@@ -45,18 +46,18 @@ auth.post("/google/verify", async (req, res) => {
       */
     }
 
-    // req.session.user = {uid, email, isVerified: true}
+    req.session.user = {uid, email, isVerified: true}
+    console.log("hi");
       
-    // req.session.save((err) => {
-    //   if (err) {
-    //     console.error("Session failed to save:", err);
-    //     return res.status(500).json({ error: "Failed to save session" });
-    //   }
-    //   // if the user exists in the database, we log them
-    //   console.log("Session has just been created");
-    //   return res.status(200).json({message: "Google user exists in the database"});
-    // })
-    return res.status(200).json({message: "Google user exists in the database"});
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session failed to save:", err);
+        return res.status(500).json({ error: "Failed to save session" });
+      }
+      // if the user exists in the database, we log them
+      console.log("Session has just been created");
+      return res.status(200).json({message: "Google user exists in the database"});
+    })
   }
   catch(error)
   {
