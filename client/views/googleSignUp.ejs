@@ -25,32 +25,42 @@
     </div>
     
     <script>
+        window.authorizedFetch = async (input, init = {}) => {
+        const user = auth.currentUser;
+        const token = user ? await user.getIdToken() : null;
+
+        const headers = new Headers(init.headers || {});
+        if (token) {
+            headers.set('Authorization', `Bearer ${token}`);
+        }
+
+        return fetch(input, {
+            ...init,
+            headers,
+            credentials: 'include' // optional, keep if you use cookies
+        });
+
+        };
         document.getElementById("agency-register-form").addEventListener("submit", async function(event) {
             event.preventDefault();
-            const url = window.location.href;
-            // regex for getting email and uid from url
-            const match = url.match(/email=([^&]+)&uid=([^&]+)/);
-            const email = decodeURIComponent(match[1]);
-            const uid = decodeURIComponent(match[2]);
             const agencyName = document.getElementById("agency-name").value;
             const agencyDesc = document.getElementById("agency-desc").value;
-            try
-            {
-                const response = await fetch('/auth/google', {
+                const response = await authorizedFetch('/auth/google', {
                 method: "POST",
                 headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
                 },
                 // Automatically converted to "username=example&password=password"
-                body: new URLSearchParams({email, uid, agencyName, agencyDesc}),
+                body: new URLSearchParams({agencyName, agencyDesc}),
                 credentials: 'include'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    window.location.href = "/";
+                })
+                .catch(error => {
+                    console.log(error);
                 });
-            }
-            catch(error)
-            {
-                console.log(error);
-            }
-            window.location.href = "/";
             })
     </script>
 </body>

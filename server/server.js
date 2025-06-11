@@ -62,10 +62,11 @@ app.use(session({
   secret: 'userVerification',
   resave: false,
   saveUninitialized: false,
+  name: "mycookieapp",
   cookie: {
     maxAge: 60000 * 120,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   }
 }));
 app.use(flash());
@@ -156,6 +157,12 @@ app.use("/auth", loggedOut, userAuth);
 
 const map = require("./assets/routes/eventMap.js");
 app.use("/map", map);
+
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).send(err);
+});
+
 
 // Start server
 app.listen(PORT, () => {

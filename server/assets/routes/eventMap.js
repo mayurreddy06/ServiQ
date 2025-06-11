@@ -23,6 +23,13 @@ const transporter = nodemailer.createTransport({
 map.post('/email', async (req, res) => {
     let { email, storeAddress, category, taskId} = req.body;
     email = email.toLowerCase();
+
+    // found on regex website
+    const emailRegex = /^(?:(?:[\w`~!#$%^&*\-=+;:{}'|,?\/]+(?:(?:\.(?:"(?:\\?[\w`~!#$%^&*\-=+;:{}'|,?\/\.()<>\[\] @]|\\"|\\\\)*"|[\w`~!#$%^&*\-=+;:{}'|,?\/]+))*\.[\w`~!#$%^&*\-=+;:{}'|,?\/]+)?)|(?:"(?:\\?[\w`~!#$%^&*\-=+;:{}'|,?\/\.()<>\[\] @]|\\"|\\\\)+"))@(?:[a-zA-Z\d\-]+(?:\.[a-zA-Z\d\-]+)*|\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\])$/;
+    if (!(emailRegex.test(email)))
+    {
+      return res.status(400).json({error: "Not a valid email"});
+    }
   
     try {
       const taskRef = db.ref(`volunteer_opportunities/${taskId}`);

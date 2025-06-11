@@ -22,6 +22,7 @@ window.authorizedFetch = async (input, init = {}) => {
 
 window.onload = async function()
 {
+    console.log("file exists");
     let uid;
     await authorizedFetch('/auth/status')
         .then(async response => await response.json())
@@ -145,6 +146,7 @@ function initAutocomplete(event) {
     }
   });
 }
+window.initAutocomplete = initAutocomplete;
 
 document.addEventListener('DOMContentLoaded', function () {
   // Initialize Flatpickr on the date input
