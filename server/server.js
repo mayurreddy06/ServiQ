@@ -123,6 +123,25 @@ app.get('/about', (req, res) => {
   res.render("about.ejs");
 });
 
+// Health check endpoint
+app.get('/health', async (req, res) => {
+  try {
+    await redisClient.ping();
+    res.status(200).json({ 
+      status: 'healthy', 
+      redis: 'connected',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(503).json({ 
+      status: 'unhealthy', 
+      redis: 'disconnected',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // routes
 const volunteerData = require('./assets/routes/volunteerData.js');
 const loggedIn = require('./assets/middleware/loggedIn.js');
