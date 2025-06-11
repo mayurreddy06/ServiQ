@@ -11,7 +11,7 @@ const cors = require('cors');
 const session = require('express-session');
 const flash = require('connect-flash');
 const redis = require('redis');
-const RedisStore = require('connect-redis');
+const RedisStore = require('connect-redis').default;
 
 // Use environment variable or fallback to default path
 const serviceAccountPath = process.env.FIREBASE_JSON || './path/to/your/firebase-service-account.json';
@@ -86,6 +86,7 @@ if (process.env.REDIS_URL) {
     }).catch((error) => {
       console.error('Failed to connect to Redis:', error);
       redisClient = null;
+      sessionStore = null;
     });
 
   } catch (error) {
