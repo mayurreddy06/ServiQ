@@ -8,6 +8,10 @@ const cookieParser = require('cookie-parser');
 const crypto = require('crypto');
 require('dotenv').config();
 const cors = require('cors');
+const session = require('express-session');
+const flash = require('connect-flash');
+const redis = require('redis');
+const RedisStore = require('connect-redis');
 
 // Use environment variable or fallback to default path
 const serviceAccountPath = process.env.FIREBASE_JSON || './path/to/your/firebase-service-account.json';
@@ -30,12 +34,68 @@ admin.initializeApp({
   databaseURL: process.env.FIREBASE_URL
 });
 
-const session = require('express-session');
-const flash = require('connect-flash');
+// Initialize Redis client with fallback
+let redisClient = null;
+let sessionStore = null;
 
-// Create a simple file-based session store for production with better error handling
-let sessionStore;
-if (process.env.NODE_ENV === 'production') {
+if (process.env.REDIS_URL) {
+  try {
+    redisClient = redis.createClient({
+      url: process.env.REDIS_URL,
+      retry_strategy: (options) => {
+        if (options.error && options.error.code === 'ECONNREFUSED') {
+          console.error('Redis server refused connection');
+          return new Error('The server refused the connection');
+        }
+        if (options.total_retry_time > 1000 * 60 * 60) {
+          console.error('Redis retry time exhausted');
+          return new Error('Retry time exhausted');
+        }
+        if (options.attempt > 10) {
+          return undefined;
+        }
+        return Math.min(options.attempt * 100, 3000);
+      }
+    });
+
+    // Handle Redis connection events
+    redisClient.on('error', (err) => {
+      console.error('Redis Client Error:', err);
+    });
+
+    redisClient.on('connect', () => {
+      console.log('Connected to Redis');
+    });
+
+    redisClient.on('ready', () => {
+      console.log('Redis client ready');
+    });
+
+    redisClient.on('end', () => {
+      console.log('Redis connection ended');
+    });
+
+    // Connect to Redis
+    redisClient.connect().then(() => {
+      console.log('Redis connection established');
+      sessionStore = new RedisStore({
+        client: redisClient,
+        prefix: "serviq_session:",
+        ttl: 7200 // 2 hours in seconds
+      });
+    }).catch((error) => {
+      console.error('Failed to connect to Redis:', error);
+      redisClient = null;
+    });
+
+  } catch (error) {
+    console.error('Redis initialization failed:', error);
+    redisClient = null;
+  }
+}
+
+// Fallback to file-based sessions if Redis fails
+if (!redisClient && process.env.NODE_ENV === 'production') {
   try {
     const FileStore = require('session-file-store')(session);
     sessionStore = new FileStore({
@@ -47,10 +107,10 @@ if (process.env.NODE_ENV === 'production') {
       maxTimeout: 86400
     });
     
-    // Handle FileStore errors gracefully
     sessionStore.on('error', (error) => {
       console.error('Session store error:', error);
     });
+    console.log('Using file-based session store as fallback');
   } catch (error) {
     console.warn('Failed to initialize FileStore, falling back to MemoryStore:', error);
     sessionStore = undefined;
@@ -59,7 +119,7 @@ if (process.env.NODE_ENV === 'production') {
 
 app.use(session({
   store: sessionStore,
-  secret: 'userVerification',
+  secret: process.env.SESSION_SECRET || 'userVerification',
   resave: false,
   saveUninitialized: false,
   name: "mycookieapp",
@@ -69,6 +129,7 @@ app.use(session({
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   }
 }));
+
 app.use(flash());
 
 // Database reference
@@ -127,17 +188,28 @@ app.get('/about', (req, res) => {
 // Health check endpoint
 app.get('/health', async (req, res) => {
   try {
-    await redisClient.ping();
-    res.status(200).json({ 
-      status: 'healthy', 
-      redis: 'connected',
-      timestamp: new Date().toISOString()
-    });
+    if (redisClient) {
+      await redisClient.ping();
+      res.status(200).json({ 
+        status: 'healthy', 
+        redis: 'connected',
+        sessionStore: 'redis',
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      res.status(200).json({ 
+        status: 'healthy', 
+        redis: 'not configured',
+        sessionStore: sessionStore ? 'file' : 'memory',
+        timestamp: new Date().toISOString()
+      });
+    }
   } catch (error) {
     res.status(503).json({ 
       status: 'unhealthy', 
       redis: 'disconnected',
       error: error.message,
+      sessionStore: sessionStore ? 'fallback' : 'memory',
       timestamp: new Date().toISOString()
     });
   }
@@ -163,6 +235,22 @@ app.use((err, req, res, next) => {
   res.status(500).send(err);
 });
 
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  console.log('Received SIGINT, closing Redis connection...');
+  if (redisClient) {
+    await redisClient.quit();
+  }
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('Received SIGTERM, closing Redis connection...');
+  if (redisClient) {
+    await redisClient.quit();
+  }
+  process.exit(0);
+});
 
 // Start server
 app.listen(PORT, () => {
