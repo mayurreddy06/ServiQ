@@ -13,6 +13,14 @@ const flash = require('connect-flash');
 const redis = require('redis');
 const RedisStore = require('connect-redis').default;
 
+// Create Redis client
+const redisClient = redis.createClient({
+  port: 6379,
+  host: 'localhost'
+});
+
+redisClient.connect().catch(console.error);
+
 // Use environment variable or fallback to default path
 const serviceAccountPath = process.env.FIREBASE_JSON || './path/to/your/firebase-service-account.json';
 const serviceAccount = require(serviceAccountPath);
@@ -21,7 +29,7 @@ const PORT = 3000;
 const { getAuth } = require('firebase-admin/auth');
 app.use(cookieParser("secret"));
 
-const allowedOrigins = ['http://localhost:3000', 'https://serviq.onrender.com', 'https://serviq-volunteer.org'];
+const allowedOrigins = ['http://localhost:3000']
 
 app.use(cors({
   origin: allowedOrigins,
@@ -34,92 +42,8 @@ admin.initializeApp({
   databaseURL: process.env.FIREBASE_URL
 });
 
-// Initialize Redis client with fallback
-let redisClient = null;
-let sessionStore = null;
-
-if (process.env.REDIS_URL) {
-  try {
-    redisClient = redis.createClient({
-      url: process.env.REDIS_URL,
-      retry_strategy: (options) => {
-        if (options.error && options.error.code === 'ECONNREFUSED') {
-          console.error('Redis server refused connection');
-          return new Error('The server refused the connection');
-        }
-        if (options.total_retry_time > 1000 * 60 * 60) {
-          console.error('Redis retry time exhausted');
-          return new Error('Retry time exhausted');
-        }
-        if (options.attempt > 10) {
-          return undefined;
-        }
-        return Math.min(options.attempt * 100, 3000);
-      }
-    });
-
-    // Handle Redis connection events
-    redisClient.on('error', (err) => {
-      console.error('Redis Client Error:', err);
-    });
-
-    redisClient.on('connect', () => {
-      console.log('Connected to Redis');
-    });
-
-    redisClient.on('ready', () => {
-      console.log('Redis client ready');
-    });
-
-    redisClient.on('end', () => {
-      console.log('Redis connection ended');
-    });
-
-    // Connect to Redis
-    redisClient.connect().then(() => {
-      console.log('Redis connection established');
-      sessionStore = new RedisStore({
-        client: redisClient,
-        prefix: "serviq_session:",
-        ttl: 7200 // 2 hours in seconds
-      });
-    }).catch((error) => {
-      console.error('Failed to connect to Redis:', error);
-      redisClient = null;
-      sessionStore = null;
-    });
-
-  } catch (error) {
-    console.error('Redis initialization failed:', error);
-    redisClient = null;
-  }
-}
-
-// Fallback to file-based sessions if Redis fails
-if (!redisClient && process.env.NODE_ENV === 'production') {
-  try {
-    const FileStore = require('session-file-store')(session);
-    sessionStore = new FileStore({
-      path: './sessions',
-      ttl: 7200,
-      retries: 5,
-      factor: 1,
-      minTimeout: 50,
-      maxTimeout: 86400
-    });
-    
-    sessionStore.on('error', (error) => {
-      console.error('Session store error:', error);
-    });
-    console.log('Using file-based session store as fallback');
-  } catch (error) {
-    console.warn('Failed to initialize FileStore, falling back to MemoryStore:', error);
-    sessionStore = undefined;
-  }
-}
-
 app.use(session({
-  store: sessionStore,
+  store: new RedisStore({ client: redisClient }),
   secret: process.env.SESSION_SECRET || 'userVerification',
   resave: false,
   saveUninitialized: false,
@@ -186,34 +110,48 @@ app.get('/about', (req, res) => {
   res.render("about.ejs");
 });
 
-// Health check endpoint
+// Enhanced health check endpoint
 app.get('/health', async (req, res) => {
+  const healthData = {
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    redisUrl: process.env.REDIS_URL ? 'configured' : 'not configured'
+  };
+
   try {
-    if (redisClient) {
+    if (redisClient && redisClient.isOpen) {
       await redisClient.ping();
-      res.status(200).json({ 
-        status: 'healthy', 
-        redis: 'connected',
-        sessionStore: 'redis',
-        timestamp: new Date().toISOString()
-      });
+      healthData.redis = 'connected';
+      healthData.sessionStore = 'redis';
+    } else if (redisClient) {
+      healthData.redis = 'client exists but not connected';
+      healthData.sessionStore = sessionStore ? (sessionStore.constructor.name === 'FileStore' ? 'file' : 'other') : 'memory';
     } else {
-      res.status(200).json({ 
-        status: 'healthy', 
-        redis: 'not configured',
-        sessionStore: sessionStore ? 'file' : 'memory',
-        timestamp: new Date().toISOString()
-      });
+      healthData.redis = 'not configured';
+      healthData.sessionStore = sessionStore ? (sessionStore.constructor.name === 'FileStore' ? 'file' : 'other') : 'memory';
     }
+    
+    res.status(200).json(healthData);
   } catch (error) {
-    res.status(503).json({ 
-      status: 'unhealthy', 
-      redis: 'disconnected',
-      error: error.message,
-      sessionStore: sessionStore ? 'fallback' : 'memory',
-      timestamp: new Date().toISOString()
-    });
+    healthData.status = 'unhealthy';
+    healthData.redis = 'error';
+    healthData.error = error.message;
+    healthData.sessionStore = sessionStore ? 'fallback' : 'memory';
+    
+    res.status(503).json(healthData);
   }
+});
+
+// Debug endpoint to check session store status
+app.get('/debug/session', (req, res) => {
+  res.json({
+    sessionStoreType: sessionStore ? sessionStore.constructor.name : 'MemoryStore',
+    redisClientExists: !!redisClient,
+    redisClientOpen: redisClient ? redisClient.isOpen : false,
+    redisUrl: process.env.REDIS_URL ? 'configured' : 'not configured',
+    environment: process.env.NODE_ENV || 'development'
+  });
 });
 
 // routes
@@ -256,4 +194,6 @@ process.on('SIGTERM', async () => {
 // Start server
 app.listen(PORT, () => {
   console.log('Server running on http://localhost:'+ PORT);
+  console.log('Visit /health for health check');
+  console.log('Visit /debug/session for session store debug info');
 });
