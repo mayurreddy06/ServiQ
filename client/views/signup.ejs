@@ -11,7 +11,7 @@
          <div class="form-box card">
          <h2 class="admin-text">Create Agency Account</h2>
 
-        <form id="agency-register-form" action="/auth/register" method="POST">
+        <form id="agency-register-form">
             <div class="signup-info">
                 <input type="text" placeholder="Agency name" id="agency-name" name="agencyName">
                 <input type="email" placeholder="email" id="agency-email" name="email">
@@ -24,9 +24,7 @@
                 <button type="submit" id="submit-button">Sign up</button>
             </div>
             <div class="error-message">
-                <% if (typeof (locals.registerError) !== "undefined") { %>
-                <p id="error-tag" style="color: red"><%= locals.registerError %></p>
-                <% } %>
+                <p id="error-tag"></p>
             </div>
             <div class="login-link">
             Already have an account? <a href="/auth/login">Log in</a>
@@ -34,6 +32,62 @@
         </form>
     </div>
     </div>
+
+    <script>
+        window.authorizedFetch = async (input, init = {}) => {
+  const user = auth.currentUser;
+  const token = user ? await user.getIdToken() : null;
+
+  const headers = new Headers(init.headers || {});
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+
+  return fetch(input, {
+    ...init,
+    headers,
+    credentials: 'include' // optional, keep if you use cookies
+  });
+};
+        document.getElementById('agency-register-form').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const agencyName = document.getElementById('agency-name').value;
+  const email = document.getElementById('agency-email').value;
+  const agencyDesc = document.getElementById('agency-desc').value
+  const password = document.getElementById('agency-password').value;
+  const password2 = document.getElementById('agency-reenter-password').value;
+  console.log("Attempting login with email:", email);
+  try {
+      await authorizedFetch('/auth/register', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        // Automatically converted to "username=example&password=password"
+        body: new URLSearchParams({agencyName, agencyDesc, email, password, password2}),
+        credentials: 'include'
+        })
+        .then(async response => {
+          if (!response.ok)
+          {
+            const errorBody = await response.json();
+            const error = new Error(errorBody.error);
+            error.status = response.status;
+            throw error;
+          }
+          return response.json();
+        })
+        .then(data => {
+          window.location.href = "/auth/verify-email";
+        })
+        .catch(error => {
+          document.getElementById('error-tag').textContent = error;
+        });
+  } catch(error) {
+      document.getElementById('error-tag').textContent = "Invalid Login Credentials";
+  }
+});
+    </script>
     
    
 </body>

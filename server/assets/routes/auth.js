@@ -28,72 +28,74 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+// Middleware to verify Firebase ID token
+async function verifyFirebaseToken(req, res, next) {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({error: "No authentication token provided"});
+    }
+    
+    const idToken = authHeader.split('Bearer ')[1];
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    
+    // Add user info to request object
+    req.user = {
+      uid: decodedToken.uid,
+      email: decodedToken.email,
+      emailVerified: decodedToken.email_verified
+    };
+    
+    next();
+  } catch (error) {
+    console.error('Token verification failed:', error);
+    return res.status(401).json({error: "Invalid authentication token"});
+  }
+}
+
 auth.post("/google/verify", async (req, res) => {
-  console.log("hi");
-  try
-  {
+  try {
     const {uid, email} = req.body;
     const userRef = db.ref(`agency_accounts/${uid}`);
     const snapshot = await userRef.once("value");
-    if (!(snapshot.exists()))
-    {
-      req.session.user = {tempGoogleUid: uid, tempGoogleEmail: email}
-      // temporary variables to use in /google post request below
-      return res.status(406).json({error: "Google user does not exist in the database"})
-      /*
-      if the user doesn't exist in the database, that means its there first time signing up with a google email
-      we have to redirect them to another page where they can add their agency name and description
-      */
+    
+    if (!(snapshot.exists())) {
+      // Store temporary data in a temporary collection or return it to frontend
+      return res.status(406).json({
+        error: "Google user does not exist in the database",
+        needsSetup: true,
+        tempData: {uid, email}
+      });
     }
 
-    req.session.user = {uid, email, isVerified: true}
-    console.log("hi");
-      
-    req.session.save((err) => {
-      if (err) {
-        console.error("Session failed to save:", err);
-        return res.status(500).json({ error: "Failed to save session" });
-      }
-      // if the user exists in the database, we log them
-      console.log("Session has just been created");
-      return res.status(200).json({message: "Google user exists in the database"});
-    })
-  }
-  catch(error)
-  {
+    // User exists, they can proceed
+    return res.status(200).json({
+      message: "Google user exists in the database",
+      user: {uid, email, isVerified: true}
+    });
+    
+  } catch(error) {
     console.error(error);
-    return res.status(500).json({error: "Intenral server error when trying to verify google account in database"});
+    return res.status(500).json({error: "Internal server error when trying to verify google account in database"});
   }
 });
-
 
 auth.get("/google", async (req, res) => {
   res.render("googleSignUp.ejs");
 });
-// google page if user doesn't exist in the database
 
-  
 auth.post("/google", async (req, res) => {
   try {
-    // found in googlesignup.ejs
-    const { agencyName, agencyDesc} = req.body;
+    const { agencyName, agencyDesc, uid, email } = req.body;
   
     // adds google account directly in firebase database with agency name and description
-    await db.ref(`agency_accounts/${req.session.user.tempGoogleUid}`).set({
-      email: req.session.user.tempGoogleEmail,
+    await db.ref(`agency_accounts/${uid}`).set({
+      email: email,
       name: agencyName,
       accountType: 'agency',
       agencyDescription: agencyDesc,
       createdAt: new Date().toISOString()
     });
-  
-    req.session.user = {
-      uid: req.session.user.tempGoogleUid,
-      email: req.session.user.tempGoogleEmail,
-      isVerified: true
-    };
-    delete req.session.user.tempGoogleUid;
-    delete req.session.user.tempGoogleEmail;
 
     res.status(200).json({message: "User information successfully stored in firebase"});
   } catch (error) {
@@ -103,23 +105,19 @@ auth.post("/google", async (req, res) => {
 });
   
 auth.get('/register', (req, res) => {
-  // flash message for register errors encountered
-  const registerError = req.flash('registerError');
-  res.render("signup.ejs", {registerError});
+  res.render("signup.ejs");
 });
   
 auth.post('/register', async (req, res) => {
   const {agencyName, agencyDesc, email, password, password2} = req.body;
 
   if (!email || !password || !password2 || !agencyName || !agencyDesc) {
-    req.flash('registerError', 'Not all required fields are filled out');
-    return res.redirect('/auth/register');
+    return res.status(400).json({error: 'Not all required fields are filled out'});
   }
 
   // check if passwords match
   if (!(password === (password2))) {
-    req.flash('registerError', 'The passwords do not match');
-    return res.redirect('/auth/register');
+    return res.status(400).json({error: 'The passwords do not match'});
   }
 
   try {
@@ -160,32 +158,27 @@ auth.post('/register', async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
-    req.session.user = { 
-      email,
-      uid: userRecord.uid,
-      isVerified: false 
-    };
-
     // redirects so user verifies email
-    return res.redirect('/auth/verify-email');
+    return res.status(200).json({message: "User account successfully created"});
   } catch (error) {
     console.log(error);
     if (error.code == "auth/email-already-exists") 
     {
+      return res.status(400).json({error: 'This email is already in use by another account'});
       req.flash('registerError', 'The email is already in use by another account');
     } 
     else if (error.code == "auth/invalid-password") 
     {
+      return res.status(400).json({error: 'The password must be atleast 6 characters long'});
       req.flash('registerError', 'The password must be at least 6 characters long');
     }
     else
     {
-      req.flash('registerError', 'Password does not meet requirements or internal sever error');
+      return res.status(400).json({error: 'Password does not meet requirements or internal server error'});
     }
-    return res.redirect('/auth/register');
   }
 });
-  
+
 auth.get('/login', (req, res) => {
   res.render("signIn.ejs");
 });
@@ -204,6 +197,7 @@ auth.post('/login', async (req, res) => {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
     const uid = decodedToken.uid;
     const email = decodedToken.email;
+    const emailVerified = decodedToken.email_verified;
 
     // Check if user exists in database
     const userRef = db.ref(`agency_accounts/${uid}`);
@@ -214,13 +208,6 @@ auth.post('/login', async (req, res) => {
       return res.status(404).json({error: "User does not exist in Firebase"});
     }
 
-    // Create session
-    req.session.user = {
-      uid: uid,
-      email: email,
-      isVerified: userData.isVerified || false
-    };
-
     return res.status(200).json({message: "User successfully logged in"});
 
   } catch (error) {
@@ -230,42 +217,33 @@ auth.post('/login', async (req, res) => {
 });
   
 auth.get('/verify-email', (req, res) => {
-  const emailVerifyError = req.flash('emailVerifyError');
-  res.render('verifyEmail.ejs', {emailVerifyError});
+  res.render('verifyEmail.ejs');
 });
   
-auth.post('/verify-email', async (req, res) => {
+auth.post('/verify-email', verifyFirebaseToken, async (req, res) => {
   const { code } = req.body;
-  
-  if (!req.session.user || !req.session.user.uid) {
-    return res.redirect('/auth/register');
-  }
-  
-  const { uid } = req.session.user;
+  const { uid } = req.user;
 
   try {
     // checks if user is in the database
     const userRef = db.ref(`agency_accounts/${uid}`);
     const snapshot = await userRef.once('value');
     const userData = snapshot.val();
+    
     if (!userData) {
-      // redirect user if doesn't exist
-      return res.redirect('/auth/register');
+      return res.status(400).json({error: "User does not exist"});
     }
 
     if (userData.isVerified) {
-      // redirect user if already verified
-      return res.redirect('/');
+      return res.status(400).json({error: "User has already been verified"});
     }
 
     if (userData.verificationCode !== code) {
-      req.flash('emailVerifyError', 'Invalid verification code');
-      return res.redirect('/auth/verify-email');
+      return res.status(406).json({error: "Invalid verification code"});
     }
 
     if (Date.now() > userData.verificationCodeExpires) {
-      req.flash('emailVerifyError', 'Verification code has expired');
-      return res.redirect('/auth/verify-email');
+      return res.status(406).json({error: "Verification code has expired"});
     }
 
    // updates firebase database and the authentication system
@@ -278,24 +256,16 @@ auth.post('/verify-email', async (req, res) => {
       admin.auth().updateUser(uid, { emailVerified: true })
     ]);
 
-    req.session.user.isVerified = true;
-
-    // redirects back to homepage, automatically logging in the user since the session is already created
-    return res.redirect("/");
+    return res.status(200).json({message: "User email has been successfully verified"});
 
   } catch (error) {
     console.error('Verification error:', error);
-    req.flash('emailVerifyError', 'Verification failed. Please try again.');
-    return res.redirect('/auth/verify-email');
+    return res.status(500).json({error: "Internal server error"});
   }
 });
   
-auth.get('/resend-verification', async (req, res) => {
-  if (!req.session.user || !req.session.user.uid) {
-    return res.status(401).json({ error: 'User not logged in' });
-  }
-  
-  const uid = req.session.user.uid;
+auth.get('/resend-verification', verifyFirebaseToken, async (req, res) => {
+  const uid = req.user.uid;
 
   try {
     // checks database to see if user exists
@@ -323,31 +293,40 @@ auth.get('/resend-verification', async (req, res) => {
       from: process.env.EMAIL,
       to: userData.email,
       subject: 'New Verification Code',
-      html: `<p>Your new verification code is: <b>` + newCode + `</b></p> <p>This code will expire in 1 hour.</p>
-      `
+      html: `<p>Your new verification code is: <b>${newCode}</b></p> <p>This code will expire in 1 hour.</p>`
     };
 
     await transporter.sendMail(mailOptions);
-    res.status(200).json({message: "New verficiation code successfuly sent"});
+    res.status(200).json({message: "New verification code successfully sent"});
   } catch (error) {
     console.log("internal server error " + error);
-    res.status(500).json({error});
+    res.status(500).json({error: "Failed to resend verification code"});
   }
 });
-  
-// direct front end access of checking if the user is logged in
-auth.get("/status", (req, res) => {
-  return req.session.user ? res.status(200).json({uid: req.session.user.uid}) : res.status(401).json({error: "User not logged in"});
-});
-  
-// logs user out by destorying the session
-auth.get("/logout", (req, res) => {
-  req.session.destroy((error) => {
-    if (error) {
-      return res.status(401).json({error: error});
+
+// Get user status - requires authentication
+auth.get("/status", verifyFirebaseToken, async (req, res) => {
+  try {
+    const { uid } = req.user;
+    
+    // Get user data from database
+    const userRef = db.ref(`agency_accounts/${uid}`);
+    const snapshot = await userRef.once('value');
+    const userData = snapshot.val();
+    
+    if (!userData) {
+      return res.status(404).json({error: "User not found in database"});
     }
-    return res.status(200).json({message: "user successfully logged out"});
-  });
+    
+    return res.status(200).json({
+      uid: uid,
+    });
+  } catch (error) {
+    console.error('Status check error:', error);
+    return res.status(500).json({error: "Failed to get user status"});
+  }
 });
+
+// No logout route needed - frontend handles Firebase auth logout
 
 module.exports = auth;
