@@ -1,35 +1,36 @@
+// signOut.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { firebaseConfig } from "/scripts/firebaseConfig.js"; // adjust path if needed
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { firebaseConfig } from '/scripts/firebaseConfig.js'
 
-// Initialize Firebase app FIRST
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Wrap native fetch to automatically attach the Firebase ID token
-window.authorizedFetch = async (input, init = {}) => {
-  const user = auth.currentUser;
-  const token = user ? await user.getIdToken() : null;
-
-  const headers = new Headers(init.headers || {});
-  if (token) {
-    headers.set('Authorization', `Bearer ${token}`);
-  }
-
-  return fetch(input, {
-    ...init,
-    headers,
-    credentials: 'include'
-  });
-};
-
-document.getElementById('logout-link').addEventListener('click', async () => {
-  await authorizedFetch('/auth/logout')
-    .then(response => response.json())
-    .then(data => {
-      window.location.href = "/";
-    })
-    .catch((error) => {
-      console.log(error);
+document.addEventListener('DOMContentLoaded', function() {
+  const logoutLink = document.getElementById('logout-link');
+  
+  if (logoutLink) {
+    logoutLink.addEventListener('click', async function(e) {
+      e.preventDefault();
+      
+      try {
+        // Sign out from Firebase
+        await signOut(auth);
+        
+        // Clear JWT cookie on server
+        await fetch('/auth/logout', {
+          method: 'POST',
+          credentials: 'include'
+        });
+        
+        // Redirect to home
+        window.location.href = '/';
+      } catch (error) {
+        console.error('Logout error:', error);
+        // Still redirect even if there's an error
+        window.location.href = '/';
+      }
     });
+  }
 });

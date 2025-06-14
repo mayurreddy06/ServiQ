@@ -1,11 +1,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, applyActionCode, getIdToken } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { firebaseConfig } from '/scripts/firebaseConfig.js'
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+// Updated authorizedFetch - still useful for API calls
 window.authorizedFetch = async (input, init = {}) => {
   const user = auth.currentUser;
   const token = user ? await user.getIdToken() : null;
@@ -18,7 +19,7 @@ window.authorizedFetch = async (input, init = {}) => {
   return fetch(input, {
     ...init,
     headers,
-    credentials: 'include' // optional, keep if you use cookies
+    credentials: 'include'
   });
 };
 
@@ -27,36 +28,73 @@ document.getElementById('signin-form').addEventListener('submit', async (event) 
   let email = document.getElementById('email-entry').value;
   const password = document.getElementById('password-entry').value;
   console.log("Attempting login with email:", email);
+  
   try {
-      const accountCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = accountCredential.user;
-      await authorizedFetch('/auth/login', {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        // Automatically converted to "username=example&password=password"
-        body: new URLSearchParams({email}),
-        credentials: 'include'
-        })
-        .then(async response => {
-          if (!response.ok)
-          {
-            const errorBody = await response.json();
-            const error = new Error(errorBody.error);
-            error.status = response.status;
-            throw error;
-          }
-          return response.json();
-        })
-        .then(data => {
-          window.location.href = "/";
-        })
-        .catch(error => {
-          document.getElementById('error-tag').textContent = "Internal server error";
-          console.log(error);
-        });
+    const accountCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = accountCredential.user;
+    
+    // Send Firebase ID token to backend to create JWT cookie
+    await authorizedFetch('/auth/login', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: 'include' // Important for cookies
+    })
+    .then(async response => {
+      if (!response.ok) {
+        const errorBody = await response.json();
+        const error = new Error(errorBody.error);
+        error.status = response.status;
+        throw error;
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log("JWT cookie created successfully");
+      // Now redirect - the JWT cookie will be sent automatically
+      window.location.href = "/";
+    })
+    .catch(error => {
+      document.getElementById('error-tag').textContent = "Internal server error";
+      console.log(error);
+    });
   } catch(error) {
-      document.getElementById('error-tag').textContent = "Invalid Login Credentials";
+    document.getElementById('error-tag').textContent = "Invalid Login Credentials";
   }
 });
+
+// Handle email verification
+const urlParams = new URLSearchParams(window.location.search);
+const mode = urlParams.get('mode');
+const oobCode = urlParams.get('oobCode');
+
+if (mode === 'verifyEmail' && oobCode) {
+  const auth = getAuth();
+  
+  applyActionCode(auth, oobCode)
+    .then(async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const token = await getIdToken(user);
+        
+        const response = await fetch('/auth/login', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          alert('Email verified successfully!');
+          window.location.href = '/admin/dashboard';
+        }
+      }
+    })
+    .catch((error) => {
+      console.error('Email verification failed:', error);
+      alert('Email verification failed. Please try again.');
+    });
+}

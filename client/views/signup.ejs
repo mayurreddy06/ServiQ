@@ -33,7 +33,14 @@
     </div>
     </div>
 
-    <script>
+    <script type = "module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, applyActionCode, getIdToken } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { firebaseConfig } from '/scripts/firebaseConfig.js'
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
         window.authorizedFetch = async (input, init = {}) => {
   const user = auth.currentUser;
   const token = user ? await user.getIdToken() : null;
@@ -78,7 +85,7 @@
           return response.json();
         })
         .then(data => {
-          window.location.href = "/auth/verify-email";
+          window.location.href = "/auth/login";
         })
         .catch(error => {
           document.getElementById('error-tag').textContent = error;

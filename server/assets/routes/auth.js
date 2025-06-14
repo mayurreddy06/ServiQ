@@ -4,6 +4,7 @@ const auth = express.Router();
 const admin = require('firebase-admin');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 
 // Get database directly from Firebase admin instead of importing from server.js
 const db = admin.database();
@@ -28,31 +29,6 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Middleware to verify Firebase ID token
-async function verifyFirebaseToken(req, res, next) {
-  try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({error: "No authentication token provided"});
-    }
-    
-    const idToken = authHeader.split('Bearer ')[1];
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-    
-    // Add user info to request object
-    req.user = {
-      uid: decodedToken.uid,
-      email: decodedToken.email,
-      emailVerified: decodedToken.email_verified
-    };
-    
-    next();
-  } catch (error) {
-    console.error('Token verification failed:', error);
-    return res.status(401).json({error: "Invalid authentication token"});
-  }
-}
-
 auth.post("/google/verify", async (req, res) => {
   try {
     const {uid, email} = req.body;
@@ -60,19 +36,29 @@ auth.post("/google/verify", async (req, res) => {
     const snapshot = await userRef.once("value");
     
     if (!(snapshot.exists())) {
-      // Store temporary data in a temporary collection or return it to frontend
-      return res.status(406).json({
-        error: "Google user does not exist in the database",
-        needsSetup: true,
-        tempData: {uid, email}
-      });
+      return res.status(406).json({error: "Google user does not exist in the database"});
     }
+    // CREATE JWT COOKIE HERE
+    const jwtPayload = {
+      uid: uid,
+      email: email,
+      isVerified: true
+    };
+
+    const jwtToken = jwt.sign(jwtPayload, process.env.JWT_SECRET, { 
+      expiresIn: '24h' 
+    });
+
+    // Set HTTP-only cookie
+    res.cookie('authToken', jwtToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      sameSite: 'lax'
+    });
 
     // User exists, they can proceed
-    return res.status(200).json({
-      message: "Google user exists in the database",
-      user: {uid, email, isVerified: true}
-    });
+    return res.status(200).json({message: "Google exists in firebase"});
     
   } catch(error) {
     console.error(error);
@@ -84,9 +70,9 @@ auth.get("/google", async (req, res) => {
   res.render("googleSignUp.ejs");
 });
 
-auth.post("/google", async (req, res) => {
+auth.post("/google/create", async (req, res) => {
   try {
-    const { agencyName, agencyDesc, uid, email } = req.body;
+    const { agencyName, agencyDesc, email, uid} = req.body;
   
     // adds google account directly in firebase database with agency name and description
     await db.ref(`agency_accounts/${uid}`).set({
@@ -95,6 +81,25 @@ auth.post("/google", async (req, res) => {
       accountType: 'agency',
       agencyDescription: agencyDesc,
       createdAt: new Date().toISOString()
+    });
+
+    // CREATE JWT COOKIE HERE
+    const jwtPayload = {
+      uid: uid,
+      email: email,
+      isVerified: true
+    };
+
+    const jwtToken = jwt.sign(jwtPayload, process.env.JWT_SECRET, { 
+      expiresIn: '24h' 
+    });
+
+    // Set HTTP-only cookie
+    res.cookie('authToken', jwtToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      sameSite: 'lax'
     });
 
     res.status(200).json({message: "User information successfully stored in firebase"});
@@ -121,8 +126,6 @@ auth.post('/register', async (req, res) => {
   }
 
   try {
-    const verificationCode = generateVerificationCode();
-    
     // creates user in firebase authentication
     const userRecord = await admin.auth().createUser({
       email,
@@ -131,50 +134,54 @@ auth.post('/register', async (req, res) => {
       emailVerified: false
     });
 
-    // adds account to database
+    // adds account to database immediately (user can login but with limited access until verified)
     await db.ref(`agency_accounts/${userRecord.uid}`).set({
       email,
       name: agencyName,
       accountType: 'agency',
       agencyDescription: agencyDesc,
       createdAt: new Date().toISOString(),
-      isVerified: false,
-      verificationCode,
-      // verification code expires in 1 hour
-      verificationCodeExpires: Date.now() + 3600000
+      isVerified: false
     });
+    // EMAIL VERIFICATION CODE keep if want to re-implement later
 
-    // send email using nodemailer
-    const mailOptions = {
-      from: process.env.EMAIL,
-      to: email,
-      subject: 'Verify Your Email',
-      html: `
-        <h2>Welcome to ServiQ, ${agencyName}!</h2>
-        <p>Your verification code is: <strong>${verificationCode}</strong></p>
-        <p>This code will expire in 1 hour.</p>
-      `
-    };
 
-    await transporter.sendMail(mailOptions);
+    // // Generate email verification link (Firebase handles this)
+    // const actionCodeSettings = {
+    //   // url: `${process.env.FRONTEND_URL}/auth/login`,
+    //   url: `http://localhost:3000/auth/login`, // Redirect after verification
+    //   handleCodeInApp: false,
+    // };
 
-    // redirects so user verifies email
+    // const emailVerificationLink = await admin.auth().generateEmailVerificationLink(email, actionCodeSettings);
+
+    // Send custom email with verification link
+    // const mailOptions = {
+    //   from: process.env.EMAIL,
+    //   to: email,
+    //   subject: 'Verify Your Email',
+    //   html: `
+    //     <h2>Welcome to ServiQ, ${agencyName}!</h2>
+    //     <p>Please click the link below to verify your email address:</p>
+    //     <a href="${emailVerificationLink}" style="background-color: #4CAF50; color: white; padding: 14px 20px; text-decoration: none; border-radius: 4px;">Verify Email</a>
+    //     <p>Or copy and paste this link in your browser:</p>
+    //     <p>${emailVerificationLink}</p>
+    //   `
+    // };
+
+    // await transporter.sendMail(mailOptions);
+
     return res.status(200).json({message: "User account successfully created"});
   } catch (error) {
     console.log(error);
-    if (error.code == "auth/email-already-exists") 
-    {
-      return res.status(400).json({error: 'This email is already in use by another account'});
-      req.flash('registerError', 'The email is already in use by another account');
+    if (error.code == "auth/email-already-exists") {
+      return res.status(400).json({error: 'The email is already in use by another account'});
     } 
-    else if (error.code == "auth/invalid-password") 
-    {
-      return res.status(400).json({error: 'The password must be atleast 6 characters long'});
-      req.flash('registerError', 'The password must be at least 6 characters long');
+    else if (error.code == "auth/invalid-password") {
+      return res.status(400).json({error: 'The password must be at least 6 characters long'});
     }
-    else
-    {
-      return res.status(400).json({error: 'Password does not meet requirements or internal server error'});
+    else {
+      return res.status(400).json({error: 'Password does not meet requirements or internal sever error'});
     }
   }
 });
@@ -182,7 +189,8 @@ auth.post('/register', async (req, res) => {
 auth.get('/login', (req, res) => {
   res.render("signIn.ejs");
 });
-  
+
+// Update your existing login route
 auth.post('/login', async (req, res) => {
   try {
     // Get the ID token from the Authorization header
@@ -208,6 +216,30 @@ auth.post('/login', async (req, res) => {
       return res.status(404).json({error: "User does not exist in Firebase"});
     }
 
+    // Update database verification status based on Firebase Auth
+    if (emailVerified && !userData.isVerified) {
+      await userRef.update({ isVerified: true });
+    }
+
+    // CREATE JWT COOKIE HERE
+    const jwtPayload = {
+      uid: uid,
+      email: email,
+      isVerified: emailVerified || userData.isVerified
+    };
+
+    const jwtToken = jwt.sign(jwtPayload, process.env.JWT_SECRET, { 
+      expiresIn: '24h' 
+    });
+
+    // Set HTTP-only cookie
+    res.cookie('authToken', jwtToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      sameSite: 'lax'
+    });
+
     return res.status(200).json({message: "User successfully logged in"});
 
   } catch (error) {
@@ -215,85 +247,58 @@ auth.post('/login', async (req, res) => {
     return res.status(500).json({error: "Authentication failed: " + error.message});
   }
 });
+
+// Add logout route to clear cookie
+auth.post('/logout', (req, res) => {
+  res.clearCookie('authToken');
+  res.status(200).json({message: "Logged out successfully"});
+});
   
+// No longer needed - Firebase handles email verification
 auth.get('/verify-email', (req, res) => {
   res.render('verifyEmail.ejs');
 });
   
-auth.post('/verify-email', verifyFirebaseToken, async (req, res) => {
-  const { code } = req.body;
-  const { uid } = req.user;
-
-  try {
-    // checks if user is in the database
-    const userRef = db.ref(`agency_accounts/${uid}`);
-    const snapshot = await userRef.once('value');
-    const userData = snapshot.val();
-    
-    if (!userData) {
-      return res.status(400).json({error: "User does not exist"});
-    }
-
-    if (userData.isVerified) {
-      return res.status(400).json({error: "User has already been verified"});
-    }
-
-    if (userData.verificationCode !== code) {
-      return res.status(406).json({error: "Invalid verification code"});
-    }
-
-    if (Date.now() > userData.verificationCodeExpires) {
-      return res.status(406).json({error: "Verification code has expired"});
-    }
-
-   // updates firebase database and the authentication system
-    await Promise.all([
-      userRef.update({ 
-        isVerified: true,
-        verificationCode: null,
-        verificationCodeExpires: null
-      }),
-      admin.auth().updateUser(uid, { emailVerified: true })
-    ]);
-
-    return res.status(200).json({message: "User email has been successfully verified"});
-
-  } catch (error) {
-    console.error('Verification error:', error);
-    return res.status(500).json({error: "Internal server error"});
-  }
+// No longer needed - Firebase handles email verification
+auth.post('/verify-email', async (req, res) => {
+  return res.status(400).json({error: "Email verification is handled by Firebase directly"});
 });
   
-auth.get('/resend-verification', verifyFirebaseToken, async (req, res) => {
-  const uid = req.user.uid;
+// Resend verification email using Firebase
+auth.post('/resend-verification', async (req, res) => {
+  const { uid, email } = req.user;
 
   try {
-    // checks database to see if user exists
-    const userRef = db.ref(`agency_accounts/${uid}`);
-    const snapshot = await userRef.once('value');
-    const userData = snapshot.val();
-
-    if (!userData) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    if (userData.isVerified) {
+    // Check if already verified
+    if (req.user.emailVerified) {
       return res.status(400).json({ error: 'Email already verified' });
     }
 
-    // creates new verification code
-    const newCode = generateVerificationCode();
-    await userRef.update({
-      verificationCode: newCode,
-      verificationCodeExpires: Date.now() + 3600000
-    });
+    // Generate new verification link
+    const actionCodeSettings = {
+      url: `${process.env.FRONTEND_URL}/auth/login`,
+      handleCodeInApp: false,
+    };
 
-    // sends new verification code with nodemailer
+    const emailVerificationLink = await admin.auth().generateEmailVerificationLink(email, actionCodeSettings);
+
+    // Get user data for name
+    const userRef = db.ref(`agency_accounts/${uid}`);
+    const snapshot = await userRef.once('value');
+    const userData = snapshot.val();
+
+    // Send new verification email
     const mailOptions = {
       from: process.env.EMAIL,
-      to: userData.email,
-      subject: 'New Verification Code',
-      html: `<p>Your new verification code is: <b>${newCode}</b></p> <p>This code will expire in 1 hour.</p>`
+      to: email,
+      subject: 'New Verification Link',
+      html: `
+        <h2>Hello ${userData?.name || 'User'}!</h2>
+        <p>Please click the link below to verify your email address:</p>
+        <a href="${emailVerificationLink}" style="background-color: #4CAF50; color: white; padding: 14px 20px; text-decoration: none; border-radius: 4px;">Verify Email</a>
+        <p>Or copy and paste this link in your browser:</p>
+        <p>${emailVerificationLink}</p>
+      `
     };
 
     await transporter.sendMail(mailOptions);
@@ -305,9 +310,10 @@ auth.get('/resend-verification', verifyFirebaseToken, async (req, res) => {
 });
 
 // Get user status - requires authentication
-auth.get("/status", verifyFirebaseToken, async (req, res) => {
+auth.get("/status", async (req, res) => {
   try {
-    const { uid } = req.user;
+    const uid = res.locals.uid;
+    console.log(uid);
     
     // Get user data from database
     const userRef = db.ref(`agency_accounts/${uid}`);

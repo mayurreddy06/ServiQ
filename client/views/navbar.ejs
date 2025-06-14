@@ -9,6 +9,12 @@
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
 </head>
 <body>
+  <div style="background: red; color: white; padding: 10px;">
+        DEBUG - locals.uid: <%= JSON.stringify(locals.uid) %><br>
+        DEBUG - locals.email: <%= JSON.stringify(locals.email) %><br>
+        DEBUG - typeof locals.uid: <%= typeof locals.uid %><br>
+        DEBUG - (!locals.uid): <%= (!locals.uid) %>
+    </div>
     <nav class="navbar navbar-expand-lg navbar-light container">
     <script>
       mediaQuery = window.matchMedia('(max-width: 1150px)');
@@ -35,12 +41,12 @@
       <li class="nav-item">
         <a class="nav-link login-cta" href="/about">About</a>
       </li>
-      <% if (typeof (locals.uid) === "undefined") { %>
+      <% if (!locals.uid) { %>
             <li class="nav-item">
                 <a class="nav-link login-cta" href="/auth/login">Login</a>
             </li>
       <% } %>
-        <% if (typeof (locals.uid) !== "undefined") {%>
+        <% if (locals.uid) {%>
             <li class="nav-item dropdown dropdown-menu-end dropdown-menu-lg-start">
                 <a class="nav-link dropdown-toggle login-cta" data-bs-toggle = "dropdown" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Admin
@@ -59,4 +65,36 @@
     <script type="module" src = "../scripts/signOut.js"></script>
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js';
+import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js';
+
+import { firebaseConfig } from '/scripts/firebaseConfig.js'
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+let hasReloaded = false;
+
+// window.onload = () => {
+//   onAuthStateChanged(auth, async (user) => {
+//     if (user && !hasReloaded) {
+//       // Only reload if user is logged in, we haven't reloaded yet, and server doesn't know about user
+//       hasReloaded = true;
+//       const token = await user.getIdToken();
+      
+//       const response = await fetch(window.location.pathname, {
+//         headers: {
+//           'Authorization': `Bearer ${token}`
+//         }
+//       });
+      
+//       if (response.ok) {
+//         const html = await response.text();
+//         document.documentElement.innerHTML = html;
+//       }
+//     }
+//   });
+// };
+</script>
 </html>

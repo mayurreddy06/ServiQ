@@ -31,48 +31,65 @@ admin.initializeApp({
 const db = admin.database();
 module.exports = db;
 
-// Middleware to verify Firebase token and set user data
+const jwt = require('jsonwebtoken');
+
+// Replace your existing auth middleware with this:
 app.use(async (req, res, next) => {
+  // Set default values FIRST
+  res.locals.uid = null;
+  res.locals.email = null;
+  res.locals.isVerified = false;
+  res.locals.user = null;
+  req.user = null;
+
   try {
-    const authHeader = req.headers.authorization;
-    
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      const idToken = authHeader.split('Bearer ')[1];
-      const decodedToken = await admin.auth().verifyIdToken(idToken);
-      
-      // Get user data from database
-      const userRef = db.ref(`agency_accounts/${decodedToken.uid}`);
-      const snapshot = await userRef.once('value');
-      const userData = snapshot.val();
-      
-      if (userData) {
-        // Set user data for use in templates and routes
-        console.log("There is user data");
-        req.user = {
-          uid: decodedToken.uid,
-          email: decodedToken.email,
-          isVerified: userData.isVerified || decodedToken.email_verified,
-          userData: userData
-        };
-        
-        // Set locals for EJS templates ONLY if user exists
-        res.locals.uid = decodedToken.uid;
-        res.locals.email = decodedToken.email;
-        res.locals.isVerified = userData.isVerified || decodedToken.email_verified;
-        res.locals.user = userData;
-        console.log(res.locals.uid);
+    // Check for JWT cookie first
+    const jwtToken = req.cookies.authToken;
+
+    if (jwtToken) {
+      try {
+        // Verify JWT token
+        const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET);
+
+        // Get user data from database
+        const userRef = db.ref(`agency_accounts/${decoded.uid}`);
+        const snapshot = await userRef.once('value');
+        const userData = snapshot.val();
+
+        if (userData) {
+          console.log("JWT token valid - setting user data");
+
+          req.user = {
+            uid: decoded.uid,
+            email: decoded.email,
+            isVerified: userData.isVerified || decoded.isVerified,
+            userData: userData
+          };
+
+          // Set locals for EJS templates
+          res.locals.uid = decoded.uid;
+          res.locals.email = decoded.email;
+          res.locals.isVerified = userData.isVerified || decoded.isVerified;
+          res.locals.user = userData;
+          console.log("User UID set in res.locals from JWT:", res.locals.uid);
+        }
+      } catch (jwtError) {
+        console.log('JWT token verification failed:', jwtError.message);
+        // Clear invalid cookie
+        res.clearCookie('authToken');
       }
     }
+
+    // Always call next at the end
+    next();
+
   } catch (error) {
-    // Token is invalid or expired, continue without user data
-    console.log('Auth token verification failed:', error.message);
+    console.log("Middleware error:", error.message);
+    next();
   }
-  
-  // Don't set any default values - leave res.locals empty if no authenticated user
-  // This way, EJS can properly check if locals.uid is undefined
-  
-  next();
 });
+
+    
 
 // Static file middleware
 app.use(express.static(path.join(__dirname, 'assets')));
@@ -104,6 +121,10 @@ app.get('/', (req, res) => {
   res.render("homePage.ejs");
 });
 
+app.get("/navbar", (req, res) => {
+  res.render("navbar.ejs", {uid: res.locals.uid});
+})
+
 app.get('/about', (req, res) => {
   res.render("about.ejs");
 });
@@ -116,10 +137,14 @@ const map = require("./assets/routes/eventMap.js");
 
 // Middleware for protected routes
 const requireAuth = (req, res, next) => {
-  if (!req.user) {
+  if (!(req.method === 'GET'))
+  {
+    if (!req.user) {
     return res.status(401).json({error: "Authentication required"});
+    }
   }
   next();
+  
 };
 
 const requireVerification = (req, res, next) => {
@@ -133,8 +158,8 @@ const requireVerification = (req, res, next) => {
 };
 
 // Apply route middlewares
-app.use("/volunteer-data", requireVerification, volunteerData);
-app.use("/admin", requireVerification, adminPages);
+app.use("/volunteer-data", requireAuth, volunteerData);
+app.use("/admin", requireAuth, adminPages);
 app.use("/auth", userAuth); // Auth routes handle their own middleware
 app.use("/map", map);
 

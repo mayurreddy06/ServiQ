@@ -69,7 +69,7 @@ volunteerData.get('/', async (req, res) => {
 // route to add volunteer data to the server
 volunteerData.post('/', async (req, res) => {
     const { storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description} = req.body;
-    const userId = req.session.user.uid;
+    const userId = res.locals.uid;
     try {
       const ref = db.ref('volunteer_opportunities');
       const newTask = ref.push(); 
@@ -107,7 +107,7 @@ volunteerData.patch('/:timestamp', async (req, res) => {
     const [taskKey, task] = filteredTasks[0];
 
     // Verify task ownership
-    if (task.userId !== req.session.user.uid) {
+    if (task.userId !== res.locals.uid) {
       return res.status(403).json({ error: "Task does not belong to logged in user" });
     }
 
@@ -148,7 +148,7 @@ volunteerData.delete('/:timestamp', async (req, res) => {
     const [taskKey, task] = filteredTasks[0];
 
     // Verify task ownership
-    if (task.userId !== req.session.user.uid) {
+    if (task.userId !== res.locals.uid) {
       return res.status(403).json({ error: "Task does not belong to logged in user" });
     }
 

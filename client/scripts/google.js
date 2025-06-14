@@ -3,6 +3,11 @@ import { getAuth, GoogleAuthProvider, signInWithPopup} from "https://www.gstatic
 
 import { firebaseConfig } from "/scripts/firebaseConfig.js";
 
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
 window.authorizedFetch = async (input, init = {}) => {
   const user = auth.currentUser;
   const token = user ? await user.getIdToken() : null;
@@ -18,10 +23,6 @@ window.authorizedFetch = async (input, init = {}) => {
     credentials: 'include' // optional, keep if you use cookies
   });
 };
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
 
 document.getElementById("google-sign").addEventListener("click", async () => {
     signInWithPopup(auth, provider)
@@ -45,13 +46,11 @@ document.getElementById("google-sign").addEventListener("click", async () => {
         .then(async response => {
           if (!response.ok)
           {
-            alert("response is not ok but fetch is successful");
             const errorBody = await response.json();
             const error = new Error(errorBody.error);
             error.status = response.status;
             throw error;
           }
-          alert("response fetched and is ok");
           return response.json();
         })
         .then(data => {
@@ -60,7 +59,30 @@ document.getElementById("google-sign").addEventListener("click", async () => {
         .catch(error => {
           if (error.status === 406)
           {
-            window.location.href = "/auth/google";
+            const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+            modal.show();
+             document.getElementById("agency-register-form").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const agencyName = document.getElementById("agency-name").value;
+            const agencyDesc = document.getElementById("agency-desc").value;
+                await authorizedFetch('/auth/google/create', {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                },
+                // Automatically converted to "username=example&password=password"
+                body: new URLSearchParams({agencyName, agencyDesc, email, uid}),
+                credentials: 'include'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    modal.hide();
+                    window.location.href = "/";
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            })
           }
           else
           {

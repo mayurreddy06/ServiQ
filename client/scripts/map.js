@@ -25,6 +25,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const element = document.getElementById(id);
     element.addEventListener('change', fetchAndDisplayMarkers);
   });
+  // close custom popup
+  function closeCustomPopup() {
+    document.getElementById('customPopup').style.display = 'none';
+  }
+
 
 });
 
@@ -145,6 +150,14 @@ function loopThroughJSON(obj, regex, targetKey) {
   }
   return value; 
 }
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, applyActionCode, getIdToken } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { firebaseConfig } from '/scripts/firebaseConfig.js'
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
 window.authorizedFetch = async (input, init = {}) => {
   const user = auth.currentUser;
@@ -349,9 +362,4 @@ async function openCustomPopup(storeAddress, category, taskId, task) {
           }
     });
     };
-}
-
-// close custom popup
-function closeCustomPopup() {
-  document.getElementById('customPopup').style.display = 'none';
 }

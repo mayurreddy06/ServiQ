@@ -6,6 +6,7 @@
     <title>ServiQ</title>
     <link rel="icon" href="../images/ServiQ_logo.png" type="image/x-icon">
     <link rel = "stylesheet" href = "/styles/login.css">   
+    <link rel = "stylesheet" href = "/styles/signup.css">
 </head>
 <body class="d-flex flex-column min-vh-100">
     <%-include('navbar.ejs')%>
@@ -69,6 +70,30 @@
   </div>
   <!-- Jumbotron -->
 </section>
+ 
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"  data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Agency Information</h5>
+      </div>
+      <div class="modal-body">
+        <p class="subtitle">Before you can finish logging in as a Google user, fill out the required fields</p>
+
+        <form id="agency-register-form">
+            <div class="signup-info">
+                <input type="text" placeholder="Agency name" id="agency-name" name="agencyName" required>
+                <input type="text" placeholder="Agency description" id="agency-desc" name="agencyDesc" required>
+            </div>
+            <div class="actions" style = "margin-top: 25px">
+                <button type="submit" id="submit-button">Sign in</button>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>
+
 <script type = "module" src = "../scripts/google.js"></script>
 <script type = "module" src = "../scripts/signIn.js"></script>
 </body>
