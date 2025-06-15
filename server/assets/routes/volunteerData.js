@@ -68,13 +68,13 @@ volunteerData.get('/', async (req, res) => {
 });
 // route to add volunteer data to the server
 volunteerData.post('/', async (req, res) => {
-    const { storeAddress, category, start_time, end_time, spots, timestamp, task, location, date, description} = req.body;
+    const { storeAddress, category, start_time, end_time, spots, timestamp, task, external, location, date, description} = req.body;
     const userId = res.locals.uid;
     try {
       const ref = db.ref('volunteer_opportunities');
       const newTask = ref.push(); 
       // Capture the reference to the new data
-      await newTask.set({ storeAddress, category, start_time, end_time, spots, timestamp: timestamp.toString(), task, location, date, description, userId});
+      await newTask.set({ storeAddress, category, start_time, end_time, spots, timestamp: timestamp.toString(), task, external, location, date, description, userId});
   
       res.status(200).json({message: "Data successfuly added to firebase"});
     } catch (error) {

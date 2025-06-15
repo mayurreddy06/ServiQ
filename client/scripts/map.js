@@ -25,13 +25,40 @@ document.addEventListener('DOMContentLoaded', function() {
     const element = document.getElementById(id);
     element.addEventListener('change', fetchAndDisplayMarkers);
   });
-  // close custom popup
+
+});
+
+// close custom popup
   function closeCustomPopup() {
     document.getElementById('customPopup').style.display = 'none';
   }
-
-
-});
+  
+  // uses google places api to make a drop down menu when user types in address
+  function initAutocomplete() {
+    const input = document.getElementById('autocomplete');
+    const autocomplete = new google.maps.places.Autocomplete(input);
+    autocomplete.addListener('place_changed', function () {
+      const place = autocomplete.getPlace();
+      if (place.geometry && place.geometry.location) {
+        const placeData = {
+          geometry: {
+            location: {
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng()
+            }
+          }
+        };
+        input.dataset.place = JSON.stringify(placeData);
+      } 
+      else
+      {
+        console.log("There are no valid places available");
+        throw error;
+      }
+    });
+}
+window.closeCustomPopup = closeCustomPopup;
+window.initAutocomplete = initAutocomplete;
 
 // rezooms map based on address typed in
 document.querySelector('.homePage-form').addEventListener('submit', async (event) => {
@@ -237,7 +264,7 @@ async function fetchAndDisplayMarkers()
       for (let taskId in volunteerObjects)
         {
           const specificTask = volunteerObjects[taskId];
-          const { storeAddress, location, category, task, spots} = specificTask;
+          const { storeAddress, location, category, task, spots, external, start_time, end_time, date, description} = specificTask;
       
           if (useZipcode)
           {
@@ -267,7 +294,7 @@ async function fetchAndDisplayMarkers()
               .addTo(map);
             markers.push(marker);
             marker.getElement().addEventListener('click', () => {
-              openCustomPopup(storeAddress, category, taskId, task);
+              openCustomPopup(storeAddress, task, taskId, description, start_time, end_time, date, external);
             });
         }
     })
@@ -282,38 +309,15 @@ async function fetchAndDisplayMarkers()
   }
 }
 
-
-// uses google places api to make a drop down menu when user types in address
-function initAutocomplete() {
-  const input = document.getElementById('autocomplete');
-  const autocomplete = new google.maps.places.Autocomplete(input);
-  autocomplete.addListener('place_changed', function () {
-    const place = autocomplete.getPlace();
-    if (place.geometry && place.geometry.location) {
-      const placeData = {
-        geometry: {
-          location: {
-            lat: place.geometry.location.lat(),
-            lng: place.geometry.location.lng()
-          }
-        }
-      };
-      input.dataset.place = JSON.stringify(placeData);
-    } 
-    else
-    {
-      console.log("There are no valid places available");
-      throw error;
-    }
-  });
-}
-
 // Function to open the custom popup, viewing the details for a certain task on
-async function openCustomPopup(storeAddress, category, taskId, task) {
-  document.getElementById('popupLocation').innerText = storeAddress;
+async function openCustomPopup(storeAddress, task, taskId, description, start_time, end_time, date, external) {
   document.getElementById('popupTask').innerText = task;
-  document.getElementById('popupCategory').innerText = category;
+  document.getElementById('popupDescription').innerText = description;
+  document.getElementById('popupTiming').innerText = date + " at " + start_time + " - " + end_time;
+  document.getElementById('popupLink').innerText = external;
+  document.getElementById('popupTag').setAttribute("href", external);
   document.getElementById('customPopup').style.display = 'block';
+  
 
   const emailError = document.getElementById("emailError");
   const emailSuccess = document.getElementById("emailSuccess");
@@ -334,7 +338,7 @@ async function openCustomPopup(storeAddress, category, taskId, task) {
     await fetch('/map/email', {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, storeAddress, category, taskId }),
+        body: JSON.stringify({ email, storeAddress, taskId, task, description, start_time, end_time, date, external }),
         })
         .then(async response => {
           if (!response.ok)

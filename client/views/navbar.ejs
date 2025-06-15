@@ -9,12 +9,6 @@
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
 </head>
 <body>
-  <div style="background: red; color: white; padding: 10px;">
-        DEBUG - locals.uid: <%= JSON.stringify(locals.uid) %><br>
-        DEBUG - locals.email: <%= JSON.stringify(locals.email) %><br>
-        DEBUG - typeof locals.uid: <%= typeof locals.uid %><br>
-        DEBUG - (!locals.uid): <%= (!locals.uid) %>
-    </div>
     <nav class="navbar navbar-expand-lg navbar-light container">
     <script>
       mediaQuery = window.matchMedia('(max-width: 1150px)');
@@ -43,7 +37,7 @@
       </li>
       <% if (!locals.uid) { %>
             <li class="nav-item">
-                <a class="nav-link login-cta" href="/auth/login">Login</a>
+                <a class="nav-link login-cta" href="/auth/login">Admin Login</a>
             </li>
       <% } %>
         <% if (locals.uid) {%>

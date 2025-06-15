@@ -306,7 +306,7 @@
 }
 
 
-#task {
+#task, #external {
     width: 100%;
     padding: 12px 15px;
     margin: 10px 0 20px;
@@ -317,7 +317,7 @@
     transition: border-color 0.3s;
 }
 
-#task:focus {
+#task:focus, #external:focus {
     outline: none;
     border-color: #4CAF50;
     box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);

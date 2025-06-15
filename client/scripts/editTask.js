@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () =>
             // check category
             const spots = task.spots;
             const taskName = task.task;
+            const external = task.external;
             const description = task.description;
             console.log("this is the description" + description);
             document.querySelector(".autocompletePATCH").setAttribute("value", storeAddress);
@@ -59,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () =>
             }
             document.querySelector(".volunteer-countPATCH").setAttribute("value", spots);
             document.querySelector(".taskPATCH").setAttribute("value", taskName);
+            document.querySelector(".externalPATCH").setAttribute("value", external);
             document.querySelector(".descriptionPATCH").textContent = description;    
             document.querySelector(".edit-post").addEventListener("submit", async function(event) {
             event.preventDefault();
@@ -69,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () =>
             const category = document.querySelector(".inp-cbxPATCH:checked")?.value;
             const spots = document.querySelector('.volunteer-countPATCH').value;
             const task = document.querySelector('.taskPATCH').value;
+            const external = document.querySelector('.externalPATCH').value;
             const description = document.querySelector('.descriptionPATCH').value;
             const autocompleteInput = document.querySelector('.autocompletePATCH');
             console.log(storeAddress, date);
@@ -85,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () =>
                 spots,
                 timestamp,
                 task,
+                external,
                 location: {lat, lng},
                 date, 
                 description,

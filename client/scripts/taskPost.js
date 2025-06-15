@@ -31,6 +31,7 @@ document.querySelector(".task-post").addEventListener("submit", async function(e
       const category = document.querySelector(".inp-cbxPOST:checked")?.value;
       const spots = document.querySelector('.volunteer-countPOST').value;
       const task = document.querySelector('.taskPOST').value;
+      const external = document.querySelector('.externalPOST').value;
       const description = document.querySelector('.descriptionPOST').value;
       const timestamp = Date.now();
       console.log(storeAddress, date, start_time, end_time, category, spots, task, description);
@@ -49,6 +50,7 @@ document.querySelector(".task-post").addEventListener("submit", async function(e
         spots,
         timestamp,
         task,
+        external,
         location: {lat, lng},
         date, 
         description,
