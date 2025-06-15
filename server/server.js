@@ -14,7 +14,7 @@ const PORT = 3000;
 
 app.use(cookieParser("secret"));
 
-const allowedOrigins = ['http://localhost:3000']
+const allowedOrigins = ['http://localhost:3000', 'https://serviq.onrender.com/', 'https://www.serviq-volunteer.org/']
 
 app.use(cors({
   origin: allowedOrigins,
