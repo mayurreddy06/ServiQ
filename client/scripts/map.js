@@ -309,13 +309,35 @@ async function fetchAndDisplayMarkers()
   }
 }
 
+function convertTime(militaryTime) {
+  // Split the time into hours and minutes
+  const parts = militaryTime.split(":");
+  const hour = parseInt(parts[0]);
+  const minute = parts[1];
+
+  // Determine if it's AM or PM
+  let period = "AM";
+  if (hour >= 12) {
+    period = "PM";
+  }
+
+  // Convert to 12-hour format
+  let standardHour = hour % 12;
+  if (standardHour === 0) {
+    standardHour = 12;
+  }
+
+  // Return the final result
+  return standardHour + ":" + minute + " " + period;
+}
+
 // Function to open the custom popup, viewing the details for a certain task on
 async function openCustomPopup(storeAddress, task, taskId, description, start_time, end_time, date, external) {
   document.getElementById('popupTask').innerText = task;
   document.getElementById('popupDescription').innerText = description;
-  document.getElementById('popupTiming').innerText = date + " at " + start_time + " - " + end_time;
+  document.getElementById('popupTiming').innerText = date + " at " + convertTime(start_time) + " - " + convertTime(end_time);
   document.getElementById('popupLink').innerText = external;
-  document.getElementById('popupTag').setAttribute("href", external);
+  document.getElementById('popupTag').setAttribute("href", "https://" + external);
   document.getElementById('customPopup').style.display = 'block';
   
 

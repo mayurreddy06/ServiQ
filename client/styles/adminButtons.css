@@ -1,0 +1,30 @@
+#button-align
+{
+    display: flex;
+    justify-content: center;
+}
+.button-borders
+{
+    color: var(--white);
+    font-size: 10px;
+    border: none;
+    padding: 10px 30px;
+    /* border-radius: 15px; */
+}
+.top-btn-cta
+{
+    border: none;
+    outline: none;
+    padding: 5px 15px;
+    color: var(--white);
+    background-color: var(--primary-color);
+    font-size: 25px;
+    margin: 0; 
+    border-radius: 5px;
+}
+
+.top-btn-cta:hover
+{
+    background-color: rgb(8, 106, 8);
+    cursor: pointer;
+}

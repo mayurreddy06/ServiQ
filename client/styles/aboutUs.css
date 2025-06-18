@@ -82,6 +82,10 @@
     background-color: var(--admin-color);
     width: 25vh;
 }
+.textDecor-cta {
+    text-decoration: none;
+    color: white;
+}
 
 #green-span-cta {
     color: var(--primary-color) !important;

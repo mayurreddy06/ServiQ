@@ -29,7 +29,7 @@
           <div class="hero-buttons d-flex flex-column gap-2 w-100">
             <a id="get-started-cta" href="auth/login" class="btn btn-lg w-100 py-2 rounded-3">Get Started</a>
 
-            <% if (typeof locals.uid !== "undefined") { %>
+            <% if (locals.uid) { %>
               <script>
                 document.getElementById("get-started-cta").textContent = "Dashboard";
                 document.getElementById("get-started-cta").setAttribute("href", "admin/view");
@@ -106,7 +106,7 @@
                 <span class="close-popup" onclick="closeCustomPopup()">&times;</span>
                 <h2>Event Information</h2>
                 <p><strong>Task:</strong> <span id="popupTask"></span></p>
-                <p><strong>Description:</strong> <span id="popupDescription"></span></p>
+                <div class = "overflow"><p><strong>Description:</strong> <span id="popupDescription"></span></p></div>
                 <p><strong>Timing:</strong> <span id="popupTiming"></span></p>
                 <p><strong>Link: </strong><a id = "popupTag"><span id = "popupLink"></span></a></p>
                 <input type="email" id="popupEmail" placeholder="Enter your email">

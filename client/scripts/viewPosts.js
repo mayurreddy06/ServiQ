@@ -104,7 +104,8 @@ window.onload = async function()
                 newRow.appendChild(date);
                 newRow.appendChild(startTime);
                 newRow.appendChild(address);
-                newRow.appendChild(spots);
+                // NOTE TO FUTURE SELF: to display spots, uncomment the line below, and viewPosts.ejs table code at the very bottom
+                // newRow.appendChild(spots);
                 newRow.appendChild(editColumn);
                 newRow.appendChild(deleteColumn);
 
