@@ -24,7 +24,8 @@ app.use(cors({
 // Initialize Firebase Admin
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: process.env.FIREBASE_URL
+  databaseURL: process.env.FIREBASE_URL,
+  storageBucket: "store-discount-finder.firebasestorage.app"
 });
 
 // Database reference

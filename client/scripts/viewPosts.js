@@ -22,18 +22,9 @@ window.authorizedFetch = async (input, init = {}) => {
 
 window.onload = async function()
 {
-    console.log("file exists");
-    let uid;
-    await authorizedFetch('/auth/status')
-        .then(async response => await response.json())
-        .then(data => {
-        uid = data.uid;
-        })
-        .catch(error => {
-        uid = "unauthorized";
-    });
-    await authorizedFetch('/volunteer-data?userId=' + uid)
-        .then(async response => await response.json())
+    // this is to safely retrieve data for each user without passing in the uid on the client side
+    await authorizedFetch('/volunteer-data?secure=yes')
+        .then(response => response.json())
         .then(volunteerTasks => {
             for (const taskID in volunteerTasks)
             {
@@ -89,11 +80,23 @@ window.onload = async function()
                     .then(response => response.json())
                     .then(data => {
                         console.log(data);
-                        window.location.reload();
+                        let alert = document.getElementById("messageSuccess");
+                        alert.classList.remove("d-none");
+                        let alertText = document.getElementById("databaseMessage");
+                        alertText.textContent = "Volunteer Event Successfully Deleted"
+                        
+                        setTimeout(() => {
+                          window.location.reload();
+                        }, 2500)  
                     })
                     .catch(error => {
                         console.log("Error deleting task from firebase");
                         console.log(error);
+                        let alert = document.getElementById("messageFailed");
+                        alert.classList.remove("d-none");
+                        setTimeout(() => {
+                          window.location.reload();
+                        }, 2500)
                     });
                 });
 

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel = "stylesheet" href = "../styles/viewPosts.css">
     <link rel = "stylesheet" href = "../styles/taskpage.css">
+    <link rel = "stylesheet" href = "../styles/editAgencyInfo.css">
     <link rel="icon" href="../images/ServiQ_logo.png" type="image/x-icon">
     <!-- Mapbox CSS -->
         <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
@@ -23,13 +24,57 @@
         <div class = "card" style = "display: flex; flex-direction: column;justify-content: center;align-items:center; margin: 10px 0">
         <h5>Welcome, <%=(locals.email)%></h5>
         <div class = "text-center">
+            <button type = "button" class = "btn taskPost-btn" data-bs-toggle = "modal" data-bs-target = "#missionStateToggle">
+            Profile</button>
             <button type="button" class="btn taskPost-btn" data-bs-toggle="modal" data-bs-target="#POSTModal">
             Add New Event
             </button>
-            <!-- <button type = "button" class = "btn taskPost-btn">Download CSV</button> -->
+            <div class="alert alert-success d-flex align-items-center d-none" id = "messageSuccess" role="alert">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                            <div id = "databaseMessage">
+                                
+                            </div>
+            </div>
+            <div class="alert alert-danger d-flex align-items-center d-none" id = "messageFailed" role="alert">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                            <div>
+                                Internal Server Error
+                            </div>
+            </div>
         </div>
     </div>
     </div>
+
+
+
+<!-- Modal for editing agency details -->
+<div class="modal fade" id="missionStateToggle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Agency Information</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class = "text-center">
+            <form id="agency-update-form">
+            <div class="signup-info">
+                <label>Agency Name</label>
+                <input type="text" value = "<%=(locals.agencyName)%>" placeholder="Agency name" class = "agencyUpdateFormInput" id="agency-name" name="agencyName" required>
+                <label>Mission Statement</label>
+                <textarea type="text" class = "agencyDescription-CTA agencyUpdateFormInput" placeholder="Mission Statement" id="agency-desc" name="agencyDesc" required><%=(locals.agencyDescription)%></textarea>
+                <label for="formFileSm">Organization Logo (png/jpg)</label>
+                <input class="form-control" accept = ".png,.jpg" id="formFileMd" type="file">
+            </div>
+            <input class="btn taskPost-btn" type="submit" value="Submit">
+        </form>
+            
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
     
     
 
@@ -47,7 +92,8 @@
             <form class="edit-post">
                 <div class="location">
                     <label for="autocomplete">Enter a Location</label>
-                    <input type="text" id="autocomplete" class = "autocompletePATCH" name="location" onclick = "initAutocomplete(event)" required>
+                    <input type="text" placeholder = "Please re-enter and select location before submitting" id="autocomplete" class = "autocompletePATCH" name="location" onclick = "initAutocomplete(event)" required>
+                    <p id = "addressErrorMessagePATCH" style = "color: red"></p>
                 </div>
                 
                 <div class="calendar">
@@ -185,16 +231,16 @@
                   
                 <!--Event Disc. and Volunteer Count-->
                 <div>
-                    <label for="volunteer-count">Volunteer Count</label>
-                    <input type="number" id="volunteer-count" class = "volunteer-countPATCH" name="volunteer_count" required>
+                    <label for="volunteer-count">Minimum Age Requirement</label>
+                    <input type="number" id="volunteer-count" placeholder = "This field is not required" class = "minAgePATCH" name="volunteer_count">
                 </div>
                 <div>
                     <label for="task">Task</label>
-                    <input type="text" id="task" name="task" class = "taskPATCH" required>
+                    <input type="text" id="task" placeholder = "Character limit 35" name="task" maxlength = "35" class = "taskPATCH" required>
                 </div>
                 <div>
                     <label for="task">External</label>
-                    <input type="text" id="external" class = "externalPATCH" name="external" placeholder = "Enter external link for sign up or organization page" required>
+                    <input type="text" id="external" class = "externalPATCH" name="external" placeholder = "Enter external link" required>
                 </div>
                 <div>
                     <label for="description">Event Description</label>
@@ -235,6 +281,7 @@
                 <div class="location">
                     <label for="autocomplete">Enter a Location</label>
                     <input type="text" id="autocomplete" class = "autocompletePOST" name="location" onclick = "initAutocomplete(event)" required>
+                    <p id = "addressErrorMessagePOST" style = "color: red"></p>
                 </div>
                 
                 <div class="calendar">
@@ -372,12 +419,12 @@
                   
                 <!--Event Disc. and Volunteer Count-->
                 <div>
-                    <label for="volunteer-count">Volunteer Count</label>
-                    <input type="number" id="volunteer-count" class = "volunteer-countPOST" name="volunteer_count" required>
+                    <label for="volunteer-count">Minimum Age Requirement</label>
+                    <input type="number" id="volunteer-count" placeholder = "This field is not required" min = "0" max = "65" maxlength = "35" class = "minAgePOST" name="volunteer_count">
                 </div>
                 <div>
                     <label for="task">Task</label>
-                    <input type="text" id="task" class = "taskPOST" name="task" required>
+                    <input type="text" id="task" placeholder = "Character limit 35" class = "taskPOST" name="task" required>
                 </div>
                 <div>
                     <label for="task">External</label>
@@ -425,6 +472,7 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
     <script type = "module" src="../scripts/taskPost.js"></script>
     <script type = "module" src = "../scripts/editTask.js"></script>
+    <script type = "module" src = "../scripts/updateAgencyInfo.js"></script>
     <script src="/flatpickr/flatpickr.min.js"></script>
 </body>
 </html>

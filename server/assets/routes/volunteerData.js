@@ -22,6 +22,19 @@ volunteerData.get('/', async (req, res) => {
     }
     // filter based on queries
     // key is not needed so left _ (or null) and value is the task information (still an object)
+    console.log("HIIIIIIIIIIIIIIIIIIIIIII" + res.locals.uid);
+    if (req.query.secure)
+    {
+      console.log("eeeeWHY IS THIS EXEUCTING")
+      filteredTasks = filteredTasks.filter(([_, task]) => {
+        console.log("We are comparing " + task.userId +  " to: " +  res.locals.uid);
+        return (task.userId === res.locals.uid);
+      });
+      const result = Object.fromEntries(filteredTasks);
+      console.log(result);
+      return res.status(200).json(result);
+    }
+    
     filteredTasks = filteredTasks.filter(([_, task]) => {
     if (req.query.category)
     {
@@ -44,15 +57,8 @@ volunteerData.get('/', async (req, res) => {
       }
       return true;
     });
-    filteredTasks = filteredTasks.filter(([_, task]) => {
-      if (req.query.userId)
-      {
-        return task.userId === req.query.userId;
-      }
-      return true;
-    });
 
-    const isInvalidQuery = Object.keys(req.query).some(key => !['category', 'date', 'zipcode', 'timestamp', 'userId'].includes(key));
+    const isInvalidQuery = Object.keys(req.query).some(key => !['category', 'date', 'zipcode', 'timestamp', 'userId', 'secure'].includes(key));
     if (isInvalidQuery)
     {
       return res.status(400).json({error: "Invalid query"});
@@ -68,13 +74,13 @@ volunteerData.get('/', async (req, res) => {
 });
 // route to add volunteer data to the server
 volunteerData.post('/', async (req, res) => {
-    const { storeAddress, category, start_time, end_time, spots, timestamp, task, external, location, date, description} = req.body;
+    const { storeAddress, category, start_time, end_time, minAge, timestamp, task, external, location, date, description} = req.body;
     const userId = res.locals.uid;
     try {
       const ref = db.ref('volunteer_opportunities');
       const newTask = ref.push(); 
       // Capture the reference to the new data
-      await newTask.set({ storeAddress, category, start_time, end_time, spots, timestamp: timestamp.toString(), task, external, location, date, description, userId});
+      await newTask.set({ storeAddress, category, start_time, end_time, minAge, timestamp: timestamp.toString(), task, external, location, date, description, userId});
   
       res.status(200).json({message: "Data successfuly added to firebase"});
     } catch (error) {

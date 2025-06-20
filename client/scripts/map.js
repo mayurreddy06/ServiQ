@@ -279,15 +279,16 @@ async function fetchAndDisplayMarkers()
               continue;   
             }
           }
-          try
-          {
-            if (parseInt(specificTask.registrations.count) >= parseInt(spots))
-            {
-              // skips task if sign up is full for that task
-              continue;
-            }
-          }
-          catch(error){}
+          //NOTE FOR LATER: This is to add registrations count back, and this will remove the event if the registration is full
+          // try
+          // {
+          //   if (parseInt(specificTask.registrations.count) >= parseInt(spots))
+          //   {
+          //     // skips task if sign up is full for that task
+          //     continue;
+          //   }
+          // }
+          // catch(error){}
             // map box api to display the marker on the map
             const marker = new mapboxgl.Marker()
               .setLngLat([location.lng, location.lat])
@@ -300,6 +301,7 @@ async function fetchAndDisplayMarkers()
     })
     .catch(error => {
       console.log("Error in fetching markers" + error);
+      console.error("Error details:", error.stack);
     }); 
   console.log("Displayed " + markers.length + " markers on the map");
   }
@@ -310,24 +312,17 @@ async function fetchAndDisplayMarkers()
 }
 
 function convertTime(militaryTime) {
-  // Split the time into hours and minutes
   const parts = militaryTime.split(":");
   const hour = parseInt(parts[0]);
   const minute = parts[1];
-
-  // Determine if it's AM or PM
   let period = "AM";
   if (hour >= 12) {
     period = "PM";
   }
-
-  // Convert to 12-hour format
   let standardHour = hour % 12;
   if (standardHour === 0) {
     standardHour = 12;
   }
-
-  // Return the final result
   return standardHour + ":" + minute + " " + period;
 }
 

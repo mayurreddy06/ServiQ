@@ -266,6 +266,7 @@
     border: none;
     background-color: transparent;
     font-size: 14px;
+    /* NOTE TO SELF: SWITCH AGENCY DESCRIPTOION FOR MISSION STATEMENT then have the tab to add the image as well! */
     text-align: center;
     width: 50%;
 }
@@ -317,7 +318,7 @@
     transition: border-color 0.3s;
 }
 
-#task:focus, #external:focus {
+#task:focus, #external:focus, #description:focus {
     outline: none;
     border-color: #4CAF50;
     box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
@@ -336,13 +337,7 @@
     resize: vertical;
 }
 
-#description:focus {
-    outline: none;
-    border-color: #4CAF50;
-    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
-}
-
-.task-post label {
+label {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
@@ -351,7 +346,7 @@
 }
 
 /* Location Input */
-#autocomplete {
+#autocomplete{
     width: 100%;
     margin: 10px 0 20px;
     border: 1px solid #ddd;
@@ -361,7 +356,7 @@
     transition: border-color 0.3s;
 }
 
-#autocomplete:focus {
+#autocomplete:focus{
     outline: none;
     border-color: #4CAF50;
     box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
@@ -402,7 +397,7 @@
 /* Input Fields */
 #autocomplete,
 #datePOST,
-#datePATCH {
+#datePATCH, .agencyUpdateFormInput{
     width: 100%;
     padding: 12px 15px;
     border: 1px solid #ddd;
@@ -415,7 +410,7 @@
 
 #autocomplete:focus,
 #datePATCH:focus,
-#datePOST:focus {
+#datePOST:focus, .agencyUpdateFormInput:focus {
     outline: none;
     border-color: #4CAF50;
     box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);

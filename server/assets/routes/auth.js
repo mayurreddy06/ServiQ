@@ -186,6 +186,10 @@ auth.post('/register', async (req, res) => {
   }
 });
 
+// auth.get('/agency', async (req, res) => {
+  
+// })
+
 auth.get('/login', (req, res) => {
   res.render("signIn.ejs");
 });

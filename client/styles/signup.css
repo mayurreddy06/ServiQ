@@ -48,7 +48,7 @@
   color: #333;
 }
 
-.signup-info input {
+.signup-info input, .signup-info textarea {
   display: block;
   width: 100%;
   padding: 12px;
@@ -59,7 +59,7 @@
   margin: 0 auto;
 }
 
-input::placeholder {
+input::placeholder, textarea::placeholder {
   color: #888;
 }
 

@@ -29,25 +29,41 @@ document.querySelector(".task-post").addEventListener("submit", async function(e
       const start_time = document.querySelector('.start_timePOST').value;
       const end_time = document.querySelector('.end_timePOST').value;
       const category = document.querySelector(".inp-cbxPOST:checked")?.value;
-      const spots = document.querySelector('.volunteer-countPOST').value;
+      let minAge = document.querySelector('.minAgePOST')?.value;
+      if (!(minAge))
+      {
+        minAge = "None"
+      }
       const task = document.querySelector('.taskPOST').value;
       const external = document.querySelector('.externalPOST').value;
       const description = document.querySelector('.descriptionPOST').value;
       const timestamp = Date.now();
-      console.log(storeAddress, date, start_time, end_time, category, spots, task, description);
   
+      let lng;
+      let lat;
       // google places API to find lng & lat
-      const autocompleteInput = document.querySelector('.autocompletePOST');
-      const place = await JSON.parse(autocompleteInput.dataset.place);
-      let lng = place.geometry.location.lng;
-      let lat = place.geometry.location.lat;
+      try
+      {
+        const autocompleteInput = document.querySelector('.autocompletePOST');
+        const place = await JSON.parse(autocompleteInput.dataset.place);
+        lng = place.geometry.location.lng;
+        lat = place.geometry.location.lat;
+      }
+      catch(error)
+      {
+        document.getElementById("addressErrorMessagePOST").textContent = "Please select address from dropdown";
+        const targetElement = document.getElementById("addressErrorMessagePOST").parentElement.parentElement;
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+        throw error;
+      }
+      
   
       const volunteerData = { 
         storeAddress, 
         category,
         start_time, 
         end_time, 
-        spots,
+        minAge,
         timestamp,
         task,
         external,
@@ -62,13 +78,27 @@ document.querySelector(".task-post").addEventListener("submit", async function(e
       })
       .then(response => response.json())
       .then(data => {
-        setTimeout(function() {
+        const form = bootstrap.Modal.getInstance(document.getElementById("POSTModal"));
+        form.hide();
+        let alert = document.getElementById("messageSuccess");
+        alert.classList.remove("d-none");
+        let alertText = document.getElementById("databaseMessage");
+        alertText.textContent = "Volunteer Event Successfully Added"
+        
+        setTimeout(() => {
           window.location.reload();
-        }, 500)
+        }, 2500)
 
       })
       .catch(error => {
         console.log(error);
+        const form = bootstrap.Modal.getInstance(document.getElementById("POSTModal"));
+        form.hide();
+        let alert = document.getElementById("messageFailed");
+        alert.classList.remove("d-none");
+        setTimeout(() => {
+          window.location.reload();
+        }, 2500)
       });
     }
     catch(error)

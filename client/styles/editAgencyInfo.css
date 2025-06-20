@@ -1,0 +1,27 @@
+
+.signup-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.signup-info label {
+  text-align: left;
+  font-size: 14px;
+  color: #333;
+}
+
+.signup-info input, .signup-info textarea {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  background-color: white;
+  color: black;
+  font-size: 16px;
+  margin: 0 auto;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #888;
+}
