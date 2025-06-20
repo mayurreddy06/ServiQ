@@ -75,6 +75,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelector(".edit-post").addEventListener('submit', async function(event) {
     // Check if the submitted form is the edit form
       event.preventDefault();
+      let buttons = document.querySelectorAll("button");
+      buttons.forEach((button) => {
+        button.disabled = true;
+      });
       
       const storeAddress = document.querySelector(".autocompletePATCH").value;
       const date = document.querySelector(".datePATCH").value;

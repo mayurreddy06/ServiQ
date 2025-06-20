@@ -28,6 +28,13 @@ document.getElementById('signin-form').addEventListener('submit', async (event) 
   let email = document.getElementById('email-entry').value;
   const password = document.getElementById('password-entry').value;
   console.log("Attempting login with email:", email);
+
+  document.getElementById('error-tag').textContent = "";
+  document.getElementById("customSignInLoading").textContent = "Processing...";
+  let buttons = document.querySelectorAll("button");
+  buttons.forEach((button) => {
+    button.disabled = true;
+  })
   
   try {
     const accountCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -60,41 +67,52 @@ document.getElementById('signin-form').addEventListener('submit', async (event) 
       console.log(error);
     });
   } catch(error) {
-    document.getElementById('error-tag').textContent = "Invalid Login Credentials";
+    let errorTag = document.getElementById('error-tag');
+    if (error.code === "auth/too-many-requests") {
+      errorTag.textContent = "Too many requests"
+    }
+    else{
+      errorTag.textContent = "Invalid Login Credentials";
+    }
   }
+  document.getElementById("customSignInLoading").textContent = "";
+  buttons = document.querySelectorAll("button");
+  buttons.forEach((button) => {
+    button.disabled = false;
+  })
 });
 
-// Handle email verification
-const urlParams = new URLSearchParams(window.location.search);
-const mode = urlParams.get('mode');
-const oobCode = urlParams.get('oobCode');
+// // Handle email verification
+// const urlParams = new URLSearchParams(window.location.search);
+// const mode = urlParams.get('mode');
+// const oobCode = urlParams.get('oobCode');
 
-if (mode === 'verifyEmail' && oobCode) {
-  const auth = getAuth();
+// if (mode === 'verifyEmail' && oobCode) {
+//   const auth = getAuth();
   
-  applyActionCode(auth, oobCode)
-    .then(async () => {
-      const user = auth.currentUser;
-      if (user) {
-        const token = await getIdToken(user);
+//   applyActionCode(auth, oobCode)
+//     .then(async () => {
+//       const user = auth.currentUser;
+//       if (user) {
+//         const token = await getIdToken(user);
         
-        const response = await fetch('/auth/login', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include'
-        });
+//         const response = await fetch('/auth/login', {
+//           method: 'POST',
+//           headers: {
+//             'Authorization': `Bearer ${token}`,
+//             'Content-Type': 'application/json'
+//           },
+//           credentials: 'include'
+//         });
         
-        if (response.ok) {
-          alert('Email verified successfully!');
-          window.location.href = '/admin/dashboard';
-        }
-      }
-    })
-    .catch((error) => {
-      console.error('Email verification failed:', error);
-      alert('Email verification failed. Please try again.');
-    });
-}
+//         if (response.ok) {
+//           alert('Email verified successfully!');
+//           window.location.href = '/admin/dashboard';
+//         }
+//       }
+//     })
+//     .catch((error) => {
+//       console.error('Email verification failed:', error);
+//       alert('Email verification failed. Please try again.');
+//     });
+// }

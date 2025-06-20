@@ -3,6 +3,7 @@
 <head>
     <title>Sign Up</title>
     <link rel="stylesheet" href="/styles/signup.css">
+    <link rel = "stylesheet" href = "/styles/googleButton.css">
 </head>
 
 <body>
@@ -12,31 +13,54 @@
          <h2 class="admin-text">Create Agency Account</h2>
 
         <form id="agency-register-form">
-            <div class="signup-info">
-                <input type="text" placeholder="Agency name" id="agency-name" name="agencyName">
-                <input type="email" placeholder="email" id="agency-email" name="email">
-                <textarea type="text" placeholder="Mission Statement" class = "agencyDescription-CTA" id="agency-desc" name="agencyDesc"></textarea>
-                <input type="password" placeholder="Password" id="agency-password" name="password">
-                <input type="password" placeholder="Confirm" id="agency-reenter-password" name="password2">
-                <p class="help-text">6+ characters with number or symbol</p>
-            </div>
-            <div class="actions">
-                <button type="submit" id="submit-button">Sign up</button>
-            </div>
-            <div class="error-message">
-                <p id="error-tag"></p>
-            </div>
-            <div class="login-link">
-            Already have an account? <a href="/auth/login">Log in</a>
-            </div>
+              <div class="signup-info">
+                  <input type="text" placeholder="Agency name" id="agency-name" name="agencyName">
+                  <input type="email" placeholder="email" id="agency-email" name="email">
+                  <textarea type="text" placeholder="Mission Statement" class = "agencyDescription-CTA" id="agency-desc" name="agencyDesc"></textarea>
+                  <input type="password" placeholder="Password" id="agency-password" name="password">
+                  <input type="password" placeholder="Confirm" id="agency-reenter-password" name="password2">
+                  <p class="help-text">6+ characters with number or symbol</p>
+              </div>
+              <div class="actions">
+                  <button type="submit" id="submit-button">Sign up</button>
+              </div>
+              <div class="error-message">
+                  <p id="error-tag"></p>
+              </div>
         </form>
+        <p class = "hrDivider">OR</p>
+            <button id = "google-sign" style = "border: 1px solid black; cursor: pointer">Sign up With Google        
+            </button>
     </div>
+    </div>
+        <!-- Modal -->
+    <div class="modal fade" id="googleRegisterModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"  data-bs-backdrop="static" data-bs-keyboard="false">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Agency Information</h5>
+          </div>
+          <div class="modal-body">
+            <p class="subtitle">Before you can finish logging in as a Google user, fill out the required fields</p>
+
+            <form id="google-register-form">
+                <div class="signup-info">
+                    <input type="text" placeholder="Agency name" id="agency-nameMODAL" name="agencyName" required>
+                    <textarea type="text" class = "agencyDescription-CTA" placeholder="Mission Statement" id="agency-descMODAL" name="agencyDesc" required></textarea>
+                </div>
+                <div class="actions" style = "margin-top: 25px">
+                    <button type="submit" id="submit-buttonMODAL">Sign in</button>
+                </div>
+            </form>
+        </div>
+      </div>
     </div>
 
     <script type = "module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, applyActionCode, getIdToken } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword,  GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, applyActionCode, getIdToken } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { firebaseConfig } from '/scripts/firebaseConfig.js'
+const provider = new GoogleAuthProvider();
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -94,6 +118,87 @@ const auth = getAuth(app);
       document.getElementById('error-tag').textContent = "Invalid Login Credentials";
   }
 });
+
+
+document.getElementById("google-sign").addEventListener("click", async () => {
+    signInWithPopup(auth, provider)
+  .then(async (result) => {
+    console.log(result);
+    // This gives you a Google Access Token. You can use it to access the Google API.
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential.accessToken;
+    const user = result.user;
+    const email = result.user.email;
+    const uid = user.uid;
+    await authorizedFetch('/auth/google/verify/', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        // Automatically converted to "username=example&password=password"
+        body: new URLSearchParams({email, uid}),
+        credentials: 'include'
+        })
+        .then(async response => {
+          if (!response.ok)
+          {
+            const errorBody = await response.json();
+            const error = new Error(errorBody.error);
+            error.status = response.status;
+            throw error;
+          }
+          return response.json();
+        })
+        .then(data => {
+          alert("Google account already exists, please sign in on sign in page");
+          window.location.href = "/auth/login";
+        })
+        .catch(error => {
+          if (error.status === 406)
+          {
+              const modal = new bootstrap.Modal(document.getElementById('googleRegisterModal'));
+            modal.show();
+             document.getElementById("google-register-form").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const agencyName = document.getElementById("agency-nameMODAL").value;
+            const agencyDesc = document.getElementById("agency-descMODAL").value;
+                await authorizedFetch('/auth/google/create', {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                },
+                // Automatically converted to "username=example&password=password"
+                body: new URLSearchParams({agencyName, agencyDesc, email, uid}),
+                credentials: 'include'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    modal.hide();
+                    window.location.href = "/auth/login";
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            })
+
+          }
+          else
+          {
+            alert("error" + error);
+          }
+        });
+  }).catch((error) => {
+    // Handle Errors here.
+    console.log(error);
+    const errorCode = error.code;
+    const errorMessage = error.message;
+  });
+});
+
+
+
+
+
     </script>
     
    

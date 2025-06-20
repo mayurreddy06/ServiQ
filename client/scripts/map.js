@@ -264,7 +264,7 @@ async function fetchAndDisplayMarkers()
       for (let taskId in volunteerObjects)
         {
           const specificTask = volunteerObjects[taskId];
-          const { storeAddress, location, category, task, spots, external, start_time, end_time, date, description} = specificTask;
+          const { storeAddress, location, category, task, minAge, external, start_time, end_time, date, description} = specificTask;
       
           if (useZipcode)
           {
@@ -295,7 +295,7 @@ async function fetchAndDisplayMarkers()
               .addTo(map);
             markers.push(marker);
             marker.getElement().addEventListener('click', () => {
-              openCustomPopup(storeAddress, task, taskId, description, start_time, end_time, date, external);
+              openCustomPopup(storeAddress, task, taskId, description, start_time, end_time, date, external, minAge);
             });
         }
     })
@@ -327,11 +327,31 @@ function convertTime(militaryTime) {
 }
 
 // Function to open the custom popup, viewing the details for a certain task on
-async function openCustomPopup(storeAddress, task, taskId, description, start_time, end_time, date, external) {
+async function openCustomPopup(storeAddress, task, taskId, description, start_time, end_time, date, external, minAge) {
+  document.getElementById('popupTask').innerText = "";
+  document.getElementById('popupDescription').innerText = "";
+  document.getElementById('popupTiming').innerText = "";
+  document.getElementById('popupLink').innerText = "";
+  document.getElementById('popupAge').innerText = "";
+  if (document.getElementById('ageDisplayText').classList.contains('d-none'))
+  {
+    document.getElementById('ageDisplayText').classList.remove('d-none');
+  }
+
   document.getElementById('popupTask').innerText = task;
   document.getElementById('popupDescription').innerText = description;
   document.getElementById('popupTiming').innerText = date + " at " + convertTime(start_time) + " - " + convertTime(end_time);
   document.getElementById('popupLink').innerText = external;
+  // Optional because some tasks may not have minimum age
+  if (minAge)
+  {
+    document.getElementById('popupAge').innerText = minAge;
+  }
+  else
+  {
+    document.getElementById('ageDisplayText').classList.add("d-none");
+  }
+  
   document.getElementById('popupTag').setAttribute("href", "https://" + external);
   document.getElementById('customPopup').style.display = 'block';
   
@@ -352,6 +372,7 @@ async function openCustomPopup(storeAddress, task, taskId, description, start_ti
       emailSuccess.classList.add("hidden");
     }
     const email = document.getElementById('popupEmail').value.trim();
+    document.getElementById('registerBtn').disabled = true;
     await fetch('/map/email', {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
@@ -382,5 +403,7 @@ async function openCustomPopup(storeAddress, task, taskId, description, start_ti
             console.log(error);
           }
     });
+      document.getElementById('registerBtn').disabled = false;
     };
+    
 }

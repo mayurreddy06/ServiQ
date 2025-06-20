@@ -59,30 +59,11 @@ document.getElementById("google-sign").addEventListener("click", async () => {
         .catch(error => {
           if (error.status === 406)
           {
-            const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
-            modal.show();
-             document.getElementById("agency-register-form").addEventListener("submit", async function(event) {
-            event.preventDefault();
-            const agencyName = document.getElementById("agency-name").value;
-            const agencyDesc = document.getElementById("agency-desc").value;
-                await authorizedFetch('/auth/google/create', {
-                method: "POST",
-                headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                },
-                // Automatically converted to "username=example&password=password"
-                body: new URLSearchParams({agencyName, agencyDesc, email, uid}),
-                credentials: 'include'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    modal.hide();
-                    window.location.href = "/";
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-            })
+            let errorTag = document.getElementById('error-tag');
+            errorTag.textContent = "Google Account is Not Registered"
+            setTimeout(() => {
+              errorTag.textContent = "";
+            }, 5000)
           }
           else
           {

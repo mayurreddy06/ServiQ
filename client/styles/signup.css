@@ -64,7 +64,7 @@ input::placeholder, textarea::placeholder {
 }
 
 
-#submit-button {
+#submit-button, #submit-buttonMODAL {
   width: 100%;
   padding: 12px;
   border: none;
@@ -76,7 +76,7 @@ input::placeholder, textarea::placeholder {
   margin-top: 5px;
 }
 
-#submit-button:hover {
+#submit-button:hover, #submit-buttonMODAL:hover {
   background-color: #017b07;
 }
 

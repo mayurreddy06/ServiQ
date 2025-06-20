@@ -83,24 +83,25 @@ auth.post("/google/create", async (req, res) => {
       createdAt: new Date().toISOString()
     });
 
-    // CREATE JWT COOKIE HERE
-    const jwtPayload = {
-      uid: uid,
-      email: email,
-      isVerified: true
-    };
+    // do not need to create JWT cookies in register proccess, will redirect to login directly instead
+    // // CREATE JWT COOKIE HERE
+    // const jwtPayload = {
+    //   uid: uid,
+    //   email: email,
+    //   isVerified: true
+    // };
 
-    const jwtToken = jwt.sign(jwtPayload, process.env.JWT_SECRET, { 
-      expiresIn: '24h' 
-    });
+    // const jwtToken = jwt.sign(jwtPayload, process.env.JWT_SECRET, { 
+    //   expiresIn: '24h' 
+    // });
 
-    // Set HTTP-only cookie
-    res.cookie('authToken', jwtToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: 'lax'
-    });
+    // // Set HTTP-only cookie
+    // res.cookie('authToken', jwtToken, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === 'production',
+    //   maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    //   sameSite: 'lax'
+    // });
 
     res.status(200).json({message: "User information successfully stored in firebase"});
   } catch (error) {

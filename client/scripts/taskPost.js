@@ -22,6 +22,10 @@ window.authorizedFetch = async (input, init = {}) => {
 
 document.querySelector(".task-post").addEventListener("submit", async function(event) {
     event.preventDefault();
+    let buttons = document.querySelectorAll("button");
+    buttons.forEach((button) => {
+      button.disabled = true;
+    });
     try {
       // Validate required fields
       const storeAddress = document.querySelector('.autocompletePOST').value;

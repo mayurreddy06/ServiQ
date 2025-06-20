@@ -24,8 +24,9 @@
         <div class = "card" style = "display: flex; flex-direction: column;justify-content: center;align-items:center; margin: 10px 0">
         <h5>Welcome, <%=(locals.email)%></h5>
         <div class = "text-center">
-            <button type = "button" class = "btn taskPost-btn" data-bs-toggle = "modal" data-bs-target = "#missionStateToggle">
-            Profile</button>
+            <!-- Temporarily commented out till we add feature for mission statements and images -->
+            <!-- <button type = "button" class = "btn taskPost-btn" data-bs-toggle = "modal" data-bs-target = "#missionStateToggle">
+            Profile</button> -->
             <button type="button" class="btn taskPost-btn" data-bs-toggle="modal" data-bs-target="#POSTModal">
             Add New Event
             </button>
@@ -47,7 +48,7 @@
 
 
 
-<!-- Modal for editing agency details -->
+<!-- Modal for editing agency details, temporarily not being used -->
 <div class="modal fade" id="missionStateToggle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -232,11 +233,11 @@
                 <!--Event Disc. and Volunteer Count-->
                 <div>
                     <label for="volunteer-count">Minimum Age Requirement</label>
-                    <input type="number" id="volunteer-count" placeholder = "This field is not required" class = "minAgePATCH" name="volunteer_count">
+                    <input type="number" id="volunteer-count" placeholder = "Leave blank if none" min = "10" max = "65" class = "minAgePATCH" name="volunteer_count">
                 </div>
                 <div>
                     <label for="task">Task</label>
-                    <input type="text" id="task" placeholder = "Character limit 35" name="task" maxlength = "35" class = "taskPATCH" required>
+                    <input type="text" id="task" placeholder = "Character Limit 35" name="task" maxlength = "35" class = "taskPATCH" required>
                 </div>
                 <div>
                     <label for="task">External</label>
@@ -244,7 +245,7 @@
                 </div>
                 <div>
                     <label for="description">Event Description</label>
-                    <textarea id="description" class = "descriptionPATCH" name="description"></textarea>
+                    <textarea id="description" maxlength = "500" placeholder = "Character Limit 500" class = "descriptionPATCH" name="description"></textarea>
                 </div>
                 <div style = "display: flex; justify-content: center">
                     <input class="btn taskPost-btn submitMethodPATCH" type="submit" value="Submit">
@@ -420,11 +421,11 @@
                 <!--Event Disc. and Volunteer Count-->
                 <div>
                     <label for="volunteer-count">Minimum Age Requirement</label>
-                    <input type="number" id="volunteer-count" placeholder = "This field is not required" min = "0" max = "65" maxlength = "35" class = "minAgePOST" name="volunteer_count">
+                    <input type="number" id="volunteer-count" placeholder = "Leave blank if none" min = "10" max = "65" class = "minAgePOST" name="volunteer_count">
                 </div>
                 <div>
                     <label for="task">Task</label>
-                    <input type="text" id="task" placeholder = "Character limit 35" class = "taskPOST" name="task" required>
+                    <input type="text" id="task" placeholder = "Character Limit 35" maxlength = "35" class = "taskPOST" name="task" required>
                 </div>
                 <div>
                     <label for="task">External</label>
@@ -432,7 +433,7 @@
                 </div>
                 <div>
                     <label for="description">Event Description</label>
-                    <textarea id="description" class = "descriptionPOST" name="description"></textarea>
+                    <textarea id="description" maxlength = "500" placeholder = "Character Limit 500" class = "descriptionPOST" name="description"></textarea>
                 </div>
                 <div style = "display: flex; justify-content: center">
                     <input class="btn taskPost-btn" type="submit" value="Submit">

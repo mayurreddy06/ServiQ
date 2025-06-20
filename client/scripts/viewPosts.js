@@ -72,6 +72,10 @@ window.onload = async function()
 
                 deleteButton.addEventListener("click", async function(event) {
                   event.preventDefault();
+                  let buttons = document.querySelectorAll("button");
+                  buttons.forEach((button) => {
+                    button.disabled = true;
+                  });
                     const timestamp = this.id;
                     console.log(timestamp);
                     await authorizedFetch('/volunteer-data/' + timestamp, {
