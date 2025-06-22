@@ -109,6 +109,7 @@ app.use('/images', express.static(path.join(__dirname, '../client/images')));
 app.use('/scripts', express.static(path.join(__dirname, '../client/scripts')));
 app.use('/config', express.static(path.join(__dirname, './assets')));
 app.use('/bootstrap', express.static(__dirname + '/../node_modules/bootstrap/dist'));
+app.use('/bootstrap-icons', express.static(__dirname + '/../node_modules/bootstrap-icons'));
 app.use('/flatpickr', express.static(__dirname + '/../node_modules/flatpickr/dist'));
 
 // Cache control middleware

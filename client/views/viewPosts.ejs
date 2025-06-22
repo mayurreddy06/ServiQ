@@ -14,6 +14,8 @@
         <!-- Flatpickr CSS -->
          <link rel="stylesheet" type = "text/css" href="/flatpickr/flatpickr.min.css" />
         <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"> -->
+         <!-- this is for bootstrap icons specifically (to use the i tags) and display the alerts -->
+         <link rel = "stylesheet" href = "/bootstrap-icons/font/bootstrap-icons.css">
     <title>ServiQ</title>
 </head>
 <body>
@@ -22,7 +24,7 @@
         <!-- Button trigger modal -->
     <div id = "top-buttons">
         <div class = "card" style = "display: flex; flex-direction: column;justify-content: center;align-items:center; margin: 10px 0">
-        <h5>Welcome</h5>
+        <h5>Welcome <%=(locals.email)%></h5>
         <div class = "text-center">
             <!-- Temporarily commented out till we add feature for mission statements and images -->
             <!-- <button type = "button" class = "btn taskPost-btn" data-bs-toggle = "modal" data-bs-target = "#missionStateToggle">
@@ -31,13 +33,13 @@
             Add New Event
             </button>
             <div class="alert alert-success d-flex align-items-center d-none" id = "messageSuccess" role="alert">
-                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                        <i class="bi bi-check-circle-fill me-2"></i>
                             <div id = "databaseMessage">
                                 
                             </div>
             </div>
             <div class="alert alert-danger d-flex align-items-center d-none" id = "messageFailed" role="alert">
-                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
                             <div>
                                 Internal Server Error
                             </div>
@@ -48,8 +50,8 @@
 
 
 
-<!-- Modal for editing agency details, temporarily not being used -->
-<div class="modal fade" id="missionStateToggle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Modal for editing agency details, temporarily not being used (DO NOT DELETE) commented out to reduce memory chunk -->
+<!-- <div class="modal fade" id="missionStateToggle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -76,7 +78,7 @@
     </div>
   </div>
 </div>
-    
+     -->
     
 
 <!-- Modal -->
@@ -92,7 +94,7 @@
         <div>        
             <form class="edit-post">
                 <div class="location">
-                    <label for="autocomplete">Enter a Location</label>
+                    <label for="autocomplete">Enter a Location<span class="text-danger fw-bold">  *</span></label>
                     <input type="text" placeholder = "Please re-enter and select location before submitting" id="autocomplete" class = "autocompletePATCH" name="location" onclick = "initAutocomplete(event)" required>
                     <p id = "addressErrorMessagePATCH" style = "color: red"></p>
                 </div>
@@ -117,8 +119,8 @@
 
                 <!--All available categories-->
                 <div class="category-group" style = "display: flex; flex-direction: column; justify-content: center; align-items: center">
-                    <label>Select Categories</label>
-                    <div class="category-boxes" style = "display: flex; justify-content: center;">
+                    <label>Select Category<span class="text-danger fw-bold">  *</span></label>
+                    <div class="category-boxes" style = "display: flex; justify-content: center;" required>
                         <div>
                             <input type="radio" id="comm-service" class="inp-cbx inp-cbxPATCH" name="category" value="community">
                             <label class="cbx" for="comm-service">
@@ -236,15 +238,15 @@
                     <input type="number" id="volunteer-count" placeholder = "Leave blank if none" min = "10" max = "65" class = "minAgePATCH" name="volunteer_count">
                 </div>
                 <div>
-                    <label for="task">Task</label>
+                    <label for="task">Task<span class="text-danger fw-bold">  *</span></label>
                     <input type="text" id="task" placeholder = "Character Limit 35" name="task" maxlength = "35" class = "taskPATCH" required>
                 </div>
                 <div>
-                    <label for="task">External</label>
+                    <label for="task">External<span class="text-danger fw-bold">  *</span></label>
                     <input type="text" id="external" class = "externalPATCH" name="external" placeholder = "Enter external link" required>
                 </div>
                 <div>
-                    <label for="description">Event Description</label>
+                    <label for="description">Event Description<span class="text-danger fw-bold">  *</span></label>
                     <textarea id="description" maxlength = "500" placeholder = "Character Limit 500" class = "descriptionPATCH" name="description"></textarea>
                 </div>
                 <div style = "display: flex; justify-content: center">
@@ -280,7 +282,7 @@
         <div>        
             <form class="task-post">
                 <div class="location">
-                    <label for="autocomplete">Enter a Location</label>
+                    <label for="autocomplete">Enter a Location<span class="text-danger fw-bold">  *</span></label>
                     <input type="text" id="autocomplete" class = "autocompletePOST" name="location" onclick = "initAutocomplete(event)" required>
                     <p id = "addressErrorMessagePOST" style = "color: red"></p>
                 </div>
@@ -305,10 +307,10 @@
 
                 <!--All available categories-->
                 <div class="category-group" style = "display: flex; flex-direction: column; justify-content: center; align-items: center">
-                    <label>Select Categories</label>
+                    <label>Select Category<span class="text-danger fw-bold">  *</span></label>
                     <div class="category-boxes" style = "display: flex; justify-content: center;">
                         <div>
-                            <input type="radio" id="comm-servicePOST" class="inp-cbx inp-cbxPOST" name="category" value="community">
+                            <input type="radio" id="comm-servicePOST" class="inp-cbx inp-cbxPOST" name="category" value="community" checked>
                             <label class="cbx" for="comm-servicePOST">
                                 <span>
                                     <svg width="12px" height="10px">
@@ -421,19 +423,19 @@
                 <!--Event Disc. and Volunteer Count-->
                 <div>
                     <label for="volunteer-count">Minimum Age Requirement</label>
-                    <input type="number" id="volunteer-count" placeholder = "Leave blank if none" min = "10" max = "65" class = "minAgePOST" name="volunteer_count">
+                    <input type="number" id="volunteer-count" placeholder = "12" min = "10" max = "65" class = "minAgePOST" name="volunteer_count">
                 </div>
                 <div>
-                    <label for="task">Task</label>
+                    <label for="task">Task<span class="text-danger fw-bold">  *</span></label>
                     <input type="text" id="task" placeholder = "Character Limit 35" maxlength = "35" class = "taskPOST" name="task" required>
                 </div>
                 <div>
-                    <label for="task">External</label>
-                    <input type="text" id="external" class = "externalPOST" name="external" placeholder = "Enter external link or contact information" required>
+                    <label for="task">External<span class="text-danger fw-bold">  *</span></label>
+                    <input type="text" id="external" class = "externalPOST" name="external" placeholder = "https://" required>
                 </div>
                 <div>
-                    <label for="description">Event Description</label>
-                    <textarea id="description" maxlength = "500" placeholder = "Character Limit 500" class = "descriptionPOST" name="description"></textarea>
+                    <label for="description">Event Description<span class="text-danger fw-bold">  *</span></label>
+                    <textarea id="description" maxlength = "500" placeholder = "Character Limit 500" class = "descriptionPOST" name="description" required></textarea>
                 </div>
                 <div style = "display: flex; justify-content: center">
                     <input class="btn taskPost-btn" type="submit" value="Submit">

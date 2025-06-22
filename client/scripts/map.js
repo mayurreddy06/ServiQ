@@ -337,10 +337,23 @@ async function openCustomPopup(storeAddress, task, taskId, description, start_ti
   {
     document.getElementById('ageDisplayText').classList.remove('d-none');
   }
+  if (document.getElementById('timingDisplayText').classList.contains('d-none'))
+  {
+    document.getElementById('timingDisplayText').classList.remove('d-none');
+  }
+  document.getElementById('popupTiming').innerText = "";
 
   document.getElementById('popupTask').innerText = task;
   document.getElementById('popupDescription').innerText = description;
-  document.getElementById('popupTiming').innerText = date + " at " + convertTime(start_time) + " - " + convertTime(end_time);
+  if (!(date) && !(start_time))
+  {
+    document.getElementById('timingDisplayText').classList.add("d-none");
+  }
+  else
+  {
+    document.getElementById('popupTiming').innerText = (date ? date : '') + ' ' + (start_time ? convertTime(start_time) : '') + (end_time ? " - " + convertTime(end_time) : '');
+  }
+  
   document.getElementById('popupLink').innerText = external;
   // Optional because some tasks may not have minimum age
   if (minAge)
@@ -352,7 +365,7 @@ async function openCustomPopup(storeAddress, task, taskId, description, start_ti
     document.getElementById('ageDisplayText').classList.add("d-none");
   }
   
-  document.getElementById('popupTag').setAttribute("href", "https://" + external);
+  document.getElementById('popupTag').setAttribute("href", external);
   document.getElementById('customPopup').style.display = 'block';
   
 

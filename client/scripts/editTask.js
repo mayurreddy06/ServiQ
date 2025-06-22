@@ -80,12 +80,13 @@ document.addEventListener('DOMContentLoaded', () => {
         button.disabled = true;
       });
       
+      // data start time end time and minAge are all optional
       const storeAddress = document.querySelector(".autocompletePATCH").value;
-      const date = document.querySelector(".datePATCH").value;
-      const start_time = document.querySelector(".start_timePATCH").value;
-      const end_time = document.querySelector(".end_timePATCH").value;
-      const category = document.querySelector(".inp-cbxPATCH:checked")?.value;
-      const minAge = document.querySelector('.minAgePATCH').value;
+      const date = document.querySelector(".datePATCH")?.value;
+      const start_time = document.querySelector(".start_timePATCH")?.value;
+      const end_time = document.querySelector(".end_timePATCH")?.value;
+      const category = document.querySelector(".inp-cbxPATCH:checked").value;
+      const minAge = document.querySelector('.minAgePATCH')?.value;
       const task = document.querySelector('.taskPATCH').value;
       const external = document.querySelector('.externalPATCH').value;
       const description = document.querySelector('.descriptionPATCH').value;

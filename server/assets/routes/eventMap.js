@@ -23,6 +23,17 @@ const transporter = nodemailer.createTransport({
 map.post('/email', async (req, res) => {
     let { email, storeAddress, taskId, task, description, start_time, end_time, date, external} = req.body;
     email = email.toLowerCase();
+
+    let timing = "";
+    if (!(date) && !(start_time))
+    {
+      timing = "Obscure"
+    }
+    else
+    {
+      timing = (date ? date : '') + ' ' + (start_time ? convertTime(start_time) : '') + (end_time ? " - " + convertTime(end_time) : '');
+    }
+
     start_time = convertTime(start_time)
     end_time = convertTime(end_time)
 
@@ -116,7 +127,7 @@ map.post('/email', async (req, res) => {
             Date & Time
           </h2>
           <p style="color: #666; margin: 0; font-size: 16px; line-height: 1.5; font-weight: bold;">
-            ${date} at ${start_time} to ${end_time}
+            ${timing}
           </p>
         </div>
 

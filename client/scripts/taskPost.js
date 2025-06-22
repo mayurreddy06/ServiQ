@@ -27,17 +27,13 @@ document.querySelector(".task-post").addEventListener("submit", async function(e
       button.disabled = true;
     });
     try {
-      // Validate required fields
+      // date start time end time minimum age are not required
       const storeAddress = document.querySelector('.autocompletePOST').value;
-      const date = document.querySelector('.datePOST').value;
-      const start_time = document.querySelector('.start_timePOST').value;
-      const end_time = document.querySelector('.end_timePOST').value;
-      const category = document.querySelector(".inp-cbxPOST:checked")?.value;
+      const date = document.querySelector('.datePOST')?.value;
+      const start_time = document.querySelector('.start_timePOST')?.value;
+      const end_time = document.querySelector('.end_timePOST')?.value;
+      const category = document.querySelector(".inp-cbxPOST:checked").value;
       let minAge = document.querySelector('.minAgePOST')?.value;
-      if (!(minAge))
-      {
-        minAge = "None"
-      }
       const task = document.querySelector('.taskPOST').value;
       const external = document.querySelector('.externalPOST').value;
       const description = document.querySelector('.descriptionPOST').value;

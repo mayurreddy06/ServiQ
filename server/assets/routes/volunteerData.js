@@ -18,20 +18,16 @@ volunteerData.get('/', async (req, res) => {
     }
     catch(error)
     {
-      return res.status(500).json({});
+      return res.status(500).json({error: "No volunteer tasks found"});
     }
     // filter based on queries
     // key is not needed so left _ (or null) and value is the task information (still an object)
-    console.log("HIIIIIIIIIIIIIIIIIIIIIII" + res.locals.uid);
     if (req.query.secure)
     {
-      console.log("eeeeWHY IS THIS EXEUCTING")
       filteredTasks = filteredTasks.filter(([_, task]) => {
-        console.log("We are comparing " + task.userId +  " to: " +  res.locals.uid);
         return (task.userId === res.locals.uid);
       });
       const result = Object.fromEntries(filteredTasks);
-      console.log(result);
       return res.status(200).json(result);
     }
     
