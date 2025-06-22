@@ -139,7 +139,7 @@ const map = require("./assets/routes/eventMap.js");
 
 // Middleware for protected routes
 const requireAuth = (req, res, next) => {
-  if (!(req.path === '/volunteer-data') && req.method === 'GET' && !(req.user))
+  if (!(req.originalUrl === '/volunteer-data') && req.method === 'GET' && !(req.user))
   {
       let errorCode = 401;
       let errorMessage = "You are not authorized to access this page"
