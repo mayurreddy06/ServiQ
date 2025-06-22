@@ -212,8 +212,12 @@
     padding: 0;
 }
 
-.overflow {
+.overflow-div {
     height: 15vh;
+    overflow-y: auto;
+}
+.overflow-p {
+    height: 10vh;
     overflow-y: auto;
 }
 

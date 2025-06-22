@@ -63,7 +63,7 @@ map.post('/email', async (req, res) => {
   
         // if the email already exists in the database in firebase, the user is already signed up
         if (registrations.volunteers[underscoreEmail]) {
-          return res.status(405).json({error: "Email has already been sent under this google account"});
+          return res.status(405).json({error: "Email has already been sent under this account"});
         }
       }
       catch(error)
