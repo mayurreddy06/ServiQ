@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <%-include('navbar.ejs')%>
+    <div class="custom-bg text-dark">
+    <div class="d-flex align-items-center justify-content-center px-2" style = "min-height: calc(100vh - 80px)">
+        <div class="text-center">
+            <h1 class="display-1 fw-bold"><%=(locals.errorCode)%></h1>
+            <p class="fs-2 fw-medium mt-4">Oops! Page not found</p>
+            <p class="mt-4 mb-5"><%=(locals.errorMessage)%></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

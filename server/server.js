@@ -139,13 +139,16 @@ const map = require("./assets/routes/eventMap.js");
 
 // Middleware for protected routes
 const requireAuth = (req, res, next) => {
-  if (!(req.method === 'GET'))
+  if (!(req.path === '/volunteer-data') && req.method === 'GET' && !(req.user))
   {
-    if (!req.user) {
-    return res.status(401).json({error: "Authentication required"});
-    }
+      let errorCode = 401;
+      let errorMessage = "You are not authorized to access this page"
+      res.render('errorPage.ejs', {errorCode, errorMessage})
   }
-  next();
+  else
+  {
+    next();
+  }
   
 };
 
@@ -165,11 +168,12 @@ app.use("/admin", requireAuth, adminPages);
 app.use("/auth", userAuth); // Auth routes handle their own middleware
 app.use("/map", map);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Unhandled error:', err);
-  res.status(500).json({error: 'Internal server error'});
+app.use((req, res, next) => {
+  let errorCode = 404;
+  let errorMessage = "The page you're looking for doesn't exist or has been moved"
+  res.render('errorPage.ejs', {errorCode, errorMessage})
 });
+
 
 // Start server
 app.listen(PORT, () => {
