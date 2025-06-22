@@ -131,6 +131,18 @@ app.get('/about', (req, res) => {
   res.render("about.ejs");
 });
 
+app.get('/api/mapbox-token', (req, res) => {
+  res.json({ 
+    accessToken: process.env.MAPBOX_ACCESS_TOKEN 
+  });
+});
+
+app.get('/api/config', (req, res) => {
+  res.json({
+    mapboxToken: process.env.MAPBOX_ACCESS_TOKEN
+  });
+});
+
 // Route imports
 const volunteerData = require('./assets/routes/volunteerData.js');
 const adminPages = require("./assets/routes/admin.js");
