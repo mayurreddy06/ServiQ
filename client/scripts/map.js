@@ -1,4 +1,4 @@
-const ACCESS_TOKEN = 'pk.eyJ1IjoidmlzaGFscHV0dGFndW50YSIsImEiOiJjbTUxaDUxMGQxeGpnMmtwcHVycGhqaHhsIn0.IWxQPRNmfEJWT-k8sTCGlA';
+const ACCESS_TOKEN = process.env.MAPBOX_API_KEY;
 mapboxgl.accessToken = ACCESS_TOKEN;
 
 // declare map
