@@ -16,7 +16,7 @@
     display: flex;
     padding-left: 35px;
     justify-content: center;
-    height: 30vh;
+    height: 20%;
     background-color: var(--primary-color);
     color: var(--white);
 }
@@ -24,7 +24,7 @@
 .introduction {
     display: flex;
     justify-content: flex-start;
-    height: 30vh;
+    height: 20%;
     align-items: center;
     width: 100% !important;
 }
@@ -33,6 +33,7 @@
     max-width: 100vh;
     border: none !important;
     background-color: transparent !important;
+    
 }
 
 .introduction h2 {
