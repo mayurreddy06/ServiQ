@@ -20,7 +20,7 @@ async function initializeMapbox() {
       container: 'map',
       style: 'mapbox://styles/mapbox/streets-v11',
       center: [-82.9988, 39.9612],
-      zoom: 12,
+      zoom: 8,
     });
 
     // adds user navigation controls to the map
@@ -384,6 +384,7 @@ async function openCustomPopup(storeAddress, task, taskId, description, start_ti
   }
   
   document.getElementById('popupTag').setAttribute("href", external);
+  document.getElementById('popupTag').setAttribute("target", '_blank');
   document.getElementById('customPopup').style.display = 'block';
   
 
