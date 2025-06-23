@@ -123,24 +123,8 @@ app.get('/', (req, res) => {
   res.render("homePage.ejs");
 });
 
-app.get("/navbar", (req, res) => {
-  res.render("navbar.ejs", {uid: res.locals.uid});
-})
-
 app.get('/about', (req, res) => {
   res.render("about.ejs");
-});
-
-app.get('/api/mapbox-token', (req, res) => {
-  res.json({ 
-    accessToken: process.env.MAPBOX_ACCESS_TOKEN 
-  });
-});
-
-app.get('/api/config', (req, res) => {
-  res.json({
-    mapboxToken: process.env.MAPBOX_ACCESS_TOKEN
-  });
 });
 
 // Route imports

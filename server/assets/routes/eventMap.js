@@ -18,6 +18,12 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+map.get('/mapbox-token', (req, res) => {
+  res.json({ 
+    accessToken: process.env.MAPBOX_ACCESS_TOKEN 
+  });
+});
+
 // sends email to user when sign up for event after clicking on a marker on 
 // the map, and updates firebase with # of registrations and emails of users that signed up
 map.post('/email', async (req, res) => {
