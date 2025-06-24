@@ -1,21 +1,29 @@
 let ACCESS_TOKEN = '';
-let map; // Declare map variable but don't initialize yet
+// Map box API Token
+let map;
 
 window.onload = () => {
-  initializeMapbox();
+  initializeKeysAndMap();
 }
 
-// Function to fetch API key from server
-async function initializeMapbox() {
+// Function to fetch MapBox and Googgle Places API key from server
+async function initializeKeysAndMap() {
   try {
-    const response = await fetch('/map/mapbox-token');
-    const data = await response.json();
-    ACCESS_TOKEN = data.accessToken;
+    // mapbox api key
+    await fetch('/map/mapbox-token')
+      .then(response => response.json())
+      .then(data => {
+        ACCESS_TOKEN = data.accessToken;
+      })
+      .catch(error => {
+        console.log("Cannot display map due to invalid API key, Error: " + error);
+        throw error;
+      })
     
     // Set the mapbox access token
     mapboxgl.accessToken = ACCESS_TOKEN;
     
-    // NOW create the map after we have the token
+    // Create the map
     map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/mapbox/streets-v11',
@@ -27,13 +35,13 @@ async function initializeMapbox() {
     map.addControl(new mapboxgl.NavigationControl());
     map.addControl(new mapboxgl.FullscreenControl());
 
-    // Set up the load event handler
+    // call fetch and display markers to put markers on map, when the map is fully loaded
     map.on('load', function() {
       fetchAndDisplayMarkers();
     });
     
   } catch (error) {
-    console.error('Failed to load Mapbox token:', error);
+    console.error('Front end error in initializing MapBox: ', error);
   }
 }
 
@@ -46,11 +54,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
 });
-
-// close custom popup
-  function closeCustomPopup() {
-    document.getElementById('customPopup').style.display = 'none';
-  }
   
   // uses google places api to make a drop down menu when user types in address
   function initAutocomplete() {
@@ -76,7 +79,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
 }
-window.closeCustomPopup = closeCustomPopup;
 window.initAutocomplete = initAutocomplete;
 
 // rezooms map based on address typed in
@@ -197,8 +199,9 @@ function loopThroughJSON(obj, regex, targetKey) {
   return value; 
 }
 
+//authorized fetch to automatically receive Firebase Token and pass it in any user authentication API call
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, applyActionCode, getIdToken } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { firebaseConfig } from '/scripts/firebaseConfig.js'
 
 // Initialize Firebase
@@ -439,3 +442,8 @@ async function openCustomPopup(storeAddress, task, taskId, description, start_ti
     };
     
 }
+// close custom popup
+  function closeCustomPopup() {
+    document.getElementById('customPopup').style.display = 'none';
+  }
+  window.closeCustomPopup = closeCustomPopup;

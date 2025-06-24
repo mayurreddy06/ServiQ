@@ -1,12 +1,13 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, applyActionCode, getIdToken } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { firebaseConfig } from '/scripts/firebaseConfig.js'
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-// Updated authorizedFetch - still useful for API calls
+// authorized fetch to automatically receive Firebase Token and pass it in any user authentication API call
 window.authorizedFetch = async (input, init = {}) => {
   const user = auth.currentUser;
   const token = user ? await user.getIdToken() : null;
@@ -27,10 +28,10 @@ document.getElementById('signin-form').addEventListener('submit', async (event) 
   event.preventDefault();
   let email = document.getElementById('email-entry').value;
   const password = document.getElementById('password-entry').value;
-  console.log("Attempting login with email:", email);
 
   document.getElementById('error-tag').textContent = "";
   document.getElementById("customSignInLoading").textContent = "Processing...";
+  // disable buttons when proccessing API request
   let buttons = document.querySelectorAll("button");
   buttons.forEach((button) => {
     button.disabled = true;
@@ -38,9 +39,8 @@ document.getElementById('signin-form').addEventListener('submit', async (event) 
   
   try {
     const accountCredential = await signInWithEmailAndPassword(auth, email, password);
-    const user = accountCredential.user;
     
-    // Send Firebase ID token to backend to create JWT cookie
+    // create JWT token
     await authorizedFetch('/auth/login', {
       method: "POST",
       headers: {
@@ -58,8 +58,6 @@ document.getElementById('signin-form').addEventListener('submit', async (event) 
       return response.json();
     })
     .then(data => {
-      console.log("JWT cookie created successfully");
-      // Now redirect - the JWT cookie will be sent automatically
       window.location.href = "/";
     })
     .catch(error => {
@@ -82,37 +80,54 @@ document.getElementById('signin-form').addEventListener('submit', async (event) 
   })
 });
 
-// // Handle email verification
-// const urlParams = new URLSearchParams(window.location.search);
-// const mode = urlParams.get('mode');
-// const oobCode = urlParams.get('oobCode');
-
-// if (mode === 'verifyEmail' && oobCode) {
-//   const auth = getAuth();
-  
-//   applyActionCode(auth, oobCode)
-//     .then(async () => {
-//       const user = auth.currentUser;
-//       if (user) {
-//         const token = await getIdToken(user);
-        
-//         const response = await fetch('/auth/login', {
-//           method: 'POST',
-//           headers: {
-//             'Authorization': `Bearer ${token}`,
-//             'Content-Type': 'application/json'
-//           },
-//           credentials: 'include'
-//         });
-        
-//         if (response.ok) {
-//           alert('Email verified successfully!');
-//           window.location.href = '/admin/dashboard';
-//         }
-//       }
-//     })
-//     .catch((error) => {
-//       console.error('Email verification failed:', error);
-//       alert('Email verification failed. Please try again.');
-//     });
-// }
+// code from Firebase Google Oauth Documentation (and modified)
+document.getElementById("google-sign").addEventListener("click", async () => {
+    signInWithPopup(auth, provider)
+  .then(async (result) => {
+    console.log(result);
+    // This gives you a Google Access Token. You can use it to access the Google API.
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential.accessToken;
+    const user = result.user;
+    const email = result.user.email;
+    const uid = user.uid;
+    await authorizedFetch('/auth/google/verify/', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        // Automatically converted to "username=example&password=password"
+        body: new URLSearchParams({email, uid}),
+        credentials: 'include'
+        })
+        .then(async response => {
+          if (!response.ok)
+          {
+            const errorBody = await response.json();
+            const error = new Error(errorBody.error);
+            error.status = response.status;
+            throw error;
+          }
+          return response.json();
+        })
+        .then(data => {
+          window.location.href = "/";
+        })
+        .catch(error => {
+          if (error.status === 406)
+          {
+            let errorTag = document.getElementById('error-tag');
+            errorTag.textContent = "Google Account is Not Registered"
+            setTimeout(() => {
+              errorTag.textContent = "";
+            }, 5000)
+          }
+          else
+          {
+            alert("Unknown Server Error" + error);
+          }
+        });
+  }).catch((error) => {
+    console.log(error);
+  });
+});

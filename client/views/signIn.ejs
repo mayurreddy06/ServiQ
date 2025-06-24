@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ServiQ</title>
+    <title>SignIn Page</title>
     <link rel="icon" href="../images/ServiQ_logo.png" type="image/x-icon">
     <link rel = "stylesheet" href = "/styles/login.css">   
     <link rel = "stylesheet" href = "/styles/googleButton.css">
 </head>
+<%-include('navbar.ejs')%>
 <body class="d-flex flex-column min-vh-100">
-    <%-include('navbar.ejs')%>
-        <!-- Section: Design Block -->
 <section class = "flex-grow-1">
-  <!-- Jumbotron -->
   <div class="d-flex align-items-center px-4 py-5 px-md-5 text-center text-lg-start" style="min-height: calc(100vh - 80px); background-color: hsl(0, 0%, 96%)">
     <div class="container">
       <div class="row gx-lg-5 justify-content-center align-items-center">
@@ -58,9 +56,6 @@
                                         <button id = "google-sign" style = "border: 1px solid black; cursor: pointer">Sign in With Google        
                                         </button>
                             </div>
-
-                        <!-- Register buttons -->
-                        
                         </div>
                     </div>
                 </div>
@@ -68,11 +63,7 @@
       </div>
     </div>
   </div>
-  <!-- Jumbotron -->
 </section>
-
-<script type = "module" src = "../scripts/googleSignin.js"></script>
 <script type = "module" src = "../scripts/signIn.js"></script>
 </body>
-
 </html>

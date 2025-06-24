@@ -10,18 +10,18 @@
     <!-- Mapbox CSS -->
         <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
         <!-- Google Places API -->
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRuZeVsj0JhzbxkUeV5FYb8PQVB-8zHEU&libraries=places"></script>
+        <script src='<%=(locals.googlePlacesToken)%>'></script>
         <!-- Flatpickr CSS -->
          <link rel="stylesheet" type = "text/css" href="/flatpickr/flatpickr.min.css" />
         <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"> -->
+
          <!-- this is for bootstrap icons specifically (to use the i tags) and display the alerts -->
          <link rel = "stylesheet" href = "/bootstrap-icons/font/bootstrap-icons.css">
-    <title>ServiQ</title>
+    <title>Dashboard Page</title>
 </head>
 <body>
     <%-include('navbar.ejs')%>
     <header class = "container">
-        <!-- Button trigger modal -->
     <div id = "top-buttons">
         <div class = "card" style = "display: flex; flex-direction: column;justify-content: center;align-items:center; margin: 10px 0">
         <h5>Welcome <%=(locals.email)%></h5>
@@ -32,6 +32,8 @@
             <button type="button" class="btn taskPost-btn" data-bs-toggle="modal" data-bs-target="#POSTModal">
             Add New Event
             </button>
+
+            <!-- These next to 2 DIV are hidden by default load, but will appear upon Create, Update, Delete operation -->
             <div class="alert alert-success d-flex align-items-center d-none" id = "messageSuccess" role="alert">
                         <i class="bi bi-check-circle-fill me-2"></i>
                             <div id = "databaseMessage">
@@ -81,7 +83,7 @@
      -->
     
 
-<!-- Modal -->
+<!-- Modal for editing tasks -->
  <div class="modal fade" id="PATCHModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
@@ -232,7 +234,6 @@
                 </div>
                 <!--End of Categories-->
                   
-                <!--Event Disc. and Volunteer Count-->
                 <div>
                     <label for="volunteer-count">Minimum Age Requirement</label>
                     <input type="number" id="volunteer-count" placeholder = "Leave blank if none" min = "10" max = "65" class = "minAgePATCH" name="volunteer_count">
@@ -269,7 +270,7 @@
 </div>
 
 
-
+<!-- Modal for posting tasks -->
 <div class="modal fade" id="POSTModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
@@ -441,8 +442,6 @@
                     <input class="btn taskPost-btn" type="submit" value="Submit">
                 </div>
                 
-                
-                <!-- SVG Sprites -->
                 <svg class="inline-svg" style="display: none;">
                     <symbol id="check" viewBox="0 0 12 10">
                         <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
@@ -455,6 +454,7 @@
     </div>
   </div>
 </div>
+<!-- table that is generated using front end javascript and API calls present in viewPosts.js -->
         <div class = "container table-responsive" id = "page-info">
 
                 <table id = "viewTable" class = "table">
@@ -463,7 +463,7 @@
                       <th>Date</th>
                       <th>Start Time</th>
                       <th>Location</th>
-                      <!-- NOTE TO FUTURE SELF: to get spots back uncomment below and viewPosts.js code -->
+                      <!-- NOTE TO FUTURE SELF: to get volunteer spots back uncomment below and viewPosts.js code -->
                       <!-- <th>Spots</th> -->
                       <th>Edit</th>
                       <th>Delete</th>

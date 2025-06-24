@@ -3,22 +3,30 @@ const express = require('express');
 const adminRouter = express.Router();
 const admin = require('firebase-admin');
 const multer = require('multer');
-// Configure multer for memory storage (since we're uploading to Firebase Storage)
+// firebase memory storage
 const upload = multer({ storage: multer.memoryStorage() });
 const db = admin.database();
 
-
+// variables specifically for agencyName and Description on edit agnecy info modal (temporarily not used and commented out)
 adminRouter.get('/view', async (req, res) => {
-    let uid = res.locals.uid;
-    const ref = db.ref(`agency_accounts/${uid}`);
-    const data = await ref.once('value');
-    const agency = data.val();
-    let agencyName = agency.name;
-    let agencyDescription = agency.agencyDescription;
-    res.render('viewPosts.ejs', {agencyName, agencyDescription});
+    try {
+      let uid = res.locals.uid;
+      const ref = db.ref(`agency_accounts/${uid}`);
+      const data = await ref.once('value');
+      const agency = data.val();
+      let agencyName = agency.name;
+      let agencyDescription = agency.agencyDescription;
+      let googlePlacesToken = "https://maps.googleapis.com/maps/api/js?key=" + process.env.GOOGLE_PLACES_TOKEN + "&libraries=places";
+      res.render('viewPosts.ejs', {agencyName, agencyDescription, googlePlacesToken});
+    }
+    catch(error)
+    {
+      res.status(500).json({error: error.message});
+    }
+    
 });
 
-
+// update agency info, including adding an image for the organization
 adminRouter.patch('/agency', upload.single('file'), async (req, res) => {
   try {
     const userId = res.locals.uid;

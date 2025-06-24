@@ -24,6 +24,13 @@ map.get('/mapbox-token', (req, res) => {
   });
 });
 
+map.get('/googlePlaces-token', (req, res) => {
+  res.json({ 
+    accessToken: process.env.GOOGLE_PLACES_TOKEN
+  });
+});
+
+
 // sends email to user when sign up for event after clicking on a marker on 
 // the map, and updates firebase with # of registrations and emails of users that signed up
 map.post('/email', async (req, res) => {
@@ -43,7 +50,7 @@ map.post('/email', async (req, res) => {
     start_time = convertTime(start_time)
     end_time = convertTime(end_time)
 
-    // found on regex website
+    // found on regex website, to validate an email
     const emailRegex = /^(?:(?:[\w`~!#$%^&*\-=+;:{}'|,?\/]+(?:(?:\.(?:"(?:\\?[\w`~!#$%^&*\-=+;:{}'|,?\/\.()<>\[\] @]|\\"|\\\\)*"|[\w`~!#$%^&*\-=+;:{}'|,?\/]+))*\.[\w`~!#$%^&*\-=+;:{}'|,?\/]+)?)|(?:"(?:\\?[\w`~!#$%^&*\-=+;:{}'|,?\/\.()<>\[\] @]|\\"|\\\\)+"))@(?:[a-zA-Z\d\-]+(?:\.[a-zA-Z\d\-]+)*|\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\])$/;
     if (!(emailRegex.test(email)))
     {
@@ -64,17 +71,17 @@ map.post('/email', async (req, res) => {
       let registrations;
       try
       {
-        // if users are signed up, the registrations field already exists in firebase
+        // if users are signed up (already recieved email once), the registrations field already exists in firebase
         registrations = taskData.registrations;
   
-        // if the email already exists in the database in firebase, the user is already signed up
+        // if the email already exists in the database in firebase, the user is already signed up (already recieved email once)
         if (registrations.volunteers[underscoreEmail]) {
           return res.status(405).json({error: "Email has already been sent under this account"});
         }
       }
       catch(error)
       {
-        // creates the registrations fields in firebase if no user is signed up
+        // creates the registrations fields in firebase if no user is signed up (already recieved email once)
         registrations = {
           count: 0,
           volunteers: {}

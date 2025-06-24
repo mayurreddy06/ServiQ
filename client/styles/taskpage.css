@@ -1,9 +1,4 @@
-/* *{
-    margin: 0 !important;
-    padding: 0 !important;
-} */
-
-
+/* styling for the modals (posting and deleting) on the dashboard */
 :root
 {
     --primary-color: #4CAF50;

@@ -2,7 +2,7 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth
 
 const auth = getAuth();
 
-// Wrap native fetch to automatically attach the Firebase ID token
+// safely wrap firebase token in fetch
 window.authorizedFetch = async (input, init = {}) => {
   const user = auth.currentUser;
   const token = user ? await user.getIdToken() : null;
@@ -15,11 +15,11 @@ window.authorizedFetch = async (input, init = {}) => {
   return fetch(input, {
     ...init,
     headers,
-    credentials: 'include' // optional, keep if you use cookies
+    credentials: 'include'
   });
 };
 
-
+// on load, the page fetches data from the API (based on who the user is) and creates a table with the tasks that they created
 window.onload = async function()
 {
     // this is to safely retrieve data for each user without passing in the uid on the client side
@@ -64,12 +64,14 @@ window.onload = async function()
                 editButton.textContent = "Edit";
                 deleteButton.textContent = "Delete";
 
+                // This was here earlier to link to a custom page to edit each task, could be added back later if nessecary
                 // editButton.addEventListener("click", async function(event) {
                 //     const timestamp = this.id;
                 //     console.log(timestamp);
                 //     window.location.href += "/" + timestamp;
                 // });
 
+                // Delete Tasks
                 deleteButton.addEventListener("click", async function(event) {
                   event.preventDefault();
                   let buttons = document.querySelectorAll("button");
@@ -156,6 +158,7 @@ function initAutocomplete(event) {
 }
 window.initAutocomplete = initAutocomplete;
 
+// flatpickr css
 document.addEventListener('DOMContentLoaded', function () {
   // Initialize Flatpickr on the date input
   flatpickr('#datePOST', {

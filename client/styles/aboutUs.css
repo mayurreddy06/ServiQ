@@ -1,4 +1,4 @@
-/* aboutUs.css - Updated with responsive fixes while maintaining existing styles */
+/* styling for the about page */
 * {
     margin: 0;
     padding: 0;
@@ -93,7 +93,6 @@
     color: var(--primary-color) !important;
 }
 
-/* New styles to enhance responsiveness and card styling */
 .card {
     border-radius: 15px;
     transition: all 0.3s ease;

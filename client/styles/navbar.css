@@ -1,3 +1,4 @@
+/* navigation bar present on all pages */
 :root
 {
     --primary-color: #4CAF50;
@@ -9,44 +10,28 @@
     margin: 0;
     padding: 0;
 }
-
-body
-{
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 25px;
-}
-.container1
-{
-    width: 100%;
-}
-/* nav
-{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 70px;
-    padding: 0 20px;
-    box-sizing: border-box;
-} */
 img {
     width: 50px;
 }
-.external-pages
+.login-cta
 {
-    display: flex;
-    gap: 35px;
-    color: var(--text-color);
-    padding-right: 75px;
-    align-items: center;
-    flex-wrap: nowrap;
-    min-width: 0;
+    padding: 7px 20px;
+    background-color: var(--primary-color);
+    border-radius: 5px;
+    color: var(--white);
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    min-width: 80px;
+    transition: background-color 0.15s;
 }
-.nav-links {
-    display: flex;
-    gap: 35px;
-    align-items: center;
-    flex-shrink: 1;
+
+.login-cta:hover
+{
+    background-color: #3c863e;
 }
+
 .external-pages a, input
 {
     text-decoration: none;
@@ -75,92 +60,13 @@ a:hover::before,input:hover::before
   transform-origin: left;
   transform: scaleX(1);
 }
-.link-cta
-{
-    color: var(--text-color);
-}
-.login-cta
-{
-    padding: 7px 20px;
-    background-color: var(--primary-color);
-    border-radius: 5px;
-    color: var(--white);
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    text-align: center;
-    min-width: 80px;
-    transition: background-color 0.15s;
-}
-
-.login-cta:hover{
-    background-color: #3c863e;
-
-}
-.user-section {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-left: 10px;
-    flex-shrink: 0;
-    position: relative;
-}
-
-.user-email {
-    color: var(--text-color);
-    font-size: 18px;
-    font-weight: normal;
-    text-decoration: none;
-    position: relative;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.user-email:hover {
-    color: var(--primary-color);
-}
-
-#profile-image
-{
-    width: 40px;
-    height: 100%;
-}
-
-#logout-container {
-    position: absolute;
-    top: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    z-index: 100;
-    background-color: white;
-    padding: 12px 15px;
-    border-radius: 6px;
-    border: 1px solid #e0e0e0;
-    display: none;
-
-    /* transitions */
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-}
-#logout-container.show{
-    opacity: 1;
-    pointer-events:auto;
-}
-
-#logout-link {
-    position: static;
-    display: block;
-}
 
 .nav-link {
     font-size: 20px !important;
-    /* !important overrides any other styling set, so overrides bootstrap */
+    /* future reference: !important overrides any other styling set, so overrides bootstrap */
 }
 
-/* makes menu bar for admin drop down to the left (stack overflow) */
+/* makes bootstrap menu bar for admin drop down to the left (stack overflow) */
 .dropdown-menu {
    right: 0 !important;
    left: auto !important;

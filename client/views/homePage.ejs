@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
-    <title>ServiQ</title>
+    <title>ServiQ - HomePage</title>
     <link rel="icon" href="../images/ServiQ_logo.png" type="image/x-icon">
     <link rel = "stylesheet" href = "../styles/homePage.css">
     <link rel = "stylesheet" href = "../styles/mapstyles.css">
@@ -50,7 +50,7 @@
 </section>
 
     <section>
-        <div class = "container1 scroll-section" id = "homePage-form">
+        <div class = "container1 scroll-section py-1" id = "homePage-form">
             <form class = "homePage-form" onsubmit="fetchAndDisplayMarkers(); return false;">
                 <input type="text" id="autocomplete" name="store-location" onclick="initAutocomplete()" class="form-element reZoom" placeholder="Enter Address or Zipcode" required>
                 <div id = "testing">
@@ -99,7 +99,7 @@
               </div>
               <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
               <script type = "module" src = "../scripts/map.js"></script>
-              <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRuZeVsj0JhzbxkUeV5FYb8PQVB-8zHEU&libraries=places"></script>
+              <script id = "googlePlacesScript" src = '<%=(locals.googlePlacesToken)%>'></script>
             
             <div id="customPopup" class="custom-popup">
               <div class="custom-popup-content">

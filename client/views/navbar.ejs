@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ServiQ</title>
+    <title>Navigation Bar</title>
     <link rel="icon" href="../images/ServiQ_logo.png" type="image/x-icon">
     <link rel = "stylesheet" href = "/styles/navbar.css">
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
@@ -19,7 +19,7 @@
       element.classList.remove("container");
     }
     </script>
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand" href="/">
         <img src = "../images/ServiQ-trans.png">
     </a>
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,36 +59,4 @@
     <script type="module" src = "../scripts/signOut.js"></script>
     <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js';
-import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js';
-
-import { firebaseConfig } from '/scripts/firebaseConfig.js'
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-let hasReloaded = false;
-
-// window.onload = () => {
-//   onAuthStateChanged(auth, async (user) => {
-//     if (user && !hasReloaded) {
-//       // Only reload if user is logged in, we haven't reloaded yet, and server doesn't know about user
-//       hasReloaded = true;
-//       const token = await user.getIdToken();
-      
-//       const response = await fetch(window.location.pathname, {
-//         headers: {
-//           'Authorization': `Bearer ${token}`
-//         }
-//       });
-      
-//       if (response.ok) {
-//         const html = await response.text();
-//         document.documentElement.innerHTML = html;
-//       }
-//     }
-//   });
-// };
-</script>
 </html>

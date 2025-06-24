@@ -2,7 +2,7 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth
 
 const auth = getAuth();
 
-// Wrap native fetch to automatically attach the Firebase ID token
+// authorized fetch to automatically receive Firebase Token and pass it in any user authentication API call
 window.authorizedFetch = async (input, init = {}) => {
   const user = auth.currentUser;
   const token = user ? await user.getIdToken() : null;
@@ -15,10 +15,11 @@ window.authorizedFetch = async (input, init = {}) => {
   return fetch(input, {
     ...init,
     headers,
-    credentials: 'include' // optional, keep if you use cookies
+    credentials: 'include' 
   });
 };
 
+// add information for each tasks in the edit modules
 document.addEventListener('DOMContentLoaded', () => {
   let elements;
   let currentTimestamp; // Store the current timestamp being edited
@@ -70,8 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }, 1200);
 
-  // Move the submit handler OUTSIDE and use event delegation
-  // This runs only once when the page loads
+  // submitting the edited tasks to the backend
   document.querySelector(".edit-post").addEventListener('submit', async function(event) {
     // Check if the submitted form is the edit form
       event.preventDefault();
@@ -102,6 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
       catch(error) {
         document.getElementById("addressErrorMessagePATCH").textContent = "Please select address from dropdown";
         const targetElement = document.getElementById("addressErrorMessagePATCH").parentElement.parentElement;
+        // scroll up to address if dropdown is not selected
         targetElement.scrollIntoView({ behavior: 'smooth' });
         throw error;
       }

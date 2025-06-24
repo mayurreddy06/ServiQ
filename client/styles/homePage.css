@@ -1,3 +1,4 @@
+/* styling page for the "/" or homepage route */
 :root
 {
     --primary-color: #4CAF50;
@@ -258,6 +259,7 @@ main
         display: none;
     }
 }
+/* removed image for mobile screens (isn't nessecary and takes too much space) */
 @media (max-width: 767px) {
     #volunteer-img {
         display: none;

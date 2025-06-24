@@ -1,4 +1,5 @@
-
+/* This file is the for the modal in the Dashboard to edit agency info (including adding organization image
+this will be added later on, the code for that modal is currently commente dout */
 .signup-info {
   display: flex;
   flex-direction: column;

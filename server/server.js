@@ -3,19 +3,23 @@ const express = require('express');
 const path = require('path');
 const admin = require('firebase-admin');
 const cookieParser = require('cookie-parser');
+// environment variables
 require('dotenv').config();
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 
-// Use environment variable or fallback to default path
-const serviceAccountPath = process.env.FIREBASE_JSON || './path/to/your/firebase-service-account.json';
+// Firebase
+const serviceAccountPath = process.env.FIREBASE_JSON;
 const serviceAccount = require(serviceAccountPath);
 const app = express();
 const PORT = 3000;
 
 app.use(cookieParser("secret"));
 
+// The second and third are the origins on render
 const allowedOrigins = ['http://localhost:3000', 'https://serviq.onrender.com/', 'https://www.serviq-volunteer.org/']
 
+// allows cross-origins (allowing the use of the particular domains specified above) needed for deployment on Render
 app.use(cors({
   origin: allowedOrigins,
   credentials: true
@@ -32,15 +36,11 @@ admin.initializeApp({
 const db = admin.database();
 module.exports = db;
 
-const jwt = require('jsonwebtoken');
-
-// Replace your existing auth middleware with this:
+// middleware to define variables to be used in EJS for updating the navbar, displaying email on dashboard, etc.
 app.use(async (req, res, next) => {
   // Set default values FIRST
   res.locals.uid = null;
   res.locals.email = null;
-  res.locals.isVerified = false;
-  res.locals.user = null;
   req.user = null;
 
   try {
@@ -58,7 +58,6 @@ app.use(async (req, res, next) => {
         const userData = snapshot.val();
 
         if (userData) {
-          console.log("JWT token valid - setting user data");
 
           req.user = {
             uid: decoded.uid,
@@ -67,12 +66,9 @@ app.use(async (req, res, next) => {
             userData: userData
           };
 
-          // Set locals for EJS templates
+          // setting the local variables
           res.locals.uid = decoded.uid;
           res.locals.email = decoded.email;
-          res.locals.isVerified = userData.isVerified || decoded.isVerified;
-          res.locals.user = userData;
-          console.log("User UID set in res.locals from JWT:", res.locals.uid);
         }
       } catch (jwtError) {
         console.log('JWT token verification failed:', jwtError.message);
@@ -80,61 +76,60 @@ app.use(async (req, res, next) => {
         res.clearCookie('authToken');
       }
     }
-
-    // Always call next at the end
     next();
 
   } catch (error) {
-    console.log("Middleware error:", error.message);
+    console.log("Error while validating JWT token: ", error.message);
     next();
   }
 });
 
-    
-
-// Static file middleware
-app.use(express.static(path.join(__dirname, 'assets')));
-
-// Body parsing middleware
+// Allows us to pass variables in the body on the front end and retrieve on the back end by doing req.body
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-// View engine setup
+// Allows to use EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../client/views'));
 
-// Static file routes
+// Static file middleware (allows us to declare the specific routes below)
+app.use(express.static(path.join(__dirname, 'assets')));
+
+// Specific Static file routes
 app.use('/styles', express.static(path.join(__dirname, '../client/styles')));
 app.use('/images', express.static(path.join(__dirname, '../client/images')));
 app.use('/scripts', express.static(path.join(__dirname, '../client/scripts')));
 app.use('/config', express.static(path.join(__dirname, './assets')));
+// these were specifically installed libraries
 app.use('/bootstrap', express.static(__dirname + '/../node_modules/bootstrap/dist'));
 app.use('/bootstrap-icons', express.static(__dirname + '/../node_modules/bootstrap-icons'));
 app.use('/flatpickr', express.static(__dirname + '/../node_modules/flatpickr/dist'));
 
-// Cache control middleware
+// doesn't store requests in the browsers memory
 app.use((req, res, next) => {
   res.set('Cache-Control', 'no-store');
   next();
 });
 
-// Public routes
+// Main routes
 app.get('/', (req, res) => {
-  res.render("homePage.ejs");
+  let googlePlacesToken = "https://maps.googleapis.com/maps/api/js?key=" + process.env.GOOGLE_PLACES_TOKEN + "&libraries=places";
+  res.render("homePage.ejs", {googlePlacesToken});
 });
 
 app.get('/about', (req, res) => {
   res.render("about.ejs");
 });
 
-// Route imports
+// Imported Routes
 const volunteerData = require('./assets/routes/volunteerData.js');
 const adminPages = require("./assets/routes/admin.js");
 const userAuth = require("./assets/routes/auth.js");
 const map = require("./assets/routes/eventMap.js");
 
-// Middleware for protected routes
+// This is to prevent logged out users from accessing routes that only logged in users can (ex: CRUD dashboard for events)
 const requireAuth = (req, res, next) => {
+  // The only exception is the /volunteer-data GET route which is to get the map data on the homepage
   if (!(req.baseUrl === '/volunteer-data') && req.method === 'GET' && !(req.user))
   {
       let errorCode = 401;
@@ -148,30 +143,19 @@ const requireAuth = (req, res, next) => {
   
 };
 
-const requireVerification = (req, res, next) => {
-  if (!req.user) {
-    return res.status(401).json({error: "Authentication required"});
-  }
-  if (!req.user.isVerified) {
-    return res.status(403).json({error: "Email verification required"});
-  }
-  next();
-};
-
 // Apply route middlewares
 app.use("/volunteer-data", requireAuth, volunteerData);
 app.use("/admin", requireAuth, adminPages);
-app.use("/auth", userAuth); // Auth routes handle their own middleware
+app.use("/auth", userAuth);
 app.use("/map", map);
 
+// if the user enters a random url under our domain, they will be redirected to an error page
 app.use((req, res, next) => {
   let errorCode = 404;
   let errorMessage = "The page you're looking for doesn't exist or has been moved"
   res.render('errorPage.ejs', {errorCode, errorMessage})
 });
 
-
-// Start server
 app.listen(PORT, () => {
   console.log('Server running on http://localhost:'+ PORT);
 });
