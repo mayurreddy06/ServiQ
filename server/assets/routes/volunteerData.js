@@ -6,6 +6,7 @@ const db = require('../../server.js');
 // route to add volunteer data to the server
 volunteerData.post('/', async (req, res) => {
     const { storeAddress, category, start_time, end_time, minAge, timestamp, task, external, location, date, description} = req.body;
+    const userId = res.locals.uid;
     try {
       const ref = db.ref('volunteer_opportunities');
       const newTask = ref.push(); 
@@ -14,6 +15,7 @@ volunteerData.post('/', async (req, res) => {
   
       res.status(200).json({message: "Data successfully added to firebase"});
     } catch (error) {
+      console.log(error);
       res.status(500).json({error: "Data cannot be added to firebase"});
     }
 });
