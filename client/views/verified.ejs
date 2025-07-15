@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <%-include('navbar.ejs')%>
+
+</body>
+<script>
+    window.onload = async () => {
+        let email = window.localStorage.getItem("emailForSignIn");
+
+        await fetch('/auth/verify', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({email}),
+            credentials: 'include' // Important for cookies
+            })
+            .then(async response => {
+            if (!response.ok) {
+                const errorBody = await response.json();
+                const error = new Error(errorBody.error);
+                error.status = response.status;
+                throw error;
+            }
+            return response.json();
+            })
+            .then(data => {
+                alert("Your email has been verified successfully. You may now log in.")
+                window.localStorage.clear();
+                window.location.href = "/auth/login";
+            })
+            .catch(error => {
+                alert("Error verifying email: " + error);
+            });
+
+    }
+</script>
+</html>

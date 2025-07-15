@@ -161,6 +161,40 @@ auth.post('/register', async (req, res) => {
   }
 });
 
+auth.get('/verify', (req, res) => {
+  res.render("verified.ejs");
+});
+
+auth.post('/verify', async (req, res) => {
+  const {email} = req.body;
+  try
+  {
+    const snapshot = await db.ref('agency_accounts').orderByChild('email').equalTo(email).once('value');
+    
+    if (!snapshot.exists()) {
+      return res.status(404).json({ error: 'User Email does not exist in the database' });
+    }
+    
+    // Get the user's UID from the database query
+    const userData = snapshot.val();
+    const uid = Object.keys(userData)[0]; // Get the first (and should be only) key
+    
+    // Update the user's verification status
+    await db.ref(`agency_accounts/${uid}`).update({
+      isVerified: true,
+    });
+
+    return res.status(200).json({message: "User successfully verified"});
+  }
+  catch(error)
+  {
+    return res.status(500).json({error: error.code});
+  }
+})
+
+
+
+
 auth.get('/login', (req, res) => {
   res.render("signIn.ejs");
 });
@@ -188,6 +222,12 @@ auth.post('/login', async (req, res) => {
 
     if (!userData) {
       return res.status(404).json({error: "User does not exist in Firebase"});
+    }
+    console.log(userData);
+    if (!userData.isVerified)
+    {
+      console.log("this shouild excute");
+      return res.status(423).json({error: "Account under email has not been verified"});
     }
 
     // // update database verification status based on Firebase Auth

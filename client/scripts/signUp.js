@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, sendSignInLinkToEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { firebaseConfig } from '/scripts/firebaseConfig.js'
 const provider = new GoogleAuthProvider();
 
@@ -51,8 +51,23 @@ document.getElementById('agency-register-form').addEventListener('submit', async
           }
           return response.json();
         })
-        .then(data => {
-          window.location.href = "/auth/login";
+        .then(async data => {
+
+          // add sending link code here. Do it in an apporpiate manner. This website is for production.
+          // Send email verification link
+          const auth = getAuth();
+          const actionCodeSettings = {
+            url: `${window.location.origin}/auth/verify`,
+            handleCodeInApp: true
+          };
+
+          await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+
+          window.localStorage.setItem('emailForSignIn', email);
+    
+          alert("An email link was sent for verification. You must verify before logging in. Email may have been sent to spam folder");
+
+          // window.location.href = "/auth/login";
         })
         .catch(error => {
           document.getElementById('error-tag').textContent = error;

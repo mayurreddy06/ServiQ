@@ -61,11 +61,19 @@ document.getElementById('signin-form').addEventListener('submit', async (event) 
       window.location.href = "/";
     })
     .catch(error => {
-      document.getElementById('error-tag').textContent = "Internal server error";
-      console.log(error);
+      if (error.status === 423)
+      {
+        document.getElementById('error-tag').textContent = "Account under email has not been verified";
+      }
+      else
+      {
+        document.getElementById('error-tag').textContent = "Internal server error";
+        console.log(error);
+      }
     });
   } catch(error) {
     let errorTag = document.getElementById('error-tag');
+    // this status code is to indicate that access is locked, because the user has not verified their account
     if (error.code === "auth/too-many-requests") {
       errorTag.textContent = "Too many requests"
     }
